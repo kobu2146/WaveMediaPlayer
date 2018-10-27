@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         myimageview= findViewById(R.id.imageview);
         myseekbar= findViewById(R.id.seekBar);
 
-
+        String musa="mal fatih";
 
          MusicList musicList = new MusicList(musicListView,this);
         musicList.getMusic("notification","ringtone");

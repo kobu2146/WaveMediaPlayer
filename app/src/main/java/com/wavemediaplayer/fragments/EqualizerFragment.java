@@ -156,13 +156,14 @@ public class EqualizerFragment extends Fragment {
 
 //        get reference to linear layout for the seekBars
         mLinearLayout =view.findViewById(R.id.linearLayoutEqual);
+        mLinearLayout.setBackgroundColor(Color.RED);
 
 //        equalizer heading
         TextView equalizerHeading = new TextView(view.getContext());
         String ss="'Equalizer'";
         equalizerHeading.setText(ss);
         equalizerHeading.setTextSize(20);
-        equalizerHeading.setGravity(Gravity.CENTER_HORIZONTAL);
+//        equalizerHeading.setGravity(Gravity.CENTER_HORIZONTAL);
         mLinearLayout.addView(equalizerHeading);
 
 //        get number frequency bands supported by the equalizer engine
@@ -182,9 +183,9 @@ public class EqualizerFragment extends Fragment {
 //            frequency header for each seekBar
             TextView frequencyHeaderTextview = new TextView(view.getContext());
             frequencyHeaderTextview.setLayoutParams(new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
-            frequencyHeaderTextview.setGravity(Gravity.CENTER_HORIZONTAL);
+//            frequencyHeaderTextview.setGravity(Gravity.CENTER_HORIZONTAL);
             String s=String.valueOf((mEqualizer.getCenterFreq(equalizerBandIndex) / 1000)) + " Hz";
             frequencyHeaderTextview
                     .setText(s);
@@ -192,7 +193,7 @@ public class EqualizerFragment extends Fragment {
 
 //            set up linear layout to contain each seekBar
             LinearLayout seekBarRowLayout = new LinearLayout(view.getContext());
-            seekBarRowLayout.setOrientation(LinearLayout.HORIZONTAL);
+            seekBarRowLayout.setOrientation(LinearLayout.VERTICAL);
 
 //            set up lower level textview for this seekBar
             TextView lowerEqualizerBandLevelTextview = new TextView(view.getContext());
@@ -212,13 +213,12 @@ public class EqualizerFragment extends Fragment {
             //            **********  the seekBar  **************
 //            set the layout parameters for the seekbar
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
-            layoutParams.weight = 1;
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    500);
 
 //            create a new seekBar
             SeekBar seekBar = new SeekBar(view.getContext());
-//            seekBar.setRotation(270);
+            seekBar.setRotation(270);
 //            give the seekBar an ID
             seekBars.add(seekBar);
             seekBar.setId(i);

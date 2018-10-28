@@ -43,11 +43,14 @@ public class MainActivity extends AppCompatActivity {
         mytext2=findViewById(R.id.bitisText);
         myimageview= findViewById(R.id.imageview);
         myseekbar= findViewById(R.id.seekBar);
+//
+//        //fat burası equalizeri açmak için
+//        FragmentManager manager = getFragmentManager();
+//        FragmentTransaction ft = manager.beginTransaction();
+//        ft.add(android.R.id.content, equalizerFragment).commit();
 
-        int fatih = 31;
-        String musa="mal fatih";
 
-         MusicList musicList = new MusicList(musicListView,this);
+        MusicList musicList = new MusicList(musicListView,this);
         musicList.getMusic("notification","ringtone");
 
        final PlayMusic pl = new PlayMusic(MainActivity.this,mediaPlayer,myseekbar,mytext1,mytext2,myimageview,handler,runnable);

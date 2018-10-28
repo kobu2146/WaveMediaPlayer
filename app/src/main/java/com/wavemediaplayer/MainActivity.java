@@ -5,22 +5,17 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.media.MediaPlayer;
-import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.SeekBar;
-import android.widget.TextView;
 
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.fragments.EqualizerFragment;
-import com.wavemediaplayer.play.PlayMusic;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -33,12 +28,11 @@ public class MainActivity extends AppCompatActivity {
      private EqualizerFragment equalizerFragment;
      public FrameLayout mainFrame;
 
-    //Media Player
-      ImageView myimageview;
-      TextView mytext1,mytext2;
-      SeekBar myseekbar;
-      Handler handler;
-      Runnable runnable;
+
+     // Sliding up panel for music player
+    ImageButton like, notlike,dislike,notdislike;
+    ImageButton play,pause,play_main,pause_main;
+    private SlidingUpPanelLayout mLayout;
 
 
     @Override
@@ -47,34 +41,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        musicListView = findViewById(R.id.musicListView);
+        musicListView = findViewById(R.id.main_musicListView);
 
-        mytext1= findViewById(R.id.baslangicText);
-        mytext2=findViewById(R.id.bitisText);
-        myimageview= findViewById(R.id.imageview);
-        myseekbar= findViewById(R.id.seekBar);
 
 
 
         MusicList musicList = new MusicList(musicListView,this);
         musicList.getMusic("notification","ringtone");
 
-       final PlayMusic pl = new PlayMusic(MainActivity.this,mediaPlayer,myseekbar,mytext1,mytext2,myimageview,handler,runnable);
 
-        musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                pl.play(MusicList.locationList.get(position));
-
-
-            }
-        });
 
         m_createListener();
 
 
-        //  PlayerFragment fragmentS1 = new PlayerFragment();
-        //  getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
+      //  PlayerFragment fragmentS1 = new PlayerFragment();
+    //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
 
 
     }
@@ -131,6 +112,19 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void f_createListener(){
+
+        like = (ImageButton) findViewById(R.id.sample_main_imageButton2);
+        notlike = (ImageButton) findViewById(R.id.sample_main_imageButton2new);
+        dislike = (ImageButton) findViewById(R.id.sample_main_button);
+        notdislike = (ImageButton) findViewById(R.id.sample_main_buttontwo);
+        play = (ImageButton) findViewById(R.id.sample_main_play_button);
+        pause = (ImageButton) findViewById(R.id.sample_main_pause_button);
+        play_main = (ImageButton) findViewById(R.id.sample_main_play_button_main);
+        pause_main = (ImageButton) findViewById(R.id.sample_main_pause_button_main);
+
+        mLayout = (SlidingUpPanelLayout) findViewById(R.id.activity_main);
+    }
 
 
 

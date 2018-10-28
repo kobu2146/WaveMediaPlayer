@@ -1,6 +1,9 @@
 package com.wavemediaplayer.fragments;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.audiofx.Equalizer;
 import android.media.audiofx.Visualizer;
@@ -12,11 +15,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.visaulizer.VisualizerView;
 
@@ -33,6 +38,7 @@ public class EqualizerFragment extends Fragment {
     private VisualizerView mVisualizerView;
     private View view;
     private ArrayList<SeekBar> seekBars;
+    private Button equalizerHideFragment;
     //    private TextView mStatusTextView;
     // The onCreateView method is called when Fragment should create its View object hierarchy,
     // either dynamically or via XML layout inflation.
@@ -40,7 +46,6 @@ public class EqualizerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
         view=inflater.inflate(R.layout.fragment_equalizer, parent, false);
-
 
         seekBars=new ArrayList<>();
 //        create the equalizer with default priority of 0 & attach to our media player
@@ -63,7 +68,22 @@ public class EqualizerFragment extends Fragment {
         });
 
 
+        clickListener();
         return view;
+    }
+
+    private void clickListener(){
+        equalizerHideFragment=view.findViewById(R.id.equalizerHideFragment);
+        equalizerHideFragment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager manager = getFragmentManager();
+                FragmentTransaction ft = manager.beginTransaction();
+                ft.hide(EqualizerFragment.this);
+                ((MainActivity)getActivity()).mainFrame.setBackgroundColor(Color.TRANSPARENT);
+                ft.commit();
+            }
+        });
     }
 
     // This event is triggered soon after onCreateView().
@@ -198,6 +218,7 @@ public class EqualizerFragment extends Fragment {
 
 //            create a new seekBar
             SeekBar seekBar = new SeekBar(view.getContext());
+//            seekBar.setRotation(270);
 //            give the seekBar an ID
             seekBars.add(seekBar);
             seekBar.setId(i);

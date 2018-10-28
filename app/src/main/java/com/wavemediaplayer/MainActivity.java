@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
      private Button mainEqualizer;
      public static MediaPlayer mediaPlayer;
      private EqualizerFragment equalizerFragment;
-     private FrameLayout mainFrame;
+     public FrameLayout mainFrame;
 
     //Media Player
       ImageView myimageview;
@@ -101,9 +101,11 @@ public class MainActivity extends AppCompatActivity {
                     }else{
                         if(equalizerFragment.isHidden()){
                             ft.show(equalizerFragment);
+                            mainFrame.setBackgroundColor(Color.BLUE);
 
                         }else{
                             ft.hide(equalizerFragment);
+                            mainFrame.setBackgroundColor(Color.TRANSPARENT);
                         }
                     }
                     ft.commit();

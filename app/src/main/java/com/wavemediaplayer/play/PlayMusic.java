@@ -13,10 +13,11 @@ import com.wavemediaplayer.R;
 
 import java.io.IOException;
 
+import static com.wavemediaplayer.MainActivity.mediaPlayer;
+
 public class PlayMusic {
 
     private Context context;
-    private  MediaPlayer mediaPlayer;
     private SeekBar myseekbar;
     private TextView mytext1;
     private TextView mytext2;
@@ -30,7 +31,6 @@ public class PlayMusic {
 
     public PlayMusic(Context context, MediaPlayer mediaPlayer, SeekBar myseekbar,TextView mytext1, TextView mytext2, ImageView myimageview,Handler handler,Runnable runnable){
         this.context = context;
-        this.mediaPlayer = mediaPlayer;
         this.myseekbar = myseekbar;
         this.mytext1 = mytext1;
         this.mytext2 = mytext2;

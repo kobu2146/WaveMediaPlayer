@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
                 fPlayListener.playMusic(position);
                 pos = position;
                fPlayListener.f_ListenerEvent(position);
+               eventClick(view);
 
 
             }

@@ -11,7 +11,7 @@ import android.widget.TextView;
 public class PlayMusic {
 
     private Context context;
-    private  MediaPlayer mediaPlayer;
+    public static MediaPlayer mediaPlayer;
     private SeekBar myseekbar;
     private TextView mytext1;
     private TextView mytext2;
@@ -24,9 +24,8 @@ public class PlayMusic {
 
 
 
-    public PlayMusic(Context context, MediaPlayer mediaPlayer, SeekBar myseekbar,TextView mytext1, TextView mytext2, ImageView myimageview,Handler handler,Runnable runnable){
+    public PlayMusic(Context context, SeekBar myseekbar,TextView mytext1, TextView mytext2, ImageView myimageview,Handler handler,Runnable runnable){
         this.context = context;
-        this.mediaPlayer = mediaPlayer;
         this.myseekbar = myseekbar;
         this.mytext1 = mytext1;
         this.mytext2 = mytext2;

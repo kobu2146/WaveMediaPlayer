@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -19,18 +20,16 @@ import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.fragments.EqualizerFragment;
 import com.wavemediaplayer.main.FPlayListener;
 
+import static com.wavemediaplayer.play.PlayMusic.mediaPlayer;
+
 
 public class MainActivity extends AppCompatActivity {
 
-
-    Context context;
-
+     Context context;
      ListView musicListView;
      private Button mainEqualizer;
-     public static MediaPlayer mediaPlayer;
      private EqualizerFragment equalizerFragment;
      public FrameLayout mainFrame;
-
      // fat linstener event knk
     FPlayListener fPlayListener;
 
@@ -81,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 if(mediaPlayer!=null){
                     FragmentManager manager = getFragmentManager();
                     FragmentTransaction ft = manager.beginTransaction();
+
                     if(!equalizerFragment.isAdded()){
                         ft.add(android.R.id.content, equalizerFragment);
                         mainFrame.setBackgroundColor(Color.BLUE);

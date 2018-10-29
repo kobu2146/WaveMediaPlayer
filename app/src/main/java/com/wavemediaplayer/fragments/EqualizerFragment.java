@@ -3,8 +3,13 @@ package com.wavemediaplayer.fragments;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.AudioTrack;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.media.audiofx.Equalizer;
 import android.media.audiofx.Visualizer;
 import android.os.Bundle;
@@ -21,13 +26,15 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.sdsmdg.harjot.crollerTest.Croller;
+import com.wavemediaplayer.Deneme.VerticalSeekBar;
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.visaulizer.VisualizerView;
 
 import java.util.ArrayList;
 
-import static com.wavemediaplayer.MainActivity.mediaPlayer;
+import static com.wavemediaplayer.play.PlayMusic.mediaPlayer;
 
 
 public class EqualizerFragment extends Fragment {
@@ -39,6 +46,7 @@ public class EqualizerFragment extends Fragment {
     private View view;
     private ArrayList<SeekBar> seekBars;
     private Button equalizerHideFragment;
+    private Croller equalizerVolume,equalizerRL;
     //    private TextView mStatusTextView;
     // The onCreateView method is called when Fragment should create its View object hierarchy,
     // either dynamically or via XML layout inflation.
@@ -69,7 +77,49 @@ public class EqualizerFragment extends Fragment {
 
 
         clickListener();
+        createCroller();
         return view;
+    }
+
+    private void createCroller(){
+        final AudioManager audio = (AudioManager) view.getContext().getSystemService(Context.AUDIO_SERVICE);
+        int currentVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
+        equalizerVolume=view.findViewById(R.id.equalizerVolume);
+        equalizerVolume.setMax(audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+        equalizerVolume.setProgress(currentVolume);
+        equalizerVolume.setOnProgressChangedListener(new Croller.onProgressChangedListener() {
+            @Override
+            public void onProgressChanged(int progress) {
+                audio.setStreamVolume(AudioManager.STREAM_MUSIC,
+                        progress, 0);
+                Log.e("qqqq",String.valueOf(progress));
+            }
+        });
+
+//
+//
+//        AudioTrack m = (AudioTrack) view.getContext().getSystemService(Context.AUDIO_SERVICE);
+//
+//        m.setStereoVolume(leftVolume, rightVolume);
+
+        equalizerRL=view.findViewById(R.id.equalizerRL);
+        equalizerRL.setMax(100);
+        equalizerRL.setProgress(50);
+        equalizerRL.setOnProgressChangedListener(new Croller.onProgressChangedListener() {
+            @Override
+            public void onProgressChanged(int progress) {
+                if(progress<50){
+                    mediaPlayer.setVolume(progress/50f,50/50f);
+                }else if(progress>50){
+                   mediaPlayer.setVolume(50/50f,(50-(progress-50))/50f);
+                }else{
+                    mediaPlayer.setVolume(50/50f,50/50f);
+                }
+            }
+        });
+
+
+
     }
 
     private void clickListener(){
@@ -164,6 +214,7 @@ public class EqualizerFragment extends Fragment {
         equalizerHeading.setText(ss);
         equalizerHeading.setTextSize(20);
 //        equalizerHeading.setGravity(Gravity.CENTER_HORIZONTAL);
+        equalizerHeading.setGravity(Gravity.CENTER_HORIZONTAL);
         mLinearLayout.addView(equalizerHeading);
 
 //        get number frequency bands supported by the equalizer engine
@@ -175,25 +226,45 @@ public class EqualizerFragment extends Fragment {
 //        get the upper limit of the range in millibels
         final short upperEqualizerBandLevel = mEqualizer.getBandLevelRange()[1];
 
+        LinearLayout horizontal=new LinearLayout(view.getContext());
+        horizontal.setOrientation(LinearLayout.HORIZONTAL);
+        LinearLayout.LayoutParams p1 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        horizontal.setWeightSum(5f);
+        horizontal.setLayoutParams(p1);
+        horizontal.setBackgroundColor(Color.BLUE);
+
 //        loop through all the equalizer bands to display the band headings, lower
 //        & upper levels and the seek bars
         for (short i = 0; i < numberFrequencyBands; i++) {
             final short equalizerBandIndex = i;
 
 //            frequency header for each seekBar
-            TextView frequencyHeaderTextview = new TextView(view.getContext());
-            frequencyHeaderTextview.setLayoutParams(new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
+//            TextView frequencyHeaderTextview = new TextView(view.getContext());
+//            frequencyHeaderTextview.setLayoutParams(new ViewGroup.LayoutParams(
+//                    ViewGroup.LayoutParams.WRAP_CONTENT,
+//                    ViewGroup.LayoutParams.WRAP_CONTENT));
 //            frequencyHeaderTextview.setGravity(Gravity.CENTER_HORIZONTAL);
             String s=String.valueOf((mEqualizer.getCenterFreq(equalizerBandIndex) / 1000)) + " Hz";
-            frequencyHeaderTextview
-                    .setText(s);
-            mLinearLayout.addView(frequencyHeaderTextview);
+//            frequencyHeaderTextview
+//                    .setText(s);
+//            horizontal.addView(frequencyHeaderTextview);
 
 //            set up linear layout to contain each seekBar
             LinearLayout seekBarRowLayout = new LinearLayout(view.getContext());
+            LinearLayout.LayoutParams paramssss = new LinearLayout.LayoutParams(
+                    0,
+                    LinearLayout.LayoutParams.MATCH_PARENT
+            );
+            paramssss.weight=1f;
+            seekBarRowLayout.setLayoutParams(paramssss);
+            seekBarRowLayout.setBackgroundColor(Color.GRAY);
+//            paramssss.setMargins(150, 0, 150, 0);
+
+
             seekBarRowLayout.setOrientation(LinearLayout.VERTICAL);
+            seekBarRowLayout.setGravity(Gravity.CENTER_HORIZONTAL);
 
 //            set up lower level textview for this seekBar
             TextView lowerEqualizerBandLevelTextview = new TextView(view.getContext());
@@ -201,7 +272,9 @@ public class EqualizerFragment extends Fragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
             String s1=String.valueOf((lowerEqualizerBandLevel / 100)) + " dB";
-            lowerEqualizerBandLevelTextview.setText(s1);
+            lowerEqualizerBandLevelTextview.setText(s+"\n\n\n"+s1);
+            lowerEqualizerBandLevelTextview.setGravity(Gravity.CENTER_HORIZONTAL);
+
 //            set up upper level textview for this seekBar
             TextView upperEqualizerBandLevelTextview = new TextView(view.getContext());
             upperEqualizerBandLevelTextview.setLayoutParams(new ViewGroup.LayoutParams(
@@ -209,16 +282,17 @@ public class EqualizerFragment extends Fragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT));
             String s2=String.valueOf((upperEqualizerBandLevel / 100)) + " dB";
             upperEqualizerBandLevelTextview.setText(s2);
+            upperEqualizerBandLevelTextview.setGravity(Gravity.CENTER_HORIZONTAL);
+
 
             //            **********  the seekBar  **************
 //            set the layout parameters for the seekbar
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
-                    500);
+                    600);
 
 //            create a new seekBar
-            SeekBar seekBar = new SeekBar(view.getContext());
-            seekBar.setRotation(270);
+            VerticalSeekBar seekBar = new VerticalSeekBar(view.getContext());
 //            give the seekBar an ID
             seekBars.add(seekBar);
             seekBar.setId(i);
@@ -251,12 +325,13 @@ public class EqualizerFragment extends Fragment {
             seekBarRowLayout.addView(lowerEqualizerBandLevelTextview);
             seekBarRowLayout.addView(seekBar);
             seekBarRowLayout.addView(upperEqualizerBandLevelTextview);
-
-            mLinearLayout.addView(seekBarRowLayout);
+            horizontal.addView(seekBarRowLayout);
 
             //        show the spinner
             equalizeSound();
         }
+        mLinearLayout.addView(horizontal);
+
     }
 
     /*displays the audio waveform*/

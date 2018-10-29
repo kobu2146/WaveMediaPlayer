@@ -26,7 +26,6 @@ public class FPlayListener {
     private ImageButton play_main;
     private ImageButton pause_main;
 
-    private MediaPlayer mediaPlayer;
     private SeekBar myseekbar;
     private TextView mytext1;
     private TextView mytext2;
@@ -61,7 +60,7 @@ public class FPlayListener {
         myseekbar= view.findViewById(R.id.sample_main_seekBar3);
         handler = new Handler();
 
-        pl = new PlayMusic(context,mediaPlayer,myseekbar,mytext1,mytext2,play,handler,runnable);
+        pl = new PlayMusic(context,myseekbar,mytext1,mytext2,play,handler,runnable);
     }
 
     public void playMusic(int position){

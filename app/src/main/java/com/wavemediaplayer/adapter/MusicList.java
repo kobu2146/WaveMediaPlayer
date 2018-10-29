@@ -8,7 +8,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ListView;
 
-import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 
 import java.util.ArrayList;
@@ -23,6 +22,8 @@ public class MusicList {
 
     private ListView musicListView;
     private Context context;
+
+    private boolean isAdd = true;
 
     public MusicList(ListView musicListView, Context context) {
         this.musicListView = musicListView;
@@ -45,7 +46,7 @@ public class MusicList {
     // Eger herhangi bir bouyt belirtilmezse 0 kb den buyuk butun dosyaları alacak
     //  Eger engellenmesini istedigimiz pathler varsa paths ile belirtiyoruz
     public void getMusic(String... paths){
-        getMusic(500*1024*8,paths);
+        getMusic(0,paths);
     }
 
     public void getMusic(int Size, String... paths){
@@ -69,18 +70,24 @@ public class MusicList {
 
                 if (Integer.valueOf(currentSize) >= Size){
                     if (paths.length>0){
+                        isAdd = true;
                         for (int i = 0;i<paths.length;i++){
-                            if (!currentLocation.toLowerCase().contains(paths[i])){
+                            if (currentLocation.toLowerCase().contains(paths[i])){
+                                isAdd = false;
 
-                                Log.e("curremtLoc",currentLocation);
-                                Log.e("Size",currentSize);
-
-                                titleList.add(currentTitle);
-                                artistList.add(currentArtist);
-                                imageList.add(R.drawable.music);
-                                durationList.add(currentDuration);
-                                locationList.add(currentLocation);
                             }
+
+                        }
+
+                        if (isAdd){
+                            Log.e("curremtLoc",currentLocation);
+                            Log.e("Size",currentSize);
+
+                            titleList.add(currentTitle);
+                            artistList.add(currentArtist);
+                            imageList.add(R.drawable.music);
+                            durationList.add(currentDuration);
+                            locationList.add(currentLocation);
                         }
                     }
                     else {

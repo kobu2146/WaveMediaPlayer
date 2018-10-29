@@ -3,24 +3,27 @@ package com.wavemediaplayer;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.fragments.EqualizerFragment;
+import com.wavemediaplayer.main.FPlayListener;
 
 
 public class MainActivity extends AppCompatActivity {
 
 
+    Context context;
 
      ListView musicListView;
      private Button mainEqualizer;
@@ -28,11 +31,14 @@ public class MainActivity extends AppCompatActivity {
      private EqualizerFragment equalizerFragment;
      public FrameLayout mainFrame;
 
+     // fat linstener event knk
+    FPlayListener fPlayListener;
 
-     // Sliding up panel for music player
-    ImageButton like, notlike,dislike,notdislike;
-    ImageButton play,pause,play_main,pause_main;
-    private SlidingUpPanelLayout mLayout;
+    // default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır
+     static int pos = 0;
+
+
+     SlidingUpPanelLayout mLayout;
 
 
     @Override
@@ -40,18 +46,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        context = this;
 
         musicListView = findViewById(R.id.main_musicListView);
-
-
-
 
         MusicList musicList = new MusicList(musicListView,this);
         musicList.getMusic("notification","ringtone");
 
-
-
         m_createListener();
+        f_createListener();
+
+
 
 
       //  PlayerFragment fragmentS1 = new PlayerFragment();
@@ -114,16 +119,47 @@ public class MainActivity extends AppCompatActivity {
 
     private void f_createListener(){
 
-        like = (ImageButton) findViewById(R.id.sample_main_imageButton2);
-        notlike = (ImageButton) findViewById(R.id.sample_main_imageButton2new);
-        dislike = (ImageButton) findViewById(R.id.sample_main_button);
-        notdislike = (ImageButton) findViewById(R.id.sample_main_buttontwo);
-        play = (ImageButton) findViewById(R.id.sample_main_play_button);
-        pause = (ImageButton) findViewById(R.id.sample_main_pause_button);
-        play_main = (ImageButton) findViewById(R.id.sample_main_play_button_main);
-        pause_main = (ImageButton) findViewById(R.id.sample_main_pause_button_main);
 
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.activity_main);
+
+        fPlayListener = new FPlayListener(this,getWindow().getDecorView().findViewById(android.R.id.content));
+
+        // Herhangi bit posizyon yok ise default 0'dır
+        fPlayListener.f_ListenerEvent(pos);
+
+        musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+               // pl.play(MusicList.locationList.get(position));
+                fPlayListener.playMusic(position);
+                pos = position;
+               fPlayListener.f_ListenerEvent(position);
+
+
+            }
+        });
+    }
+
+    // Layouttaki herhangi bir clik button click haric bu islem calisacak
+    public  void eventClick(View view){
+        if (mLayout != null){
+            if ((mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
+                mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+            }
+            else {
+                mLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mLayout != null &&
+                (mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
+            mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        } else {
+            super.onBackPressed();
+        }
     }
 
 

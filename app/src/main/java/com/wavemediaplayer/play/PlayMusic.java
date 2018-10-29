@@ -11,7 +11,7 @@ import android.widget.TextView;
 public class PlayMusic {
 
     private Context context;
-    private  MediaPlayer mediaPlayer;
+    public static MediaPlayer mediaPlayer;
     private SeekBar myseekbar;
     private TextView mytext1;
     private TextView mytext2;

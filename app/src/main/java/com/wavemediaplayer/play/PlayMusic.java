@@ -1,12 +1,24 @@
 package com.wavemediaplayer.play;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.audiofx.BassBoost;
+import android.media.audiofx.EnvironmentalReverb;
+import android.media.audiofx.PresetReverb;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import java.io.IOException;
+
+import static android.media.audiofx.PresetReverb.PRESET_LARGEHALL;
 
 public class PlayMusic {
 
@@ -18,21 +30,20 @@ public class PlayMusic {
     private ImageView myimageview;
     private  Runnable runnable;
     private  Handler handler;
+    private BassBoost bassBoost;
 
     private static String playPrev = "";
     /***/
 
 
 
-    public PlayMusic(Context context, SeekBar myseekbar,TextView mytext1, TextView mytext2, ImageView myimageview,Handler handler,Runnable runnable){
+    public PlayMusic(Context context, SeekBar myseekbar,TextView mytext1, TextView mytext2, ImageView myimageview,Handler handler){
         this.context = context;
         this.myseekbar = myseekbar;
         this.mytext1 = mytext1;
         this.mytext2 = mytext2;
         this.myimageview = myimageview;
         this.handler = handler;
-        this.runnable = runnable;
-
     }
 
 
@@ -41,8 +52,42 @@ public class PlayMusic {
         if (!playPrev.equals(link)){
             playPrev = link;
             stopPlaying();
-            mediaPlayer = MediaPlayer.create(context,Uri.parse(link));
-            mediaPlayer.start();
+            mediaPlayer = new MediaPlayer();
+            bassBoost = new BassBoost(1, mediaPlayer.getAudioSessionId());
+            bassBoost.setEnabled(true);
+            BassBoost.Settings bassBoostSettingTemp =  bassBoost.getProperties();
+            BassBoost.Settings bassBoostSetting = new BassBoost.Settings(bassBoostSettingTemp.toString());
+            bassBoostSetting.strength=1000;
+            bassBoost.setStrength((short)1000);
+            bassBoost.setProperties(bassBoostSetting);
+            mediaPlayer.setAuxEffectSendLevel(1.0f);
+            mediaPlayer.attachAuxEffect(bassBoost.getId());
+            mediaPlayer=MediaPlayer.create(context,Uri.parse(link));
+//            try {
+//                mediaPlayer.setDataSource(context, Uri.parse(link));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            Log.e("link",link);
+//
+
+
+
+
+//
+//            try {
+//                mediaPlayer.prepare();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+
+
+//            try {
+//                mediaPlayer.prepare();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+
         }
         else {
             if (mediaPlayer != null){
@@ -75,7 +120,7 @@ public class PlayMusic {
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-
+                Log.e("qqqq","qqqqqqq");
                 myseekbar.setMax(mediaPlayer.getDuration());
                 myseekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                     @Override

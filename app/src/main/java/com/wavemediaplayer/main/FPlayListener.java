@@ -29,7 +29,7 @@ public class FPlayListener {
     private SeekBar myseekbar;
     private TextView mytext1;
     private TextView mytext2;
-    private  Runnable runnable;
+
     private Handler handler;
 
 
@@ -46,21 +46,21 @@ public class FPlayListener {
 
 
     private void init(){
-        like = (ImageButton) view.findViewById(R.id.sample_main_imageButton2);
-        notlike = (ImageButton) view.findViewById(R.id.sample_main_imageButton2new);
-        dislike = (ImageButton) view.findViewById(R.id.sample_main_button);
-        notdislike = (ImageButton) view.findViewById(R.id.sample_main_buttontwo);
-        play = (ImageButton) view.findViewById(R.id.sample_main_play_button);
-        pause = (ImageButton) view.findViewById(R.id.sample_main_pause_button);
-        play_main = (ImageButton) view.findViewById(R.id.sample_main_play_button_main);
-        pause_main = (ImageButton) view.findViewById(R.id.sample_main_pause_button_main);
+        like =view.findViewById(R.id.sample_main_imageButton2);
+        notlike =view.findViewById(R.id.sample_main_imageButton2new);
+        dislike =view.findViewById(R.id.sample_main_button);
+        notdislike = view.findViewById(R.id.sample_main_buttontwo);
+        play =view.findViewById(R.id.sample_main_play_button);
+        pause =view.findViewById(R.id.sample_main_pause_button);
+        play_main =view.findViewById(R.id.sample_main_play_button_main);
+        pause_main =view.findViewById(R.id.sample_main_pause_button_main);
 
         mytext1= view.findViewById(R.id.sample_main_StartTime);
         mytext2= view.findViewById(R.id.sample_main_endTime);
         myseekbar= view.findViewById(R.id.sample_main_seekBar3);
         handler = new Handler();
 
-        pl = new PlayMusic(context,myseekbar,mytext1,mytext2,play,handler,runnable);
+        pl = new PlayMusic(context,myseekbar,mytext1,mytext2,play,handler);
     }
 
     public void playMusic(int position){

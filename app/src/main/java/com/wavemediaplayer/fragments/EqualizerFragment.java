@@ -10,6 +10,7 @@ import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
+import android.media.audiofx.BassBoost;
 import android.media.audiofx.Equalizer;
 import android.media.audiofx.Visualizer;
 import android.os.Bundle;
@@ -45,8 +46,7 @@ public class EqualizerFragment extends Fragment {
     private VisualizerView mVisualizerView;
     private View view;
     private ArrayList<SeekBar> seekBars;
-    private Button equalizerHideFragment;
-    private Croller equalizerVolume,equalizerRL;
+    private Croller equalizerVolume,equalizerRL,equalizerBass;
     //    private TextView mStatusTextView;
     // The onCreateView method is called when Fragment should create its View object hierarchy,
     // either dynamically or via XML layout inflation.
@@ -119,21 +119,28 @@ public class EqualizerFragment extends Fragment {
         });
 
 
+        equalizerBass=view.findViewById(R.id.equalizerBass);
+        equalizerBass.setMax(1000);
+
+
+        final BassBoost bassBoost = new BassBoost(1, mediaPlayer.getAudioSessionId());
+        bassBoost.setEnabled(true);
+
+
+
+
+        equalizerBass.setOnProgressChangedListener(new Croller.onProgressChangedListener() {
+            @Override
+            public void onProgressChanged(int progress) {
+                bassBoost.setStrength((short)progress);
+            }
+        });
+
 
     }
 
     private void clickListener(){
-        equalizerHideFragment=view.findViewById(R.id.equalizerHideFragment);
-        equalizerHideFragment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentManager manager = getFragmentManager();
-                FragmentTransaction ft = manager.beginTransaction();
-                ft.hide(EqualizerFragment.this);
-                ((MainActivity)getActivity()).mainFrame.setBackgroundColor(Color.TRANSPARENT);
-                ft.commit();
-            }
-        });
+
     }
 
     // This event is triggered soon after onCreateView().
@@ -146,10 +153,9 @@ public class EqualizerFragment extends Fragment {
 
 
 
-
     /* shows spinner with list of equalizer presets to choose from
- - updates the seekBar progress and gain levels according
- to those of the selected preset*/
+     - updates the seekBar progress and gain levels according
+     to those of the selected preset*/
     private void equalizeSound() {
 //        set up the spinner
         ArrayList<String> equalizerPresetNames = new ArrayList<>();
@@ -200,13 +206,15 @@ public class EqualizerFragment extends Fragment {
         });
     }
 
+
+
     /* displays the SeekBar sliders for the supported equalizer frequency bands
      user can move sliders to change the frequency of the bands*/
     private void setupEqualizerFxAndUI() {
-
 //        get reference to linear layout for the seekBars
         mLinearLayout =view.findViewById(R.id.linearLayoutEqual);
         mLinearLayout.setBackgroundColor(Color.RED);
+
 
 //        equalizer heading
         TextView equalizerHeading = new TextView(view.getContext());
@@ -356,9 +364,12 @@ public class EqualizerFragment extends Fragment {
             }
 
             public void onFftDataCapture(Visualizer visualizer, byte[] bytes, int samplingRate) {
+
             }
         }, Visualizer.getMaxCaptureRate() / 2, true, false);
     }
+
+
 
 //    @Override
 //    protected void onPause() {

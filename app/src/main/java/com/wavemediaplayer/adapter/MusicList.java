@@ -104,6 +104,8 @@ public class MusicList {
 
             }
             while (songCursor.moveToNext());
+            songCursor.close();
+
         }
 
         Adapter adapter = new Adapter(context,R.layout.custom_list_item,titleList,artistList,imageList,durationList);

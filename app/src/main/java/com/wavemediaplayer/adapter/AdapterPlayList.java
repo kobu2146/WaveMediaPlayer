@@ -13,22 +13,26 @@ import com.wavemediaplayer.R;
 
 import java.util.ArrayList;
 
+/**
+ * Playlist icin olusturulan list adapter
+ *
+ * */
 public class AdapterPlayList extends ArrayAdapter<String>{
 
 
     private Context context;
     private ArrayList<String> title;
     private ArrayList<String> artist;
-    private ArrayList<String> duration;
+    private ArrayList<String> location;
     private ArrayList<Integer> thumbnail;
 
-    public AdapterPlayList(Context context, int resource, ArrayList<String> title, ArrayList<String> artist, ArrayList<Integer> thumbnail,ArrayList<String> duration) {
+    public AdapterPlayList(Context context, int resource, ArrayList<String> title, ArrayList<String> artist, ArrayList<Integer> thumbnail,ArrayList<String> location) {
         super(context, resource, artist);
         this.context = context;
         this.title = title;
         this.artist = artist;
         this.thumbnail = thumbnail;
-        this.duration = duration;
+        this.location = location;
     }
 
 

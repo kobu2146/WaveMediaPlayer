@@ -1,15 +1,10 @@
 package com.wavemediaplayer.fragments;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
-import android.media.AudioAttributes;
 import android.media.AudioManager;
-import android.media.AudioTrack;
 import android.media.MediaPlayer;
-import android.media.SoundPool;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.Equalizer;
 import android.media.audiofx.Visualizer;
@@ -21,15 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.sdsmdg.harjot.crollerTest.Croller;
-import com.wavemediaplayer.Deneme.VerticalSeekBar;
-import com.wavemediaplayer.MainActivity;
+import com.wavemediaplayer.visaulizer.VerticalSeekBar;
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.visaulizer.VisualizerView;
 

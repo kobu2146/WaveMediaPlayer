@@ -36,36 +36,36 @@ import static com.wavemediaplayer.play.PlayMusic.mediaPlayer;
 public class MainActivity extends AppCompatActivity {
 
     /** Diger sınıflara context ve view gondermek icin */
-     public static Context context;
-     public static View mainView;
+    public static Context context;
+    public static View mainView;
 
 
-     /** Main musiclistview */
-     ListView musicListView;
+    /** Main musiclistview */
+    ListView musicListView;
 
     /**
      * Templist'te multi choise ile secilen coklu secimlerin pozisyonları tutuluyor
      * */
-     ArrayList<Integer> tempList = new ArrayList<>();
+    ArrayList<Integer> tempList = new ArrayList<>();
 
     /** listview de secilen item sayısı multichoise icin */
     int list_selected_count = 0;
 
-     private Button mainEqualizer;
-     private EqualizerFragment equalizerFragment;
-     public FrameLayout mainFrame;
-     /** Calma listelerinin goorunecegi listi  oynatmaListesiFragment inde gosterilecek*/
-     private OynatmaListesiFragment oynatmaListesiFragment;
+    private Button mainEqualizer;
+    private EqualizerFragment equalizerFragment;
+    public FrameLayout mainFrame;
+    /** Calma listelerinin goorunecegi listi  oynatmaListesiFragment inde gosterilecek*/
+    private OynatmaListesiFragment oynatmaListesiFragment;
 
-     /** fat linstener event knk */
+    /** fat linstener event knk */
     FPlayListener fPlayListener;
     MusicList musicList;
 
     /** default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır */
-     static int pos = 0;
+    static int pos = 0;
 
 
-     SlidingUpPanelLayout mLayout;
+    SlidingUpPanelLayout mLayout;
 
 
     @Override
@@ -87,8 +87,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-      //  PlayerFragment fragmentS1 = new PlayerFragment();
-    //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
+        //  PlayerFragment fragmentS1 = new PlayerFragment();
+        //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
 
 
     }
@@ -156,11 +156,11 @@ public class MainActivity extends AppCompatActivity {
         musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               // pl.play(MusicList.locationList.get(position));
+                // pl.play(MusicList.locationList.get(position));
                 fPlayListener.playMusic(position);
                 pos = position;
-               fPlayListener.f_ListenerEvent(position);
-               eventClick(view);
+                fPlayListener.f_ListenerEvent(position);
+                eventClick(view);
             }
         });
     }
@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.itemSil:
                         for (Integer s: tempList){
                             // silme islemi
-                        musicList.removeFromAdapter(s);
+                            musicList.removeFromAdapter(s);
                         }
                         list_selected_count = 0;
                         mode.finish();
@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     case R.id.itemPlayList:
                         // select Playlist
-                         playlistInfo(tempList);
+                        playlistInfo(tempList);
 //                        if (!oynatmaListesiFragment.isAdded()){
 //                            getFragmentManager().beginTransaction().add(android.R.id.content, oynatmaListesiFragment).commit();
 //                            mainFrame.setBackgroundColor(Color.WHITE);

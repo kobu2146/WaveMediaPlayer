@@ -1,25 +1,22 @@
 package com.wavemediaplayer.play;
 
 import android.content.Context;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
-import android.media.audiofx.EnvironmentalReverb;
-import android.media.audiofx.PresetReverb;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.io.IOException;
+import java.io.File;
 
-import static android.media.audiofx.PresetReverb.PRESET_LARGEHALL;
-
+/**
+ *
+ * Gonderilen dosya linkine gore muzik calma islemi
+ * */
 public class PlayMusic {
 
     private Context context;
@@ -47,64 +44,53 @@ public class PlayMusic {
     }
 
 
+    /** Dosya var mı yok mu belirtilecek varsa calmaya baslar */
     public void playMusic(String link){
 
-        if (!playPrev.equals(link)){
-            playPrev = link;
-            stopPlaying();
-            mediaPlayer = new MediaPlayer();
-            bassBoost = new BassBoost(1, mediaPlayer.getAudioSessionId());
-            bassBoost.setEnabled(true);
-            BassBoost.Settings bassBoostSettingTemp =  bassBoost.getProperties();
-            BassBoost.Settings bassBoostSetting = new BassBoost.Settings(bassBoostSettingTemp.toString());
-            bassBoostSetting.strength=1000;
-            bassBoost.setStrength((short)1000);
-            bassBoost.setProperties(bassBoostSetting);
-            mediaPlayer.setAuxEffectSendLevel(1.0f);
-            mediaPlayer.attachAuxEffect(bassBoost.getId());
-            mediaPlayer=MediaPlayer.create(context,Uri.parse(link));
-//            try {
-//                mediaPlayer.setDataSource(context, Uri.parse(link));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            Log.e("link",link);
-//
+        File file =  new File(link);
+        try {
+            if (file.exists()){
+                if (!playPrev.equals(link)){
+                    playPrev = link;
+                    stopPlaying();
+                    mediaPlayer = new MediaPlayer();
+                    bassBoost = new BassBoost(1, mediaPlayer.getAudioSessionId());
+                    bassBoost.setEnabled(true);
+                    BassBoost.Settings bassBoostSettingTemp =  bassBoost.getProperties();
+                    BassBoost.Settings bassBoostSetting = new BassBoost.Settings(bassBoostSettingTemp.toString());
+                    bassBoostSetting.strength=1000;
+                    bassBoost.setStrength((short)1000);
+                    bassBoost.setProperties(bassBoostSetting);
+                    mediaPlayer.setAuxEffectSendLevel(1.0f);
+                    mediaPlayer.attachAuxEffect(bassBoost.getId());
+                    mediaPlayer=MediaPlayer.create(context,Uri.parse(link));
 
-
-
-
-//
-//            try {
-//                mediaPlayer.prepare();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-
-
-//            try {
-//                mediaPlayer.prepare();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-
-        }
-        else {
-            if (mediaPlayer != null){
-                if (!mediaPlayer.isPlaying()){
-                    mediaPlayer.start();
                 }
+                else {
+                    if (mediaPlayer != null){
+                        if (!mediaPlayer.isPlaying()){
+                            mediaPlayer.start();
+                        }
+                    }
+                }
+                seekBarChange();
+                setChangeSeconds();
+            }
+            else {
+                Log.e("Dosya","Belirtilen dosya yok");
+                Toast.makeText(context,"Hata",Toast.LENGTH_LONG).show();
             }
         }
+        catch (Exception ex){
+            Log.e("HATA",ex.getMessage());
+        }
 
 
-        seekBarChange();
-        setChangeSeconds();
 
 
 
     }
-    public void stopPlaying() {
+    private void stopPlaying() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
@@ -160,20 +146,11 @@ public class PlayMusic {
         }
     }
 
-     private void getAudioStats(){
-        int duration  = mediaPlayer.getDuration()/1000; // In milliseconds
-        int due = (mediaPlayer.getDuration() - mediaPlayer.getCurrentPosition())/1000;
-        int pass = duration - due;
 
-        mytext1.setText(""+due);
-
-        mytext2.setText( ""+duration );
-    }
 
 
 
     private void setChangeSeconds(){
-
 
             runnable=new Runnable() {
                 @Override
@@ -188,7 +165,6 @@ public class PlayMusic {
                 }
             };
             runnable.run();
-
     }
 
 

@@ -1,10 +1,10 @@
 package com.wavemediaplayer.fragments;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,30 +57,33 @@ public class OynatmaListesiFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_oynatma_listesi, container, false);
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState){
+        View view=inflater.inflate(R.layout.fragment_oynatma_listesi, container, false);
         oynatma_listesi = view.findViewById(R.id.oynatma_listesi);
         context = getActivity();
         fPlayListener = new FPlayListener(MainActivity.context,MainActivity.mainView);
 
-            SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences( "WAVE MUSIC PLAYLIST", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences( "WAVE MUSIC PLAYLIST", Context.MODE_PRIVATE);
 
-            /** tum playlistleri ve iceriklerini cekiyor cekiyor */
-            Map<String, ?> allEntries = sharedPreferences.getAll();
-            for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-                Log.e("map values", entry.getKey() + ": " + entry.getValue().toString());
-                oynat_list.add(entry.getKey());
-            }
+        /** tum playlistleri ve iceriklerini cekiyor cekiyor */
+        Map<String, ?> allEntries = sharedPreferences.getAll();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            Log.e("aaaa","aasdsadasda");
+            Log.e("map values", entry.getKey() + ": " + entry.getValue().toString());
+            oynat_list.add(entry.getKey());
+        }
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(view.getContext(),
-                    android.R.layout.simple_list_item_1, android.R.id.text1, oynat_list);
-            oynatma_listesi.setAdapter(adapter);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(view.getContext(),
+                android.R.layout.simple_list_item_1, android.R.id.text1, oynat_list);
+        oynatma_listesi.setAdapter(adapter);
 
-      clickEvent();
+        clickEvent();
+        // Inflate the layout for this fragment
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState){
+
 
 
 
@@ -102,11 +105,16 @@ public class OynatmaListesiFragment extends Fragment {
                                 JSONArray jsonArray = new JSONArray(entry.getValue().toString());
                                 for (int i = 0;i<jsonArray.length();i++){
 
+
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     String title = jsonObject.getString("title");
+                                    Log.e("title",title);
                                     String artist = jsonObject.getString("artist");
+                                    Log.e("artist",artist);
                                     int thumbnail = jsonObject.getInt("thumbnail");
+                                    Log.e("thumbnail",""+thumbnail);
                                     String location = jsonObject.getString("location");
+                                    Log.e("location",location);
 
                                     title_list.add(title);
                                     artist_list.add(artist);

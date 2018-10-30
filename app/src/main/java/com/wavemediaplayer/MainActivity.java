@@ -27,6 +27,7 @@ import com.wavemediaplayer.fragments.EqualizerFragment;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.fragments.PlayListsFragment;
 import com.wavemediaplayer.main.FPlayListener;
+import com.wavemediaplayer.mfcontroller.MainManager;
 
 import java.util.ArrayList;
 
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     /** Main musiclistview */
-    ListView musicListView;
+    public ListView musicListView;
 
     /**
      * Templist'te multi choise ile secilen coklu secimlerin pozisyonları tutuluyor
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        new MainManager(this);
         context = this;
         mainView = getWindow().getDecorView().findViewById(android.R.id.content);
         musicListView = findViewById(R.id.main_musicListView);
@@ -286,11 +288,9 @@ public class MainActivity extends AppCompatActivity {
         /**  */
         if( oynatmaListesiFragment!= null && !oynatmaListesiFragment.isHidden()){
             Log.e("hidden","deil");
-            FragmentManager manager = getFragmentManager();
-            FragmentTransaction ft = manager.beginTransaction();
-            ft.hide(oynatmaListesiFragment);
+            getSupportFragmentManager().beginTransaction().hide(oynatmaListesiFragment).commit();
+
             mainFrame.setBackgroundColor(Color.TRANSPARENT);
-            ft.commit();
             return;
         }
 

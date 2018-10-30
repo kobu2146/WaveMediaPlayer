@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
+import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 
 public class MainManager {
     private MainActivity activity;
@@ -66,8 +67,9 @@ public class MainManager {
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(activity.getSupportFragmentManager());
         adapter.addFragment(new MainFragment(),"One");
-        adapter.addFragment(new FragmentTwo(), "Two");
+        adapter.addFragment(new OynatmaListesiFragment(), "PlayList");
         adapter.addFragment(new DownloadFragment(), "Download");
+
         viewPager.setAdapter(adapter);
     }
 }

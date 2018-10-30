@@ -20,10 +20,6 @@ import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.playlist.CreatePlayList;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -75,15 +71,6 @@ public class PlayListsFragment extends DialogFragment {
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
             Log.e("map values", entry.getKey() + ": " + entry.getValue().toString());
             playLists.add(entry.getKey());
-            try {
-                JSONArray jsonArray = new JSONArray(entry.getValue().toString());
-                for (int i = 0;i<jsonArray.length();i++){
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                   // Log.e("json obje",jsonObject.)
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(view.getContext(),

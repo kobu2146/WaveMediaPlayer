@@ -6,7 +6,12 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import com.wavemediaplayer.adapter.MusicList;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Map;
 
 public class CreatePlayList {
 
@@ -35,6 +40,30 @@ public class CreatePlayList {
 
         }
 
+
+
+        Map<String, ?> allEntries = sharedPreferences.getAll();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            try {
+                if (entry.getKey().equals(listName)){
+                    JSONArray jsonArray = new JSONArray(entry.getValue().toString());
+                    for (int i = 0;i<jsonArray.length();i++){
+
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        String title = jsonObject.getString("title");
+                        String artist = jsonObject.getString("artist");
+                        int thumbnail = jsonObject.getInt("thumbnail");
+                        String location = jsonObject.getString("location");
+
+                        plList.add(new PlayList(title,artist,thumbnail,location));
+
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
         Gson gson = new Gson();
         String json = gson.toJson(plList);

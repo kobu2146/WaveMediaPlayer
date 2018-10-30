@@ -36,6 +36,7 @@ public class Adapter extends ArrayAdapter<String> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // TODO Auto-generated method stub
+
         return getCustomView(position, convertView, parent);
     }
 

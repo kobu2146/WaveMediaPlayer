@@ -1,15 +1,21 @@
 package com.wavemediaplayer;
 
 
+import android.app.DialogFragment;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -18,20 +24,32 @@ import android.widget.ListView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.fragments.EqualizerFragment;
+import com.wavemediaplayer.fragments.PlayListsFragment;
 import com.wavemediaplayer.main.FPlayListener;
+
+import java.util.ArrayList;
 
 import static com.wavemediaplayer.play.PlayMusic.mediaPlayer;
 
 
 public class MainActivity extends AppCompatActivity {
 
-     Context context;
+     public static Context context;
      ListView musicListView;
+
+
+
+     ArrayList<Integer> tempList = new ArrayList<>();
+    // listview de secilen item sayısı multichoise icin
+    int list_selected_count = 0;
+
      private Button mainEqualizer;
      private EqualizerFragment equalizerFragment;
      public FrameLayout mainFrame;
+
      // fat linstener event knk
     FPlayListener fPlayListener;
+    MusicList musicList;
 
     // default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır
      static int pos = 0;
@@ -48,8 +66,9 @@ public class MainActivity extends AppCompatActivity {
         context = this;
 
         musicListView = findViewById(R.id.main_musicListView);
+        musicListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 
-        MusicList musicList = new MusicList(musicListView,this);
+        musicList = new MusicList(musicListView,this);
         musicList.getMusic("notification","ringtone");
 
         m_createListener();
@@ -64,6 +83,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        musicList.getMusic("notification","ringtone");
+    }
+
     private void m_createListener(){
         equalizerFragment=new EqualizerFragment();
         mainEqualizer=findViewById(R.id.mainEqualizer);
@@ -75,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         mainEqualizer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //
+
                 //fat burası equalizeri açmak için
                 if(mediaPlayer!=null){
                     FragmentManager manager = getFragmentManager();
@@ -119,13 +144,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void f_createListener(){
 
-
-        mLayout = (SlidingUpPanelLayout) findViewById(R.id.activity_main);
-
+        mLayout =  findViewById(R.id.activity_main);
         fPlayListener = new FPlayListener(this,getWindow().getDecorView().findViewById(android.R.id.content));
 
         // Herhangi bit posizyon yok ise default 0'dır
         fPlayListener.f_ListenerEvent(pos);
+
+
+        // Listviewde coklu secim yapmak icin
+        multipleChoise();
+
 
         musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -135,10 +163,91 @@ public class MainActivity extends AppCompatActivity {
                 pos = position;
                fPlayListener.f_ListenerEvent(position);
                eventClick(view);
+            }
+        });
+    }
+
+    public void multipleChoise(){
+        musicListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+
+
+                if (!tempList.contains(position)){
+                    list_selected_count = list_selected_count + 1;
+                    mode.setTitle(list_selected_count + "item selected");
+                    tempList.add(position);
+                }
 
 
             }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.custom_tools,menu);
+                Log.e("uzun","tik");
+
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+
+                switch (item.getItemId()){
+                    case R.id.itemSil:
+                        Log.e("sil","item");
+                        for (Integer s: tempList){
+                            // silme islemi
+                        musicList.removeFromAdapter(s);
+                        }
+                        list_selected_count = 0;
+                        mode.finish();
+                        tempList.clear();
+
+                        return true;
+                    case R.id.itemPlayList:
+                        // select Playlist
+                        playlistInfo(tempList);
+
+                    default:
+                        return false;
+                }
+
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+
+                tempList = new ArrayList<>();
+                list_selected_count = 0;
+            }
         });
+
+
+    }
+
+    private void playlistInfo(ArrayList<Integer> tempLists){
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null){
+            fragmentTransaction.remove(prev);
+        }
+
+        fragmentTransaction.addToBackStack(null);
+
+        DialogFragment dialogFragment = new PlayListsFragment();
+        ((PlayListsFragment) dialogFragment).setList(tempLists);
+        dialogFragment.show(fragmentTransaction,"dialog");
+
+
     }
 
     // Layouttaki herhangi bir clik button click haric bu islem calisacak
@@ -163,6 +272,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /** item menu islemleri */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_options, menu);
+
+        // return true so that the menu pop up is opened
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId())
+        {
+
+
+        }
+        return true;
+    }
 
 
 

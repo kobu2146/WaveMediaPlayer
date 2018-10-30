@@ -4,9 +4,13 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
 
 public class PlayMusic {
 
@@ -15,50 +19,65 @@ public class PlayMusic {
     private SeekBar myseekbar;
     private TextView mytext1;
     private TextView mytext2;
-    private ImageView myimageview;
     private  Runnable runnable;
     private  Handler handler;
+
+    private static final String TAG = "PlayMusic";
 
     private static String playPrev = "";
     /***/
 
 
 
-    public PlayMusic(Context context, SeekBar myseekbar,TextView mytext1, TextView mytext2, ImageView myimageview,Handler handler,Runnable runnable){
+    public PlayMusic(Context context, SeekBar myseekbar,TextView mytext1, TextView mytext2, ImageView myimageview,Handler handler){
         this.context = context;
         this.myseekbar = myseekbar;
         this.mytext1 = mytext1;
         this.mytext2 = mytext2;
         this.handler = handler;
-        this.runnable = runnable;
 
     }
 
 
     public void playMusic(String link){
 
-        if (!playPrev.equals(link)){
-            playPrev = link;
-            stopPlaying();
-            mediaPlayer = MediaPlayer.create(context,Uri.parse(link));
-            mediaPlayer.start();
-        }
-        else {
-            if (mediaPlayer != null){
-                if (!mediaPlayer.isPlaying()){
+        try {
+            File file = new File(link);
+            if (file.exists()){
+                if (!playPrev.equals(link)){
+                    playPrev = link;
+                    stopPlaying();
+                    mediaPlayer = MediaPlayer.create(context,Uri.parse(link));
                     mediaPlayer.start();
                 }
+                else {
+                    if (mediaPlayer != null){
+                        if (!mediaPlayer.isPlaying()){
+                            mediaPlayer.start();
+                        }
+                    }
+                }
+
+
+                seekBarChange();
+                setChangeSeconds();
+
             }
+            else {
+                Log.e(TAG,"Dosya yok");
+                Toast.makeText(context,"File not Found",Toast.LENGTH_SHORT).show();
+            }
+        }
+        catch (Exception ex){
+            Log.e(TAG,ex.getMessage()+"knk");
         }
 
 
-        seekBarChange();
-        setChangeSeconds();
 
 
 
     }
-    public void stopPlaying() {
+    private void stopPlaying() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();

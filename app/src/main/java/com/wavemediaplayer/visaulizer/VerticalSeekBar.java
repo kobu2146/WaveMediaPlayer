@@ -1,4 +1,4 @@
-package com.wavemediaplayer.Deneme;
+package com.wavemediaplayer.visaulizer;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;

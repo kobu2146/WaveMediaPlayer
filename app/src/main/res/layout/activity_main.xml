@@ -19,7 +19,32 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/naber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabMode="fixed"
+                app:tabGravity="fill"/>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"  />
+
+
+
         <ListView
+            android:layout_below="@+id/naber"
             android:id="@+id/main_musicListView"
             android:layout_width="match_parent"
             android:layout_height="415dp"
@@ -40,17 +65,11 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            >
 
 
-            <TextView
-                android:id="@+id/bitisText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="180dp"
-                android:layout_marginStart="180dp"
-                android:text="0:00"
-                android:textColor="#ffff" />
             <Button
                 android:text="Equalizer"
                 android:background="@android:color/holo_blue_dark"

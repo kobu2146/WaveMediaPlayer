@@ -6,10 +6,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.AnimatorRes;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ActionMode;
@@ -24,6 +22,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.wavemediaplayer.mfcontroller.MainManager;
 import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.fragments.EqualizerFragment;
 import com.wavemediaplayer.fragments.PlayListsFragment;
@@ -37,7 +36,7 @@ import static com.wavemediaplayer.play.PlayMusic.mediaPlayer;
 public class MainActivity extends AppCompatActivity {
 
      public static Context context;
-     ListView musicListView;
+     public ListView musicListView;
 
 
 
@@ -64,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        new MainManager(this);
 
         context = this;
 

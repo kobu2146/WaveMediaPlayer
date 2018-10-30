@@ -1,11 +1,13 @@
 package com.wavemediaplayer.main;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.MusicList;
@@ -13,7 +15,7 @@ import com.wavemediaplayer.play.PlayMusic;
 
 public class FPlayListener {
 
-    private  PlayMusic pl;
+    private  PlayMusic pl; // = new PlayMusic(this,mediaPlayer,myseekbar,mytext1,mytext2,play,handler,runnable);
 
     private ImageButton like;
     private ImageButton notlike;
@@ -27,6 +29,7 @@ public class FPlayListener {
     private SeekBar myseekbar;
     private TextView mytext1;
     private TextView mytext2;
+    private  Runnable runnable;
     private Handler handler;
 
 
@@ -67,7 +70,7 @@ public class FPlayListener {
         // play tab on screen
         play.setVisibility(View.GONE);
         pause.setVisibility(View.VISIBLE);
-//        Toast.makeText(context,"Song Is now Playing",Toast.LENGTH_SHORT).show();
+        Toast.makeText(context,"Song Is now Playing",Toast.LENGTH_SHORT).show();
         if (play_main.getVisibility() == View.VISIBLE){
             play_main.setVisibility(View.GONE);
             pause_main.setVisibility(View.VISIBLE);
@@ -76,13 +79,11 @@ public class FPlayListener {
         // main play button
         play_main.setVisibility(View.GONE);
         pause_main.setVisibility(View.VISIBLE);
-//        Toast.makeText(context,"Song Is now Playing",Toast.LENGTH_SHORT).show();
+        Toast.makeText(context,"Song Is now Playing",Toast.LENGTH_SHORT).show();
         if (play.getVisibility() == View.VISIBLE){
             play.setVisibility(View.GONE);
             pause.setVisibility(View.VISIBLE);
         }
-
-
     }
 
 
@@ -93,7 +94,7 @@ public class FPlayListener {
             @Override
             public void onClick(View view) {
                 notlike.setVisibility(View.VISIBLE);
-//                Toast.makeText(context,"You Like the Song",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"You Like the Song",Toast.LENGTH_SHORT).show();
                 if (notdislike.getVisibility() == View.VISIBLE){
                     notdislike.setVisibility(View.GONE);
                 }
@@ -111,7 +112,7 @@ public class FPlayListener {
             @Override
             public void onClick(View view) {
                 notdislike.setVisibility(View.VISIBLE);
-//                Toast.makeText(context,"You DisLike the Song",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"You DisLike the Song",Toast.LENGTH_SHORT).show();
                 if (notlike.getVisibility() == View.VISIBLE){
                     notlike.setVisibility(View.GONE);
                 }
@@ -131,7 +132,7 @@ public class FPlayListener {
                 pl.playMusic(MusicList.locationList.get(position));
                 play.setVisibility(View.GONE);
                 pause.setVisibility(View.VISIBLE);
-//                Toast.makeText(context,"Song Is now Playing",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Song Is now Playing",Toast.LENGTH_SHORT).show();
                 if (play_main.getVisibility() == View.VISIBLE){
                     play_main.setVisibility(View.GONE);
                     pause_main.setVisibility(View.VISIBLE);
@@ -146,7 +147,7 @@ public class FPlayListener {
                 pl.pauseMusic();
                 pause.setVisibility(View.GONE);
                 play.setVisibility(View.VISIBLE);
-//                Toast.makeText(context,"Song is Pause",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Song is Pause",Toast.LENGTH_SHORT).show();
                 if (pause_main.getVisibility() == View.VISIBLE){
                     pause_main.setVisibility(View.GONE);
                     play_main.setVisibility(View.VISIBLE);
@@ -160,7 +161,7 @@ public class FPlayListener {
                 pl.playMusic(MusicList.locationList.get(position));
                 play_main.setVisibility(View.GONE);
                 pause_main.setVisibility(View.VISIBLE);
-//                Toast.makeText(context,"Song Is now Playing",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Song Is now Playing",Toast.LENGTH_SHORT).show();
                 if (play.getVisibility() == View.VISIBLE){
                     play.setVisibility(View.GONE);
                     pause.setVisibility(View.VISIBLE);
@@ -174,7 +175,7 @@ public class FPlayListener {
                 pl.pauseMusic();
                 pause_main.setVisibility(View.GONE);
                 play_main.setVisibility(View.VISIBLE);
-//                Toast.makeText(context,"Song is Pause",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Song is Pause",Toast.LENGTH_SHORT).show();
                 if (pause.getVisibility() == View.VISIBLE){
                     pause.setVisibility(View.GONE);
                     play.setVisibility(View.VISIBLE);

@@ -38,11 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="4">
-        <Button
-            android:text="Hide"
-            android:id="@+id/equalizerHideFragment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -51,8 +47,8 @@
 
             <com.sdsmdg.harjot.crollerTest.Croller
                 android:id="@+id/equalizerVolume"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 app:back_circle_color="#EDEDED"
                 app:indicator_color="#0B3C49"
                 app:indicator_width="10"
@@ -65,8 +61,23 @@
                 app:start_offset="45" />
             <com.sdsmdg.harjot.crollerTest.Croller
                 android:id="@+id/equalizerRL"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:back_circle_color="#EDEDED"
+                app:indicator_color="#0B3C49"
+                app:indicator_width="10"
+                app:is_continuous="true"
+                app:label_color="#000000"
+                app:main_circle_color="#FFFFFF"
+                app:max="1000"
+                app:progress_primary_color="#0B3C49"
+                app:progress_secondary_color="#EEEEEE"
+                app:start_offset="45" />
+
+            <com.sdsmdg.harjot.crollerTest.Croller
+                android:id="@+id/equalizerBass"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 app:back_circle_color="#EDEDED"
                 app:indicator_color="#0B3C49"
                 app:indicator_width="10"
@@ -78,6 +89,7 @@
                 app:progress_secondary_color="#EEEEEE"
                 app:start_offset="45" />
         </LinearLayout>
+
 
 
 

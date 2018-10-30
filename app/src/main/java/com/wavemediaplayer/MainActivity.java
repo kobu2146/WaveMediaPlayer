@@ -6,8 +6,10 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.AnimatorRes;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ActionMode;
@@ -142,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
     private void f_createListener(){
 
         mLayout =  findViewById(R.id.activity_main);
@@ -264,6 +267,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if( equalizerFragment!=null && !equalizerFragment.isHidden()){
+            FragmentManager manager = getFragmentManager();
+            FragmentTransaction ft = manager.beginTransaction();
+            ft.hide(equalizerFragment);
+            mainFrame.setBackgroundColor(Color.TRANSPARENT);
+            ft.commit();
+            return;
+        }
         if (mLayout != null &&
                 (mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
             mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);

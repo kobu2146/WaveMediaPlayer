@@ -1,7 +1,6 @@
 package com.wavemediaplayer.main;
 
 import android.content.Context;
-import android.media.MediaPlayer;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageButton;
@@ -13,9 +12,17 @@ import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.play.PlayMusic;
 
+/**
+ * Fatihin olusturdugu listener
+ *
+ * Mainactivity deki tanımlamlamalar ve event islemleri yapılacak
+ *
+ *
+ * */
+
 public class FPlayListener {
 
-    private  PlayMusic pl; // = new PlayMusic(this,mediaPlayer,myseekbar,mytext1,mytext2,play,handler,runnable);
+    private  PlayMusic pl;
 
     private ImageButton like;
     private ImageButton notlike;
@@ -61,6 +68,30 @@ public class FPlayListener {
         handler = new Handler();
 
         pl = new PlayMusic(context,myseekbar,mytext1,mytext2,play,handler);
+    }
+
+
+    public void playFromPlayList(String link){
+        /** Music play */
+        pl.playMusic(link);
+
+        // play tab on screen
+        play.setVisibility(View.GONE);
+        pause.setVisibility(View.VISIBLE);
+        Toast.makeText(context,"Song Is now Playing",Toast.LENGTH_SHORT).show();
+        if (play_main.getVisibility() == View.VISIBLE){
+            play_main.setVisibility(View.GONE);
+            pause_main.setVisibility(View.VISIBLE);
+        }
+
+        // main play button
+        play_main.setVisibility(View.GONE);
+        pause_main.setVisibility(View.VISIBLE);
+        Toast.makeText(context,"Song Is now Playing",Toast.LENGTH_SHORT).show();
+        if (play.getVisibility() == View.VISIBLE){
+            play.setVisibility(View.GONE);
+            pause.setVisibility(View.VISIBLE);
+        }
     }
 
     public void playMusic(int position){

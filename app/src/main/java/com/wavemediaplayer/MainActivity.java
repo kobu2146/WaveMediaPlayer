@@ -6,10 +6,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.AnimatorRes;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ActionMode;
@@ -26,6 +24,7 @@ import android.widget.ListView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.fragments.EqualizerFragment;
+import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.fragments.PlayListsFragment;
 import com.wavemediaplayer.main.FPlayListener;
 
@@ -36,24 +35,33 @@ import static com.wavemediaplayer.play.PlayMusic.mediaPlayer;
 
 public class MainActivity extends AppCompatActivity {
 
+    /** Diger sınıflara context ve view gondermek icin */
      public static Context context;
+     public static View mainView;
+
+
+     /** Main musiclistview */
      ListView musicListView;
 
-
-
+    /**
+     * Templist'te multi choise ile secilen coklu secimlerin pozisyonları tutuluyor
+     * */
      ArrayList<Integer> tempList = new ArrayList<>();
-    // listview de secilen item sayısı multichoise icin
+
+    /** listview de secilen item sayısı multichoise icin */
     int list_selected_count = 0;
 
      private Button mainEqualizer;
      private EqualizerFragment equalizerFragment;
      public FrameLayout mainFrame;
+     /** Calma listelerinin goorunecegi listi  oynatmaListesiFragment inde gosterilecek*/
+     private OynatmaListesiFragment oynatmaListesiFragment;
 
-     // fat linstener event knk
+     /** fat linstener event knk */
     FPlayListener fPlayListener;
     MusicList musicList;
 
-    // default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır
+    /** default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır */
      static int pos = 0;
 
 
@@ -66,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         context = this;
-
+        mainView = getWindow().getDecorView().findViewById(android.R.id.content);
         musicListView = findViewById(R.id.main_musicListView);
         musicListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 
@@ -85,19 +93,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /** Uygulama arka plana dusup tekrar acıldıgında musicleri yeniden secme */
     @Override
     protected void onResume() {
         super.onResume();
         musicList.getMusic("notification","ringtone");
     }
 
+    /** Musanın olusturdugu listener fonksyonu */
     private void m_createListener(){
         equalizerFragment=new EqualizerFragment();
+        oynatmaListesiFragment = new OynatmaListesiFragment();
         mainEqualizer=findViewById(R.id.mainEqualizer);
         mainFrame=findViewById(R.id.mainFrame);
-
-
-
 
         mainEqualizer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,35 +134,22 @@ public class MainActivity extends AppCompatActivity {
                 }
 
 
-//                if(mediaPlayer!=null){
-//                    FragmentManager manager = getFragmentManager();
-//                    FragmentTransaction ft = manager.beginTransaction();
-//                    ft.add(android.R.id.content, equalizerFragment);
-//
-//                    if(equalizerFragment.isHidden()){
-//                        ft.show(equalizerFragment);
-//                    }else{
-//                        ft.hide(equalizerFragment);
-//                    }
-//                    ft.commit();
-//
-//                }
-
             }
         });
     }
 
 
+    /** Fatihin olusturdugu listener fonksiyonu */
     private void f_createListener(){
 
         mLayout =  findViewById(R.id.activity_main);
-        fPlayListener = new FPlayListener(this,getWindow().getDecorView().findViewById(android.R.id.content));
+        fPlayListener = new FPlayListener(this,mainView);
 
-        // Herhangi bit posizyon yok ise default 0'dır
+        /** Herhangi bit posizyon yok ise default 0'dır */
         fPlayListener.f_ListenerEvent(pos);
 
 
-        // Listviewde coklu secim yapmak icin
+        /** Listviewde coklu secim yapmak icin */
         multipleChoise();
 
 
@@ -170,9 +165,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /** Listview multi choise event fonksiyonu */
     public void multipleChoise(){
         musicListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
+            /** Multichoise islemi yapıldıgında secilen itemleri liste ata ve secilen sayısını belirt */
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
 
@@ -190,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = mode.getMenuInflater();
                 inflater.inflate(R.menu.custom_tools,menu);
-                Log.e("uzun","tik");
 
                 return true;
             }
@@ -205,7 +201,6 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item.getItemId()){
                     case R.id.itemSil:
-                        Log.e("sil","item");
                         for (Integer s: tempList){
                             // silme islemi
                         musicList.removeFromAdapter(s);
@@ -217,14 +212,28 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     case R.id.itemPlayList:
                         // select Playlist
-                        playlistInfo(tempList);
-
+                         playlistInfo(tempList);
+//                        if (!oynatmaListesiFragment.isAdded()){
+//                            getFragmentManager().beginTransaction().add(android.R.id.content, oynatmaListesiFragment).commit();
+//                            mainFrame.setBackgroundColor(Color.WHITE);
+//                        }
+//                        else {
+//                            if(equalizerFragment.isHidden()){
+//                                getFragmentManager().beginTransaction().show(oynatmaListesiFragment).commit();
+//                                mainFrame.setBackgroundColor(Color.WHITE);
+//
+//                            }else{
+//                                getFragmentManager().beginTransaction().hide(oynatmaListesiFragment).commit();
+//                                mainFrame.setBackgroundColor(Color.WHITE);
+//                            }
+//                        }
                     default:
                         return false;
                 }
 
             }
 
+            /** Multichoise islemi iptal edildiginde secilen tum itemler sıfırlanacak  */
             @Override
             public void onDestroyActionMode(ActionMode mode) {
 
@@ -232,10 +241,9 @@ public class MainActivity extends AppCompatActivity {
                 list_selected_count = 0;
             }
         });
-
-
     }
 
+    /** Add Play list'e tıklandıgında Dialog fragment acılacak ve olusturulan playlistler gosterilecek */
     private void playlistInfo(ArrayList<Integer> tempLists){
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 
@@ -243,7 +251,6 @@ public class MainActivity extends AppCompatActivity {
         if (prev != null){
             fragmentTransaction.remove(prev);
         }
-
         fragmentTransaction.addToBackStack(null);
 
         DialogFragment dialogFragment = new PlayListsFragment();
@@ -253,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    // Layouttaki herhangi bir clik button click haric bu islem calisacak
+    /** Mini music playera herhangi bir tiklama isleminde büyültme veya kucultme islemi calisacak*/
     public  void eventClick(View view){
         if (mLayout != null){
             if ((mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
@@ -275,6 +282,19 @@ public class MainActivity extends AppCompatActivity {
             ft.commit();
             return;
         }
+
+        /**  */
+        if( oynatmaListesiFragment!= null && !oynatmaListesiFragment.isHidden()){
+            Log.e("hidden","deil");
+            FragmentManager manager = getFragmentManager();
+            FragmentTransaction ft = manager.beginTransaction();
+            ft.hide(oynatmaListesiFragment);
+            mainFrame.setBackgroundColor(Color.TRANSPARENT);
+            ft.commit();
+            return;
+        }
+
+
         if (mLayout != null &&
                 (mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
             mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);

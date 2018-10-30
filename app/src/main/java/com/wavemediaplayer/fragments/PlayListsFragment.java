@@ -17,7 +17,6 @@ import android.widget.ListView;
 
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
-import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.playlist.CreatePlayList;
 
 import java.util.ArrayList;
@@ -26,6 +25,11 @@ import java.util.Map;
 public class PlayListsFragment extends DialogFragment {
 
 
+    /**
+     *
+     * option menudeki add playlist kısmı icin
+     * AÇılır bir dialog fragment acılacak ve play listeleri gosterilecek
+     * */
     ListView playListView;
     ArrayList<String> playLists = new ArrayList<>();
 
@@ -89,22 +93,15 @@ public class PlayListsFragment extends DialogFragment {
                     new CreatePlayList(MainActivity.context).createAndAddList(list_name,music_position);
                     SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences( "WAVE MUSIC PLAYLIST", Context.MODE_PRIVATE);
                     String s =  sharedPreferences.getString(list_name,null);
-                    Log.e("KEY",s);
                 }
             }
         });
 
+        /** Listviiew deki elemana tıklandıgında yen geleln itemlleri o listview iceriisine atıyor */
         playListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                for (int pos : music_position){
-                    Log.e("Title",MusicList.titleList.get(pos));
-                    Log.e("Artist",MusicList.artistList.get(pos));
-                    Log.e("Location",MusicList.locationList.get(pos));
-                    Log.e("Eklenecek","evet");
 
-
-                }
                 new CreatePlayList(MainActivity.context).createAndAddList(playLists.get(position),music_position);
             }
         });

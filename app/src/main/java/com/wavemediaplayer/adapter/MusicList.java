@@ -21,7 +21,7 @@ public class MusicList {
     public static ArrayList<String> durationList;
     public static ArrayList<String> locationList;
     public static ArrayList<String> idList;
-    private Adapter adapter;
+    public static Adapter adapter;
 
     private ListView musicListView;
     private Context context;

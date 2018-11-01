@@ -4,7 +4,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
-
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
@@ -17,11 +16,14 @@ public class MainManager {
 
     public MainManager(final MainActivity activity){
         this.activity=activity;
+        denemeeee();
+
         viewPager = (ViewPager) activity.findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
         tabLayout = (TabLayout) activity.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
 //
 //        tabLayout.getTabAt(0).setIcon(tabIcons[0]);
 //        tabLayout.getTabAt(1).setIcon(tabIcons[1]);
@@ -62,6 +64,13 @@ public class MainManager {
 
 
     }
+
+    private void denemeeee(){
+//        Intent serviceIntent = new Intent(activity, NotificationService.class);
+//        serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+//        activity.startService(serviceIntent);
+    }
+
 
     private void setupViewPager(ViewPager viewPager) {
 

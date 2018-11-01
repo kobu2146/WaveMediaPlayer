@@ -63,7 +63,9 @@ public class PlayMusic {
                     bassBoost.setProperties(bassBoostSetting);
                     mediaPlayer.setAuxEffectSendLevel(1.0f);
                     mediaPlayer.attachAuxEffect(bassBoost.getId());
-                    mediaPlayer=MediaPlayer.create(context,Uri.parse(link));
+                    mediaPlayer.setDataSource(context,Uri.parse(link));
+                    mediaPlayer.prepareAsync();
+//                    mediaPlayer=MediaPlayer.create(context,Uri.parse(link));
 
                 }
                 else {

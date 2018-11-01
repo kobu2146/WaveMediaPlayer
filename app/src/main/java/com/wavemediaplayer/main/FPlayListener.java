@@ -1,6 +1,8 @@
 package com.wavemediaplayer.main;
 
+import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageButton;
@@ -10,6 +12,8 @@ import android.widget.Toast;
 
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.MusicList;
+import com.wavemediaplayer.mservices.Constants;
+import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.play.PlayMusic;
 
 /**
@@ -115,7 +119,25 @@ public class FPlayListener {
             play.setVisibility(View.GONE);
             pause.setVisibility(View.VISIBLE);
         }
+
+        if(!isMyServiceRunning(NotificationService.class)){
+            Intent serviceIntent = new Intent(context, NotificationService.class);
+            serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+            context.startService(serviceIntent);
+        }
     }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 
 

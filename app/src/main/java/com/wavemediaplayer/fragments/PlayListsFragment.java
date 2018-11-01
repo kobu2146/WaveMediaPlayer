@@ -1,6 +1,6 @@
 package com.wavemediaplayer.fragments;
 
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;

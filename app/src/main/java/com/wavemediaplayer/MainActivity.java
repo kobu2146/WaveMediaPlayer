@@ -1,15 +1,16 @@
 package com.wavemediaplayer;
 
 
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,6 +30,7 @@ import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.fragments.PlayListsFragment;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mfcontroller.MainManager;
+import com.wavemediaplayer.settings.FolderFragment;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
 import java.util.ArrayList;
@@ -47,6 +49,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static View mainView;
     private boolean isMulti = false;
 
+    public static int tabsHeigh;
+
+    private MainMenu mainMenu;
+
 
     /** Main musiclistview */
     public static SlideAndDragListView musicListView;
@@ -64,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     /** Calma listelerinin goorunecegi listi  oynatmaListesiFragment inde gosterilecek*/
     private OynatmaListesiFragment oynatmaListesiFragment;
 
+    public FolderFragment folderFragment;
     /** fat linstener event knk */
     FPlayListener fPlayListener;
     MusicList musicList;
@@ -78,7 +85,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        folderFragment=new FolderFragment();
+        tabsHeigh=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,50,getResources().getDisplayMetrics());
         new MainManager(this);
         context = this;
         mainView = getWindow().getDecorView().findViewById(android.R.id.content);
@@ -97,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         m_createListener();
         f_createListener();
+        mainMenu=new MainMenu(this);
 
         //  PlayerFragment fragmentS1 = new PlayerFragment();
         //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
@@ -124,20 +133,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 //fat burası equalizeri açmak için
                 if(mediaPlayer!=null){
-                    FragmentManager manager = getFragmentManager();
+                    FragmentManager manager = getSupportFragmentManager();
                     FragmentTransaction ft = manager.beginTransaction();
 
                     if(!equalizerFragment.isAdded()){
                         ft.add(android.R.id.content, equalizerFragment);
-                        mainFrame.setBackgroundColor(Color.BLUE);
                     }else{
                         if(equalizerFragment.isHidden()){
                             ft.show(equalizerFragment);
-                            mainFrame.setBackgroundColor(Color.BLUE);
 
                         }else{
                             ft.hide(equalizerFragment);
-                            mainFrame.setBackgroundColor(Color.TRANSPARENT);
                         }
                     }
                     ft.commit();
@@ -268,9 +274,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     /** Add Play list'e tıklandıgında Dialog fragment acılacak ve olusturulan playlistler gosterilecek */
     private void playlistInfo(ArrayList<Integer> tempLists){
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
-        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
         if (prev != null){
             fragmentTransaction.remove(prev);
         }
@@ -297,23 +303,35 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onBackPressed() {
+
+        /** fragment işlemleri burada yapılacak sürekli Commit yapılmasın diye managerler falan ortak kullanılsın diye*/
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        if(folderFragment!=null){
+            if(folderFragment.isAdded()){
+                fragmentTransaction.remove(folderFragment);
+                fragmentTransaction.commit();
+                return;
+            }
+        }
+
+
+
         if( equalizerFragment!=null && !equalizerFragment.isHidden()){
-            FragmentManager manager = getFragmentManager();
-            FragmentTransaction ft = manager.beginTransaction();
-            ft.hide(equalizerFragment);
-            mainFrame.setBackgroundColor(Color.TRANSPARENT);
-            ft.commit();
+            fragmentTransaction.hide(equalizerFragment);
+            fragmentTransaction.commit();
             return;
         }
 
-        /**  */
+
+
         if( oynatmaListesiFragment!= null && !oynatmaListesiFragment.isHidden()){
             Log.e("hidden","deil");
             getSupportFragmentManager().beginTransaction().hide(oynatmaListesiFragment).commit();
-
-            mainFrame.setBackgroundColor(Color.TRANSPARENT);
             return;
         }
+
 
 
         if (mLayout != null &&
@@ -338,6 +356,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId())
         {
+            case R.id.menu_search: mainMenu.search(); break;
+            case R.id.menu_folder: mainMenu.folder(); break;
         }
         return true;
     }

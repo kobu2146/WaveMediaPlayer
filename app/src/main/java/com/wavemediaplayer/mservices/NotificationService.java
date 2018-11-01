@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
+import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.play.PlayMusic;
@@ -30,7 +31,7 @@ public class NotificationService extends Service {
     Notification status;
     private final String LOG_TAG = "NotificationService";
     private MediaPlayer mediaPlayer;
-    private ArrayList<String> list;
+    private ArrayList<MusicData> list;
     private int i=0;
 
     @Override
@@ -39,7 +40,7 @@ public class NotificationService extends Service {
             showNotification();
             Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
             mediaPlayer=PlayMusic.mediaPlayer;
-            list=MusicList.locationList;
+            list=MusicList.musicData;
 
         } else if (intent.getAction().equals(Constants.ACTION.PREV_ACTION)) {
             previousSong();
@@ -62,7 +63,7 @@ public class NotificationService extends Service {
         }
         if(mediaPlayer!=null){
             mediaPlayer.stop();
-            mediaPlayer=MediaPlayer.create(getApplicationContext(), Uri.parse(list.get(i)));
+            mediaPlayer=MediaPlayer.create(getApplicationContext(), Uri.parse(list.get(i).getLocation()));
             mediaPlayer.start();
         }
         Toast.makeText(this, "Clicked Next", Toast.LENGTH_SHORT).show();
@@ -87,7 +88,7 @@ public class NotificationService extends Service {
         }
         if(mediaPlayer!=null){
             mediaPlayer.stop();
-            mediaPlayer=MediaPlayer.create(getApplicationContext(), Uri.parse(list.get(i)));
+            mediaPlayer=MediaPlayer.create(getApplicationContext(), Uri.parse(list.get(i).getLocation()));
             mediaPlayer.start();
         }
         Toast.makeText(this, "Clicked Previous", Toast.LENGTH_SHORT).show();

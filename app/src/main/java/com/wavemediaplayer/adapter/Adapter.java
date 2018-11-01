@@ -67,7 +67,6 @@ public class Adapter extends ArrayAdapter<MusicData> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        Log.e("ssss",musicData.get(position).getArtist());
         holder.title.setText(musicData.get(position).getTitles());
         holder.image.setImageResource(musicData.get(position).getImages());
         holder.artist.setText(musicData.get(position).getArtist());

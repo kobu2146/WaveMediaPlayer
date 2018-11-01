@@ -22,31 +22,37 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.fragments.EqualizerFragment;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.fragments.PlayListsFragment;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mfcontroller.MainManager;
+import com.yydcdut.sdlv.SlideAndDragListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.wavemediaplayer.play.PlayMusic.mediaPlayer;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,
+        AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener,
+        SlideAndDragListView.OnDragDropListener, SlideAndDragListView.OnSlideListener,
+        SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnItemDeleteListener {
 
     /** Diger sınıflara context ve view gondermek icin */
     public static Context context;
     public static View mainView;
+    private boolean isMulti = false;
 
 
     /** Main musiclistview */
-    public ListView musicListView;
-
-    /**
-     * Templist'te multi choise ile secilen coklu secimlerin pozisyonları tutuluyor
-     * */
+    public static SlideAndDragListView musicListView;
+    List<View> tempListLayout = new ArrayList<>();
+    private MusicData mDraggedEntity;
+     /** Templist'te multi choise ile secilen coklu secimlerin pozisyonları tutuluyor */
     ArrayList<Integer> tempList = new ArrayList<>();
 
     /** listview de secilen item sayısı multichoise icin */
@@ -61,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
     /** fat linstener event knk */
     FPlayListener fPlayListener;
     MusicList musicList;
-
     /** default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır */
     static int pos = 0;
 
@@ -78,22 +83,26 @@ public class MainActivity extends AppCompatActivity {
         context = this;
         mainView = getWindow().getDecorView().findViewById(android.R.id.content);
         musicListView = findViewById(R.id.main_musicListView);
-        musicListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+
+
 
         musicList = new MusicList(musicListView,this);
         musicList.getMusic("notification","ringtone");
+        musicListView.setOnDragDropListener(this);
+        musicListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        musicListView.setOnSlideListener(this);
+        musicListView.setOnMenuItemClickListener(this);
+        musicListView.setOnItemDeleteListener(this);
+        musicListView.setOnScrollListener(this);
 
         m_createListener();
         f_createListener();
 
-
-
-
         //  PlayerFragment fragmentS1 = new PlayerFragment();
         //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
-
-
     }
+
+
 
     /** Uygulama arka plana dusup tekrar acıldıgında musicleri yeniden secme */
     @Override
@@ -140,56 +149,64 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
     /** Fatihin olusturdugu listener fonksiyonu */
     private void f_createListener(){
-
         mLayout =  findViewById(R.id.activity_main);
         fPlayListener = new FPlayListener(this,mainView);
 
         /** Herhangi bit posizyon yok ise default 0'dır */
         fPlayListener.f_ListenerEvent(pos);
-
-
         /** Listviewde coklu secim yapmak icin */
         multipleChoise();
+        listviewOneClickListener();
+    }
 
+    private void listviewOneClickListener(){
+            musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // pl.play(MusicList.locationList.get(position));
-                fPlayListener.playMusic(position);
-                pos = position;
-                fPlayListener.f_ListenerEvent(position);
-                eventClick(view);
-            }
-        });
+                    if (!isMulti){
+                        Log.e("tiklandi",position+" "+"multi "+isMulti);
+                        // pl.play(MusicList.locationList.get(position));
+                        fPlayListener.playMusic(position);
+                        pos = position;
+                        fPlayListener.f_ListenerEvent(position);
+                        eventClick(view);
+                    }
+                }
+            });
     }
 
     /** Listview multi choise event fonksiyonu */
     public void multipleChoise(){
         musicListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-
             /** Multichoise islemi yapıldıgında secilen itemleri liste ata ve secilen sayısını belirt */
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
 
-
+                isMulti = true;
                 if (!tempList.contains(position)){
                     list_selected_count = list_selected_count + 1;
                     mode.setTitle(list_selected_count + "item selected");
+                    musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.background_grey));
+                    tempListLayout.add( musicListView.getChildAt(position).findViewById(R.id.listview_layout));
                     tempList.add(position);
                 }
+                else {
+                    list_selected_count = list_selected_count - 1;
+                    mode.setTitle(list_selected_count + "item selected");
+                    musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
+                    tempListLayout.remove(musicListView.getChildAt(position).findViewById(R.id.listview_layout));
+                    tempList.remove((Object)position);
 
-
+                }
             }
 
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = mode.getMenuInflater();
                 inflater.inflate(R.menu.custom_tools,menu);
-
                 return true;
             }
 
@@ -200,35 +217,28 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-
+                MenuInflater inflater = mode.getMenuInflater();
                 switch (item.getItemId()){
                     case R.id.itemSil:
+                        layoutListClear(tempListLayout);
                         for (Integer s: tempList){
-                            // silme islemi
                             musicList.removeFromAdapter(s);
                         }
                         list_selected_count = 0;
                         mode.finish();
                         tempList.clear();
 
+
                         return true;
                     case R.id.itemPlayList:
-                        // select Playlist
+
+                        list_selected_count = 0;
+                        layoutListClear(tempListLayout);
+                        mode.finish();
                         playlistInfo(tempList);
-//                        if (!oynatmaListesiFragment.isAdded()){
-//                            getFragmentManager().beginTransaction().add(android.R.id.content, oynatmaListesiFragment).commit();
-//                            mainFrame.setBackgroundColor(Color.WHITE);
-//                        }
-//                        else {
-//                            if(equalizerFragment.isHidden()){
-//                                getFragmentManager().beginTransaction().show(oynatmaListesiFragment).commit();
-//                                mainFrame.setBackgroundColor(Color.WHITE);
-//
-//                            }else{
-//                                getFragmentManager().beginTransaction().hide(oynatmaListesiFragment).commit();
-//                                mainFrame.setBackgroundColor(Color.WHITE);
-//                            }
-//                        }
+
+
+
                     default:
                         return false;
                 }
@@ -240,9 +250,20 @@ public class MainActivity extends AppCompatActivity {
             public void onDestroyActionMode(ActionMode mode) {
 
                 tempList = new ArrayList<>();
+                layoutListClear(tempListLayout);
                 list_selected_count = 0;
+                isMulti = false;
             }
         });
+    }
+
+    private void layoutListClear(List<View> layoutList){
+        for (View v :layoutList){
+            v.findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
+        }
+        tempListLayout.clear();
+        tempListLayout =  new ArrayList<>();
+
     }
 
     /** Add Play list'e tıklandıgında Dialog fragment acılacak ve olusturulan playlistler gosterilecek */
@@ -317,10 +338,86 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId())
         {
-
-
         }
         return true;
+    }
+
+    @Override
+    public void onDragViewStart(int beginPosition) {
+        mDraggedEntity = MusicList.musicData.get(beginPosition);
+    }
+
+    @Override
+    public void onDragDropViewMoved(int fromPosition, int toPosition) {
+        MusicData applicationInfo = MusicList.musicData.remove(fromPosition);
+        MusicList.musicData.add(toPosition, applicationInfo);
+    }
+
+    @Override
+    public void onDragViewDown(int finalPosition) {
+        MusicList.musicData.set(finalPosition, mDraggedEntity);
+    }
+
+    @Override
+    public void onSlideOpen(View view, View parentView, int position, int direction) {
+    }
+
+    @Override
+    public void onSlideClose(View view, View parentView, int position, int direction) {
+    }
+
+    @Override
+    public int onMenuItemClick(View v, int itemPosition, int buttonPosition, int direction) {
+        switch (direction) {
+            case com.yydcdut.sdlv.MenuItem.DIRECTION_LEFT:
+                switch (buttonPosition) {
+                    case 0:
+                        return com.yydcdut.sdlv.Menu.ITEM_NOTHING;
+                    case 1:
+                        return com.yydcdut.sdlv.Menu.ITEM_SCROLL_BACK;
+                }
+                break;
+            case com.yydcdut.sdlv.MenuItem.DIRECTION_RIGHT:
+                switch (buttonPosition) {
+                    case 0:
+                        return com.yydcdut.sdlv.Menu.ITEM_SCROLL_BACK;
+                    case 1:
+                        return com.yydcdut.sdlv.Menu.ITEM_DELETE_FROM_BOTTOM_TO_TOP;
+                }
+        }
+        return com.yydcdut.sdlv.Menu.ITEM_NOTHING;
+    }
+
+    @Override
+    public void onItemDeleteAnimationFinished(View view, int position) {
+        MusicList.musicData.remove(position - musicListView.getHeaderViewsCount());
+        MusicList.adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        switch (scrollState) {
+            case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
+                break;
+            case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
+                break;
+            case AbsListView.OnScrollListener.SCROLL_STATE_FLING:
+                break;
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        return false;
     }
 
 

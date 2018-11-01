@@ -36,4 +36,5 @@ dependencies {
     implementation 'jp.wasabeef:blurry:2.1.1'
     implementation 'com.github.navasmdc:MaterialDesign:1.5@aar'
     implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.yydcdut:sdlv:0.7.6'
 }

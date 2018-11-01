@@ -31,10 +31,10 @@ public class CreatePlayList {
 
         ArrayList<PlayList> plList = new ArrayList<>();
         for (int i : playLists){
-            String title = MusicList.titleList.get(i);
-            String artirst = MusicList.artistList.get(i);
-            Integer thumbnail = MusicList.imageList.get(i);
-            String location = MusicList.locationList.get(i);
+            String title = MusicList.musicData.get(i).getTitles();
+            String artirst = MusicList.musicData.get(i).getArtist();
+            Integer thumbnail = MusicList.musicData.get(i).getImages();
+            String location = MusicList.musicData.get(i).getLocation();
 
             plList.add(new PlayList(title,artirst,thumbnail,location));
 

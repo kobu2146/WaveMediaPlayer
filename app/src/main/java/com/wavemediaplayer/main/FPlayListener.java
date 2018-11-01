@@ -96,7 +96,7 @@ public class FPlayListener {
 
     public void playMusic(int position){
         /** Music play */
-        pl.playMusic(MusicList.locationList.get(position));
+        pl.playMusic(MusicList.musicData.get(position).getLocation());
 
         // play tab on screen
         play.setVisibility(View.GONE);
@@ -160,7 +160,7 @@ public class FPlayListener {
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pl.playMusic(MusicList.locationList.get(position));
+                pl.playMusic(MusicList.musicData.get(position).getLocation());
                 play.setVisibility(View.GONE);
                 pause.setVisibility(View.VISIBLE);
                 Toast.makeText(context,"Song Is now Playing",Toast.LENGTH_SHORT).show();
@@ -189,7 +189,7 @@ public class FPlayListener {
         play_main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pl.playMusic(MusicList.locationList.get(position));
+                pl.playMusic(MusicList.musicData.get(position).getLocation());
                 play_main.setVisibility(View.GONE);
                 pause_main.setVisibility(View.VISIBLE);
                 Toast.makeText(context,"Song Is now Playing",Toast.LENGTH_SHORT).show();

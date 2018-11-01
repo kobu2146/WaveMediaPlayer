@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
@@ -94,6 +95,7 @@ public class PlayListsFragment extends DialogFragment {
                     SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences( "WAVE MUSIC PLAYLIST", Context.MODE_PRIVATE);
                     String s =  sharedPreferences.getString(list_name,null);
                 }
+                dismiss();
             }
         });
 
@@ -103,6 +105,9 @@ public class PlayListsFragment extends DialogFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 new CreatePlayList(MainActivity.context).createAndAddList(playLists.get(position),music_position);
+                Toast.makeText(MainActivity.context,"Music added to "+playLists.get(position),Toast.LENGTH_SHORT).show();
+                dismiss();
+
             }
         });
     }

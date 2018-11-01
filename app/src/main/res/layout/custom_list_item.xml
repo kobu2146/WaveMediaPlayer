@@ -1,62 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="horizontal"
+    android:id="@+id/listview_layout"
+android:weightSum="3"
+android:background="@drawable/item_selector">
+
+<ImageView
+    android:id="@+id/music_image"
+    android:layout_width="0dp"
+    android:layout_weight="1"
     android:layout_height="wrap_content"
-    android:background="@drawable/select_list_bg"
-    android:elevation="4dp"
-    android:orientation="horizontal"
-    android:weightSum="1">
+    android:layout_gravity="center" />
 
-    <ImageView
-        android:id="@+id/music_image"
-        android:layout_width="120px"
-        android:layout_height="90px"
-        android:layout_gravity="center" />
+<LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="66dp"
+    android:layout_marginTop="10dp"
+    android:layout_weight="1"
+    android:background="@android:color/transparent"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="66dp"
-        android:layout_marginTop="10dp"
-        android:layout_weight="1"
+
+    <TextView
+        android:id="@+id/music_title"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_weight="0.71"
+        android:layout_gravity="center"
         android:background="@android:color/transparent"
-        android:orientation="vertical">
+        android:text="naber kana"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="#000000"
+        android:textSize="12sp"
+        android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/music_artist"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_weight="0.71"
+        android:layout_gravity="center"
+        android:background="@android:color/transparent"
+        android:text="naber kana"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="#000000"
+        android:textSize="12sp"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/music_title"
-            android:layout_width="match_parent"
-            android:layout_height="75dp"
-            android:layout_weight="0.71"
-            android:layout_gravity="center"
-            android:background="@android:color/transparent"
-            android:text="naber kana"
-            android:textAlignment="center"
-            android:textAllCaps="true"
-            android:textColor="#000000"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/music_artist"
-            android:layout_width="match_parent"
-            android:layout_height="75dp"
-            android:layout_weight="0.71"
-            android:layout_gravity="center"
-            android:background="@android:color/transparent"
-            android:text="naber kana"
-            android:textAlignment="center"
-            android:textAllCaps="true"
-            android:textColor="#000000"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-
-
-
-
-
-    </LinearLayout>
+</LinearLayout>
+<ImageView
+    android:id="@+id/music_logo"
+    android:layout_width="0dp"
+    android:layout_height="90px"
+    android:layout_gravity="center"
+    android:layout_weight="1"/>
 
 
 

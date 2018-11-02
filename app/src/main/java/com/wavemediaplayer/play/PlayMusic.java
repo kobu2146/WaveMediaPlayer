@@ -1,5 +1,6 @@
 package com.wavemediaplayer.play;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
@@ -10,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.wavemediaplayer.mservices.NotificationService;
 
 import java.io.File;
 
@@ -49,39 +52,49 @@ public class PlayMusic {
 
         File file =  new File(link);
         try {
-            if (file.exists()){
-                if (!playPrev.equals(link)){
-                    playPrev = link;
-                    stopPlaying();
-                    mediaPlayer = new MediaPlayer();
-                    bassBoost = new BassBoost(1, mediaPlayer.getAudioSessionId());
-                    bassBoost.setEnabled(true);
-                    BassBoost.Settings bassBoostSettingTemp =  bassBoost.getProperties();
-                    BassBoost.Settings bassBoostSetting = new BassBoost.Settings(bassBoostSettingTemp.toString());
-                    bassBoostSetting.strength=1000;
-                    bassBoost.setStrength((short)1000);
-                    bassBoost.setProperties(bassBoostSetting);
-                    mediaPlayer.setAuxEffectSendLevel(1.0f);
-                    mediaPlayer.attachAuxEffect(bassBoost.getId());
-                    mediaPlayer.setDataSource(context,Uri.parse(link));
-                    mediaPlayer.prepareAsync();
+            if(isMyServiceRunning(NotificationService.class)){
+                mediaPlayer=NotificationService.mediaPlayer;
+            }
+
+
+
+                if (file.exists()){
+                    if (!playPrev.equals(link)){
+                        playPrev = link;
+                        stopPlaying();
+                        mediaPlayer = new MediaPlayer();
+                        bassBoost = new BassBoost(1, mediaPlayer.getAudioSessionId());
+                        bassBoost.setEnabled(true);
+                        BassBoost.Settings bassBoostSettingTemp =  bassBoost.getProperties();
+                        BassBoost.Settings bassBoostSetting = new BassBoost.Settings(bassBoostSettingTemp.toString());
+                        bassBoostSetting.strength=1000;
+                        bassBoost.setStrength((short)1000);
+                        bassBoost.setProperties(bassBoostSetting);
+                        mediaPlayer.setAuxEffectSendLevel(1.0f);
+                        mediaPlayer.attachAuxEffect(bassBoost.getId());
+                        mediaPlayer.setDataSource(context,Uri.parse(link));
+                        mediaPlayer.prepareAsync();
 //                    mediaPlayer=MediaPlayer.create(context,Uri.parse(link));
 
-                }
-                else {
-                    if (mediaPlayer != null){
-                        if (!mediaPlayer.isPlaying()){
-                            mediaPlayer.start();
+                    }
+                    else {
+                        if (mediaPlayer != null){
+                            if (!mediaPlayer.isPlaying()){
+                                mediaPlayer.start();
+                            }
                         }
                     }
+                    seekBarChange();
+                    setChangeSeconds();
+                    if(isMyServiceRunning(NotificationService.class)){
+                        NotificationService.mediaPlayer=mediaPlayer;
+                    }
                 }
-                seekBarChange();
-                setChangeSeconds();
-            }
-            else {
-                Log.e("Dosya","Belirtilen dosya yok");
-                Toast.makeText(context,"Hata",Toast.LENGTH_LONG).show();
-            }
+                else {
+                    Log.e("Dosya","Belirtilen dosya yok");
+                    Toast.makeText(context,"Hata",Toast.LENGTH_LONG).show();
+                }
+
         }
         catch (Exception ex){
             Log.e("HATA",ex.getMessage());
@@ -92,6 +105,20 @@ public class PlayMusic {
 
 
     }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
     private void stopPlaying() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();

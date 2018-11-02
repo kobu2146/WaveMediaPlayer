@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import static com.wavemediaplayer.play.PlayMusic.mediaPlayer;
 
 
-public class EqualizerFragment extends Fragment {
+public class EqualizerFragment extends Fragment{
     private static final float VISUALIZER_HEIGHT_DIP = 50f;
     private Visualizer mVisualizer;
     private Equalizer mEqualizer;

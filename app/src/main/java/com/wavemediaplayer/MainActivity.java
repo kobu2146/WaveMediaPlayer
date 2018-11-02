@@ -237,11 +237,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                         return true;
                     case R.id.itemPlayList:
-
+                        playlistInfo(tempList);
                         list_selected_count = 0;
                         layoutListClear(tempListLayout);
                         mode.finish();
-                        playlistInfo(tempList);
+
 
 
 

@@ -26,6 +26,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.fragments.EqualizerFragment;
+import com.wavemediaplayer.fragments.FragmentListener;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.fragments.PlayListsFragment;
 import com.wavemediaplayer.main.FPlayListener;
@@ -80,19 +81,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     SlidingUpPanelLayout mLayout;
 
+    private FragmentListener fragmentListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        folderFragment=new FolderFragment();
         tabsHeigh=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,50,getResources().getDisplayMetrics());
-        new MainManager(this);
         context = this;
         mainView = getWindow().getDecorView().findViewById(android.R.id.content);
         musicListView = findViewById(R.id.main_musicListView);
 
 
+        fragmentListener=new FragmentListener(this);
+        folderFragment=new FolderFragment();
+        new MainManager(this);
 
         musicList = new MusicList(musicListView,this);
         musicList.getMusic("notification","ringtone");
@@ -133,21 +137,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 //fat burası equalizeri açmak için
                 if(mediaPlayer!=null){
-                    FragmentManager manager = getSupportFragmentManager();
-                    FragmentTransaction ft = manager.beginTransaction();
-
-                    if(!equalizerFragment.isAdded()){
-                        ft.add(android.R.id.content, equalizerFragment);
-                    }else{
-                        if(equalizerFragment.isHidden()){
-                            ft.show(equalizerFragment);
-
-                        }else{
-                            ft.hide(equalizerFragment);
-                        }
-                    }
-                    ft.commit();
-
+                    fragmentListener.addFragment(equalizerFragment);
                 }
 
 
@@ -205,7 +195,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
                     tempListLayout.remove(musicListView.getChildAt(position).findViewById(R.id.listview_layout));
                     tempList.remove((Object)position);
-
                 }
             }
 
@@ -304,34 +293,40 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onBackPressed() {
 
-        /** fragment işlemleri burada yapılacak sürekli Commit yapılmasın diye managerler falan ortak kullanılsın diye*/
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        if(folderFragment!=null){
-            if(folderFragment.isAdded()){
-                fragmentTransaction.remove(folderFragment);
-                fragmentTransaction.commit();
-                return;
-            }
-        }
-
-
-
-        if( equalizerFragment!=null && !equalizerFragment.isHidden()){
-            fragmentTransaction.hide(equalizerFragment);
-            fragmentTransaction.commit();
+        if(fragmentListener.removeFragment(folderFragment,equalizerFragment,oynatmaListesiFragment)){
             return;
         }
 
-
-
-        if( oynatmaListesiFragment!= null && !oynatmaListesiFragment.isHidden()){
-            Log.e("hidden","deil");
-            getSupportFragmentManager().beginTransaction().hide(oynatmaListesiFragment).commit();
-            return;
-        }
-
+//
+//        /** fragment işlemleri burada yapılacak sürekli Commit yapılmasın diye managerler falan ortak kullanılsın diye*/
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//
+//        if(folderFragment!=null){
+//            if(folderFragment.isAdded()){
+//                fragmentTransaction.remove(folderFragment);
+//                fragmentTransaction.commit();
+//                return;
+//            }
+//        }
+//
+//
+//
+//
+//        if( equalizerFragment!=null && !equalizerFragment.isHidden()){
+//            fragmentTransaction.hide(equalizerFragment);
+//            fragmentTransaction.commit();
+//            return;
+//        }
+//
+//
+//
+//        if( oynatmaListesiFragment!= null && !oynatmaListesiFragment.isHidden()){
+//            Log.e("hidden","deil");
+//            getSupportFragmentManager().beginTransaction().hide(oynatmaListesiFragment).commit();
+//            return;
+//        }
+//
 
 
         if (mLayout != null &&

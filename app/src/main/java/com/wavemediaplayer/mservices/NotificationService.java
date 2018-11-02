@@ -30,7 +30,7 @@ import java.util.ArrayList;
 public class NotificationService extends Service {
     Notification status;
     private final String LOG_TAG = "NotificationService";
-    private MediaPlayer mediaPlayer;
+    public static MediaPlayer mediaPlayer;
     private ArrayList<MusicData> list;
     private int i=0;
 

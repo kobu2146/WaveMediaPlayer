@@ -16,6 +16,7 @@ import android.widget.ListView;
 
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
+import com.wavemediaplayer.adapter.Adapter;
 import com.wavemediaplayer.adapter.AdapterPlayList;
 import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
@@ -44,10 +45,10 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
 
     FPlayListener fPlayListener;
     private MusicData mDraggedEntity;
-    AdapterPlayList adapterPlayList;
-    Context context;
+    Adapter adapterPlayList;
+    public static Context context;
     // Tum oynatma listesini gpruntulemek icin
-    private boolean isList = true;
+    public static boolean isList = true;
 
 
     public OynatmaListesiFragment() {
@@ -68,18 +69,28 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
         oynatma_listesi = view.findViewById(R.id.oynatma_listesi);
 
         oynatma_listesi.setOnDragDropListener(this);
-        oynatma_listesi.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        oynatma_listesi.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         oynatma_listesi.setOnSlideListener(this);
         oynatma_listesi.setOnMenuItemClickListener(this);
         oynatma_listesi.setOnItemDeleteListener(this);
         oynatma_listesi.setOnScrollListener(this);
 
 
-        context = getActivity();
+        context = view.getContext();
         fPlayListener = new FPlayListener(MainActivity.context,MainActivity.mainView);
 
-        SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences( "WAVE MUSIC PLAYLIST", Context.MODE_PRIVATE);
 
+
+
+         getCalmaListeleri();
+         clickEvent();
+         return view;
+    }
+
+    public void getCalmaListeleri(){
+
+        oynat_list.clear();
+        SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences( "WAVE MUSIC PLAYLIST", Context.MODE_PRIVATE);
         /** tum playlistleri ve iceriklerini cekiyor cekiyor */
         Map<String, ?> allEntries = sharedPreferences.getAll();
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
@@ -87,22 +98,21 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
             oynat_list.add(entry.getKey());
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(view.getContext(),
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
                 android.R.layout.simple_list_item_1, android.R.id.text1, oynat_list);
         oynatma_listesi.setMenu(new Menu(false));
         oynatma_listesi.setAdapter(adapter);
+        isList = true;
+    }
 
-        clickEvent();
-        // Inflate the layout for this fragment
-        return view;
+    public void getCalmaListeleriSarkilari(){
+        adapterPlayList = new Adapter(context,R.layout.custom_list_item,music_oynat_list);
+        oynatma_listesi.setMenu(new Menu(false));
+        oynatma_listesi.setAdapter(adapterPlayList);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState){
-
-
-
-
     }
 
     private void clickEvent(){
@@ -113,6 +123,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 if (isList){
+                    music_oynat_list.clear();
                     SharedPreferences sharedPreferences  = context.getSharedPreferences("WAVE MUSIC PLAYLIST", Context.MODE_PRIVATE);
                     Map<String, ?> allEntries = sharedPreferences.getAll();
                     for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
@@ -133,8 +144,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                                     String ids = jsonObject.getString("id");
 
                                     music_oynat_list.add(new MusicData(title,artist,thumbnail,duration,location,ids));
-
-
                                 }
                             }
 
@@ -142,15 +151,10 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                             e.printStackTrace();
                         }
                     }
-                    adapterPlayList = new AdapterPlayList(context,R.layout.custom_list_item,music_oynat_list);
-                    oynatma_listesi.setMenu(new Menu(false));
-                    oynatma_listesi.setAdapter(adapterPlayList);
-
+                    getCalmaListeleriSarkilari();
                     isList = false;
                 }
-
                 else {
-                    Log.e("music","caliyor");
                     fPlayListener.playFromPlayList(music_oynat_list.get(position).getLocation());
                 }
 
@@ -185,6 +189,23 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
     @Override
     public int onMenuItemClick(View v, int itemPosition, int buttonPosition, int direction) {
 
+        switch (direction) {
+            case com.yydcdut.sdlv.MenuItem.DIRECTION_LEFT:
+                switch (buttonPosition) {
+                    case 0:
+                        return com.yydcdut.sdlv.Menu.ITEM_NOTHING;
+                    case 1:
+                        return com.yydcdut.sdlv.Menu.ITEM_SCROLL_BACK;
+                }
+                break;
+            case com.yydcdut.sdlv.MenuItem.DIRECTION_RIGHT:
+                switch (buttonPosition) {
+                    case 0:
+                        return com.yydcdut.sdlv.Menu.ITEM_SCROLL_BACK;
+                    case 1:
+                        return com.yydcdut.sdlv.Menu.ITEM_DELETE_FROM_BOTTOM_TO_TOP;
+                }
+        }
         return com.yydcdut.sdlv.Menu.ITEM_NOTHING;
     }
 

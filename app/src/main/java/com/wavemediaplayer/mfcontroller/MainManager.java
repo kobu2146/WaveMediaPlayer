@@ -35,8 +35,10 @@ public class MainManager {
                 if(i==0){
                     activity.musicListView.setX(-i1);
                     activity.musicListView.setVisibility(View.VISIBLE);
+                    activity.edit_search.setVisibility(View.VISIBLE);
                 }else{
                     activity.musicListView.setVisibility(View.GONE);
+                    activity.edit_search.setVisibility(View.GONE);
                 }
                 Log.e(String.valueOf(i1),String.valueOf(i));
             }

@@ -32,12 +32,7 @@ public class AdapterPlayList extends ArrayAdapter<MusicData>{
         super(context, resource, music_data);
         this.context = context;
         this.music_data = music_data;
-
-
     }
-
-
-
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

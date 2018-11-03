@@ -22,12 +22,12 @@ public class Adapter extends ArrayAdapter<MusicData> {
 
 
     private ArrayList<MusicData> musicData;
-
+    private int resource;
     public Adapter(Context context, int resource, ArrayList<MusicData> musicData) {
         super(context, resource, musicData);
         this.context = context;
         this.musicData = musicData;
-
+        this.resource = resource;
     }
 
 
@@ -53,7 +53,7 @@ public class Adapter extends ArrayAdapter<MusicData> {
         ViewHolder holder = null;
 
         if (convertView == null){
-            convertView = LayoutInflater.from(context).inflate(R.layout.custom_list_item, null);
+            convertView = LayoutInflater.from(context).inflate(resource, null);
             holder = new ViewHolder();
 
             holder.title = convertView.findViewById(R.id.music_title);

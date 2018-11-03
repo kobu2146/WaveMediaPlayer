@@ -106,7 +106,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
     }
 
     public void getCalmaListeleriSarkilari(){
-        adapterPlayList = new Adapter(context,R.layout.custom_list_item,music_oynat_list);
+        adapterPlayList = new Adapter(context,R.layout.custom_list_item,music_oynat_list,1);
         oynatma_listesi.setMenu(new Menu(false));
         oynatma_listesi.setAdapter(adapterPlayList);
     }

@@ -13,21 +13,21 @@ import android.widget.TextView;
 
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
+import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 
 import java.util.ArrayList;
 
 public class Adapter extends ArrayAdapter<MusicData> {
 
     private Context context;
-
-
     private ArrayList<MusicData> musicData;
-    private int resource;
-    public Adapter(Context context, int resource, ArrayList<MusicData> musicData) {
+    private int kaynak;
+
+    public Adapter(Context context, int resource, ArrayList<MusicData> musicData,int kaynak) {
         super(context, resource, musicData);
         this.context = context;
         this.musicData = musicData;
-        this.resource = resource;
+        this.kaynak = kaynak;
     }
 
 
@@ -53,7 +53,7 @@ public class Adapter extends ArrayAdapter<MusicData> {
         ViewHolder holder = null;
 
         if (convertView == null){
-            convertView = LayoutInflater.from(context).inflate(resource, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.custom_list_item, null);
             holder = new ViewHolder();
 
             holder.title = convertView.findViewById(R.id.music_title);
@@ -74,18 +74,13 @@ public class Adapter extends ArrayAdapter<MusicData> {
         holder.image_logo.setTag(Integer.parseInt(position + ""));
 
         return convertView;
-
     }
-
-
 
     private class ViewHolder {
         ImageView image;
         ImageView image_logo;
         TextView title;
         TextView artist;
-
-
     }
 
     private View.OnTouchListener mOnTouchListener = new View.OnTouchListener() {
@@ -94,8 +89,14 @@ public class Adapter extends ArrayAdapter<MusicData> {
             Object o = v.getTag();
 
             if (o != null && o instanceof Integer) {
-                Log.e("kkk",o.toString());
-                MainActivity.musicListView.startDrag(((Integer) o).intValue());
+                Log.e("Secilen item",o.toString());
+                if (kaynak == 0){
+                    MainActivity.musicListView.startDrag(((Integer) o).intValue());
+                }
+                else if (kaynak == 1){
+                    OynatmaListesiFragment.oynatma_listesi.startDrag(((Integer) o).intValue());
+                }
+
             }
             return false;
         }

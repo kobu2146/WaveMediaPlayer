@@ -83,14 +83,12 @@ public class AdapterPlayList extends ArrayAdapter<MusicData>{
         ImageView image_logo;
         TextView title;
         TextView artist;
-
     }
 
     private View.OnTouchListener mOnTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             Object o = v.getTag();
-
             if (o != null && o instanceof Integer) {
                 Log.e("kkk",o.toString());
                 OynatmaListesiFragment.oynatma_listesi.startDrag(((Integer) o).intValue());

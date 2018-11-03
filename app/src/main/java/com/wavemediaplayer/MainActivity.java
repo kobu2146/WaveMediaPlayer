@@ -140,18 +140,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     geciciAramaSonuclari.clear();
                 }
                 else {
-                    searchItem(s.toString());
-                    if (before > count){
-                       MusicList.musicData.clear();
-                        MusicList.musicData.addAll(geciciAramaSonuclari.get(count - 1));
-                        MusicList.adapter.notifyDataSetChanged();
-                    }
-                    else {
-                        tempData = new ArrayList<>();
-                        searchItem(s.toString().toLowerCase());
-                        geciciAramaSonuclari.add(tempData);
-                        MusicList.adapter.notifyDataSetChanged();
-                    }
+
+                    searchItem(s.toString().toLowerCase());
                 }
             }
 
@@ -168,9 +158,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if(denememusicdata.get(i).getTitles().toLowerCase().contains(text.toString().toLowerCase())){
                 MusicList.musicData.add(denememusicdata.get(i));
                 MusicList.adapter.notifyDataSetChanged();
-                if (!tempData.contains(denememusicdata.get(i))){
-                    tempData.add(denememusicdata.get(i));
-                }
+
             }
         }
         MusicList.adapter.notifyDataSetChanged();

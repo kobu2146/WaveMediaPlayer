@@ -166,7 +166,7 @@ public class MusicList {
 
         }
 
-        adapter = new Adapter(context,R.layout.custom_list_item,musicData);
+        adapter = new Adapter(context,R.layout.custom_list_item,musicData,0);
         musicListView.setMenu(new Menu(false));
         musicListView.setAdapter(adapter);
 

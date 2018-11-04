@@ -9,6 +9,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ActionMode;
@@ -19,6 +21,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
@@ -46,28 +49,50 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         SlideAndDragListView.OnDragDropListener, SlideAndDragListView.OnSlideListener,
         SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnItemDeleteListener {
 
+    /** Diger sınıflara context ve view gondermek icin */
     public static Context context;
     public static View mainView;
     private boolean isMulti = false;
+
     public static int tabsHeigh;
+
     private MainMenu mainMenu;
+
+
+    /** Main musiclistview */
     public static SlideAndDragListView musicListView;
     List<View> tempListLayout = new ArrayList<>();
     private MusicData mDraggedEntity;
-    ArrayList<Integer> tempList = new ArrayList<>();
+
+    public EditText edit_search;
+    ArrayList<ArrayList<MusicData>> geciciAramaSonuclari = new ArrayList<>();
+    ArrayList<MusicData> tempData = new ArrayList<>();
+    /** Templist'te multi choise ile secilen coklu secimlerin pozisyonları tutuluyor */
+
+     ArrayList<Integer> tempList = new ArrayList<>();
+
+    /** listview de secilen item sayısı multichoise icin */
     int list_selected_count = 0;
+
     private Button mainEqualizer;
     private EqualizerFragment equalizerFragment;
     public FrameLayout mainFrame;
+    /** Calma listelerinin goorunecegi listi  oynatmaListesiFragment inde gosterilecek*/
     private OynatmaListesiFragment oynatmaListesiFragment;
+
     public FolderFragment folderFragment;
+    /** fat linstener event knk */
     FPlayListener fPlayListener;
     MusicList musicList;
+    /** default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır */
     static int pos = 0;
+
+    private ArrayList<MusicData> denememusicdata;
     SlidingUpPanelLayout mLayout;
     public FragmentListener fragmentListener;
     public MusicListSettingsFragment musicListSettingsFragment;
 
+    private FragmentListener fragmentListener;
 
 
     @Override
@@ -78,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         context = this;
         mainView = getWindow().getDecorView().findViewById(android.R.id.content);
         musicListView = findViewById(R.id.main_musicListView);
+        edit_search = findViewById(R.id.edit_search);
 
 
         fragmentListener=new FragmentListener(this);
@@ -87,6 +113,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         musicList = new MusicList(musicListView,this);
         musicList.getMusic("notification","ringtone");
+        denememusicdata=new ArrayList<>();
+        denememusicdata.addAll(MusicList.musicData);
         musicListView.setOnDragDropListener(this);
         musicListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         musicListView.setOnSlideListener(this);
@@ -96,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         m_createListener();
         f_createListener();
+        editTextDegisiklikKontrol();
         mainMenu=new MainMenu(this);
 
         //  PlayerFragment fragmentS1 = new PlayerFragment();
@@ -103,6 +132,42 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
+    private void editTextDegisiklikKontrol(){
+        edit_search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().equals("")){
+                    musicList.getMusic("notification","ringtone");
+                    geciciAramaSonuclari.clear();
+                }
+                else {
+
+                    searchItem(s.toString().toLowerCase());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void searchItem(String text){
+        MusicList.musicData.clear();
+        for(int i=0;i<denememusicdata.size();i++){
+            if(denememusicdata.get(i).getTitles().toLowerCase().contains(text.toString().toLowerCase())){
+                MusicList.musicData.add(denememusicdata.get(i));
+                MusicList.adapter.notifyDataSetChanged();
+
+            }
+        }
+        MusicList.adapter.notifyDataSetChanged();
+    }
 
     /** Uygulama arka plana dusup tekrar acıldıgında musicleri yeniden secme */
     @Override
@@ -121,6 +186,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mainEqualizer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 //fat burası equalizeri açmak için
                 if(mediaPlayer!=null){
                     fragmentListener.addFragment(equalizerFragment);
@@ -214,8 +280,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
                         return true;
-                    case R.id.itemPlayList:
 
+                    case R.id.itemPlayList:
+                        playlistInfo(tempList);
                         list_selected_count = 0;
                         layoutListClear(tempListLayout);
                         mode.finish();

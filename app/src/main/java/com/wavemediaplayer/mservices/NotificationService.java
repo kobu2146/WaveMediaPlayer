@@ -33,6 +33,9 @@ public class NotificationService extends Service {
     public static MediaPlayer mediaPlayer;
     private ArrayList<MusicData> list;
     private int i=0;
+    private RemoteViews views;
+    private RemoteViews bigViews;
+    private PendingIntent pendingIntent;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -73,9 +76,18 @@ public class NotificationService extends Service {
         if(mediaPlayer!=null){
             if(mediaPlayer.isPlaying()){
                 mediaPlayer.pause();
+                views.setImageViewResource(R.id.status_bar_play,
+                        R.drawable.apollo_holo_dark_play);
+                bigViews.setImageViewResource(R.id.status_bar_play,
+                        R.drawable.apollo_holo_dark_play);
             }else{
                 mediaPlayer.start();
+                views.setImageViewResource(R.id.status_bar_play,
+                        R.drawable.apollo_holo_dark_pause);
+                bigViews.setImageViewResource(R.id.status_bar_play,
+                        R.drawable.apollo_holo_dark_pause);
             }
+            create();
         }
         Toast.makeText(this, "Clicked Play", Toast.LENGTH_SHORT).show();
         Log.i(LOG_TAG, "Clicked Play");
@@ -107,9 +119,9 @@ public class NotificationService extends Service {
 
     private void showNotification() {
 // Using RemoteViews to bind custom layouts into Notification
-        RemoteViews views = new RemoteViews(getPackageName(),
+        views = new RemoteViews(getPackageName(),
                 R.layout.status_bar);
-        RemoteViews bigViews = new RemoteViews(getPackageName(),
+        bigViews = new RemoteViews(getPackageName(),
                 R.layout.status_bar_expanded);
 
 // showing default album image
@@ -122,7 +134,7 @@ public class NotificationService extends Service {
         notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+        pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
 
         Intent previousIntent = new Intent(this, NotificationService.class);
@@ -169,24 +181,29 @@ public class NotificationService extends Service {
         bigViews.setTextViewText(R.id.status_bar_artist_name, "Artist Name");
 
         bigViews.setTextViewText(R.id.status_bar_artist_name, "Album Name");
+        create();
 
 
+    }
+
+    private void create(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
             String name = "Wave ";
             int importance = NotificationManager.IMPORTANCE_LOW;
             NotificationChannel mChannel = new NotificationChannel("com.wavemediaplayer", name, importance);
             mNotificationManager.createNotificationChannel(mChannel);
-
-
             status = new Notification.Builder(this).setChannelId(mChannel.getId()).build();
+
             status.contentView = views;
             status.bigContentView = bigViews;
             status.flags = Notification.FLAG_ONGOING_EVENT;
             status.icon = R.drawable.ic_launcher;
             status.contentIntent = pendingIntent;
             startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
+
         }else{
+
             status = new Notification.Builder(this).build();
             status.contentView = views;
             status.bigContentView = bigViews;
@@ -195,6 +212,7 @@ public class NotificationService extends Service {
             status.contentIntent = pendingIntent;
             startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
         }
+
 
 
     }

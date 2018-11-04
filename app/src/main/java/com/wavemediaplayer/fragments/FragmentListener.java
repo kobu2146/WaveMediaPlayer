@@ -24,9 +24,11 @@ public class FragmentListener implements FragmentInterface {
             if(frag!=null){
                 fragmentTransaction=fragmentManager.beginTransaction();
                 if(frag.isAdded()){
+                    fragmentTransaction.show(frag);
+                    fragmentTransaction.commit();
+                }else{
                     fragmentTransaction.add(android.R.id.content,frag);
                     fragmentTransaction.commit();
-
                 }
             }
         }
@@ -58,4 +60,6 @@ public class FragmentListener implements FragmentInterface {
 
         }
     }
+
+
 }

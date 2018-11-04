@@ -1,6 +1,7 @@
 package com.wavemediaplayer;
 
 import com.wavemediaplayer.settings.FolderFragment;
+import com.wavemediaplayer.settings.MusicListSettingsFragment;
 
 
 public class MainMenu {
@@ -15,6 +16,10 @@ public class MainMenu {
 
     public void search(){
 
+    }
+
+    public void musiclist(){
+        mainActivity.fragmentListener.addFragment(mainActivity.musicListSettingsFragment);
     }
 
     public void folder(){

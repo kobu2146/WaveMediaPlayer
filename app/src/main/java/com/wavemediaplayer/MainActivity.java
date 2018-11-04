@@ -32,6 +32,7 @@ import com.wavemediaplayer.fragments.PlayListsFragment;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mfcontroller.MainManager;
 import com.wavemediaplayer.settings.FolderFragment;
+import com.wavemediaplayer.settings.MusicListSettingsFragment;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
 import java.util.ArrayList;
@@ -45,43 +46,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         SlideAndDragListView.OnDragDropListener, SlideAndDragListView.OnSlideListener,
         SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnItemDeleteListener {
 
-    /** Diger sınıflara context ve view gondermek icin */
     public static Context context;
     public static View mainView;
     private boolean isMulti = false;
-
     public static int tabsHeigh;
-
     private MainMenu mainMenu;
-
-
-    /** Main musiclistview */
     public static SlideAndDragListView musicListView;
     List<View> tempListLayout = new ArrayList<>();
     private MusicData mDraggedEntity;
-     /** Templist'te multi choise ile secilen coklu secimlerin pozisyonları tutuluyor */
     ArrayList<Integer> tempList = new ArrayList<>();
-
-    /** listview de secilen item sayısı multichoise icin */
     int list_selected_count = 0;
-
     private Button mainEqualizer;
     private EqualizerFragment equalizerFragment;
     public FrameLayout mainFrame;
-    /** Calma listelerinin goorunecegi listi  oynatmaListesiFragment inde gosterilecek*/
     private OynatmaListesiFragment oynatmaListesiFragment;
-
     public FolderFragment folderFragment;
-    /** fat linstener event knk */
     FPlayListener fPlayListener;
     MusicList musicList;
-    /** default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır */
     static int pos = 0;
-
-
     SlidingUpPanelLayout mLayout;
+    public FragmentListener fragmentListener;
+    public MusicListSettingsFragment musicListSettingsFragment;
 
-    private FragmentListener fragmentListener;
 
 
     @Override
@@ -95,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
         fragmentListener=new FragmentListener(this);
+        musicListSettingsFragment=new MusicListSettingsFragment();
         folderFragment=new FolderFragment();
         new MainManager(this);
 
@@ -134,7 +121,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mainEqualizer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //fat burası equalizeri açmak için
                 if(mediaPlayer!=null){
                     fragmentListener.addFragment(equalizerFragment);
@@ -149,7 +135,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void f_createListener(){
         mLayout =  findViewById(R.id.activity_main);
         fPlayListener = new FPlayListener(this,mainView);
-
+        /** burada equalizeri başlangıçta çalıştırıyorum ki sonradan equalizere tıkladığında ses değişmesin ayarlar önceden yapılsın diye*/
+        if(mediaPlayer!=null){
+            fragmentListener.addFragment(equalizerFragment);
+        }
         /** Herhangi bit posizyon yok ise default 0'dır */
         fPlayListener.f_ListenerEvent(pos);
         /** Listviewde coklu secim yapmak icin */
@@ -293,7 +282,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onBackPressed() {
 
-        if(fragmentListener.removeFragment(folderFragment,equalizerFragment,oynatmaListesiFragment)){
+        if(fragmentListener.removeFragment(folderFragment,equalizerFragment,oynatmaListesiFragment,musicListSettingsFragment)){
             return;
         }
 
@@ -353,6 +342,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         {
             case R.id.menu_search: mainMenu.search(); break;
             case R.id.menu_folder: mainMenu.folder(); break;
+            case R.id.menu_musiclist: mainMenu.musiclist(); break;
         }
         return true;
     }

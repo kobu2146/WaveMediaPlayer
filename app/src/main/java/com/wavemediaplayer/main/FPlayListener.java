@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -36,6 +37,8 @@ public class FPlayListener {
     private ImageButton pause;
     private ImageButton play_main;
     private ImageButton pause_main;
+    public static TextView song_title;
+    public static TextView song_artis;
 
     private SeekBar myseekbar;
     private TextView mytext1;
@@ -43,6 +46,8 @@ public class FPlayListener {
     private  Runnable runnable;
     private Handler handler;
 
+    public static int currentMusicPosition; //Sıralı calmada tutulacak pozisyon
+    public static boolean calmaListesiMuzik = false; //Music calma listesinden mi ana listeden mi?
 
 
     private Context context;
@@ -65,6 +70,9 @@ public class FPlayListener {
         pause = (ImageButton) view.findViewById(R.id.sample_main_pause_button);
         play_main = (ImageButton) view.findViewById(R.id.sample_main_play_button_main);
         pause_main = (ImageButton) view.findViewById(R.id.sample_main_pause_button_main);
+        song_title = view.findViewById(R.id.songs_title);
+        song_artis = view.findViewById(R.id.songs_artist_name);
+
 
         mytext1= view.findViewById(R.id.sample_main_StartTime);
         mytext2= view.findViewById(R.id.sample_main_endTime);
@@ -79,10 +87,10 @@ public class FPlayListener {
         /** Music play */
         pl.playMusic(link);
 
+        calmaListesiMuzik = true;
         // play tab on screen
         play.setVisibility(View.GONE);
         pause.setVisibility(View.VISIBLE);
-        Toast.makeText(context,"Song Is now Playing",Toast.LENGTH_SHORT).show();
         if (play_main.getVisibility() == View.VISIBLE){
             play_main.setVisibility(View.GONE);
             pause_main.setVisibility(View.VISIBLE);
@@ -91,7 +99,6 @@ public class FPlayListener {
         // main play button
         play_main.setVisibility(View.GONE);
         pause_main.setVisibility(View.VISIBLE);
-        Toast.makeText(context,"Song Is now Playing",Toast.LENGTH_SHORT).show();
         if (play.getVisibility() == View.VISIBLE){
             play.setVisibility(View.GONE);
             pause.setVisibility(View.VISIBLE);
@@ -100,7 +107,11 @@ public class FPlayListener {
 
     public void playMusic(int position){
         /** Music play */
+
+        song_title.setText(MusicList.musicData.get(position).getTitles());
+        song_artis.setText(MusicList.musicData.get(position).getArtist());
         pl.playMusic(MusicList.musicData.get(position).getLocation());
+
 
         // play tab on screen
         play.setVisibility(View.GONE);
@@ -182,6 +193,8 @@ public class FPlayListener {
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                song_title.setText(MusicList.musicData.get(position).getTitles());
+                song_artis.setText(MusicList.musicData.get(position).getArtist());
                 pl.playMusic(MusicList.musicData.get(position).getLocation());
                 play.setVisibility(View.GONE);
                 pause.setVisibility(View.VISIBLE);
@@ -211,6 +224,8 @@ public class FPlayListener {
         play_main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                song_title.setText(MusicList.musicData.get(position).getTitles());
+                song_artis.setText(MusicList.musicData.get(position).getArtist());
                 pl.playMusic(MusicList.musicData.get(position).getLocation());
                 play_main.setVisibility(View.GONE);
                 pause_main.setVisibility(View.VISIBLE);

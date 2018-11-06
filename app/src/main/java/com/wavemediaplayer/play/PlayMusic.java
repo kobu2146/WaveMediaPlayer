@@ -12,15 +12,27 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.wavemediaplayer.MainActivity;
+import com.wavemediaplayer.adapter.MusicList;
+import com.wavemediaplayer.fragments.OynatmaListesiFragment;
+import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mservices.NotificationService;
+import com.wavemediaplayer.playlist.PlayList;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
 
 /**
  *
  * Gonderilen dosya linkine gore muzik calma islemi
  * */
 public class PlayMusic {
+
+    public static boolean karisikCal = true;
 
     private Context context;
     public static MediaPlayer mediaPlayer;
@@ -50,14 +62,14 @@ public class PlayMusic {
     /** Dosya var mı yok mu belirtilecek varsa calmaya baslar */
     public void playMusic(String link){
 
+        Log.e("music yolu",link);
         File file =  new File(link);
         try {
             if(isMyServiceRunning(NotificationService.class)){
                 mediaPlayer=NotificationService.mediaPlayer;
+
+
             }
-
-
-
                 if (file.exists()){
                     if (!playPrev.equals(link)){
                         playPrev = link;
@@ -80,7 +92,9 @@ public class PlayMusic {
                     else {
                         if (mediaPlayer != null){
                             if (!mediaPlayer.isPlaying()){
+
                                 mediaPlayer.start();
+
                             }
                         }
                     }
@@ -94,16 +108,69 @@ public class PlayMusic {
                     Log.e("Dosya","Belirtilen dosya yok");
                     Toast.makeText(context,"Hata",Toast.LENGTH_LONG).show();
                 }
-
         }
         catch (Exception ex){
-            Log.e("HATA",ex.getMessage());
+            Log.e("FILE NOT FOUND",ex.getMessage());
         }
+    }
+
+    private void calmayaDevamEt(){
+        Log.e("Music","bitti");
+        if (!karisikCal){ // Sıralı calma aktifse
+            Log.e("sıralı","cal");
+            if (!FPlayListener.calmaListesiMuzik){//Ana playerdan calınacaksa
+                FPlayListener.currentMusicPosition++;
+                Log.e("Ana","Music player");
+                if (FPlayListener.currentMusicPosition < MusicList.musicData.size()){
+                    Log.e("current position",""+FPlayListener.currentMusicPosition);
+                    MainActivity.fPlayListener.song_artis.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getArtist());
+                    MainActivity.fPlayListener.song_title.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getTitles());
+                    playMusic(MusicList.musicData.get(FPlayListener.currentMusicPosition).getLocation());
+                }
+                else {
+                    FPlayListener.currentMusicPosition = 0;
+                    MainActivity.fPlayListener.song_artis.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getArtist());
+                    MainActivity.fPlayListener.song_title.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getTitles());
+                    playMusic(MusicList.musicData.get( FPlayListener.currentMusicPosition).getLocation());
+                }
+            }
+            else { //Playlistden veya baska biryerden ise
+                FPlayListener.currentMusicPosition++;
+                if (OynatmaListesiFragment.music_oynat_list.size() > FPlayListener.currentMusicPosition){
+                    MainActivity.fPlayListener.song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getArtist());
+                    MainActivity.fPlayListener.song_title.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getTitles());
+                    MainActivity.fPlayListener.playFromPlayList(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getLocation());
+                }
+                else {
+                    FPlayListener.currentMusicPosition = 0;
+                    MainActivity.fPlayListener.song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getArtist());
+                    MainActivity.fPlayListener.song_title.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getTitles());
+                    MainActivity.fPlayListener.playFromPlayList(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getLocation());
+                }
+
+            }
+        }
+        else {
+            if (!FPlayListener.calmaListesiMuzik){
+                int rndPositin = new Random().nextInt(MusicList.musicData.size());
+                Log.e("rnd",""+rndPositin);
+                if (rndPositin <= MusicList.musicData.size()){
+                    MainActivity.fPlayListener.song_artis.setText(MusicList.musicData.get(rndPositin).getArtist());
+                    MainActivity.fPlayListener.song_title.setText(MusicList.musicData.get(rndPositin).getTitles());
+                    playMusic(MusicList.musicData.get(rndPositin).getLocation());
+                }
+            }
+            else {
+                int rndPositin = new Random().nextInt(OynatmaListesiFragment.music_oynat_list.size());
+                if (rndPositin <= OynatmaListesiFragment.music_oynat_list.size()){
+                    MainActivity.fPlayListener.song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(rndPositin).getArtist());
+                    MainActivity.fPlayListener.song_title.setText(OynatmaListesiFragment.music_oynat_list.get(rndPositin).getTitles());
+                    MainActivity.fPlayListener.playFromPlayList(OynatmaListesiFragment.music_oynat_list.get(rndPositin).getLocation());
+                }
+            }
 
 
-
-
-
+        }
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -117,8 +184,6 @@ public class PlayMusic {
         return false;
     }
 
-
-
     private void stopPlaying() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
@@ -128,14 +193,13 @@ public class PlayMusic {
                 handler.removeCallbacks(runnable);
             }
         }
-
     }
 
     private void seekBarChange(){
+
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
-            public void onPrepared(MediaPlayer mp) {
-                Log.e("qqqq","qqqqqqq");
+            public void onPrepared(final MediaPlayer mp) {
                 myseekbar.setMax(mediaPlayer.getDuration());
                 myseekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                     @Override
@@ -148,17 +212,17 @@ public class PlayMusic {
 
                     @Override
                     public void onStartTrackingTouch(SeekBar seekBar) {
-
+                        Log.e("Start touch","xxxxx");
                     }
 
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {
+                        Log.e("Stop touch","xxxxx");
+
 
                     }
                 });
                 mytext2.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getDuration())));
-
-
                 mediaPlayer.start();
             }
         });
@@ -175,10 +239,6 @@ public class PlayMusic {
         }
     }
 
-
-
-
-
     private void setChangeSeconds(){
 
             runnable=new Runnable() {
@@ -188,6 +248,18 @@ public class PlayMusic {
                     if(mediaPlayer!=null){
                         myseekbar.setProgress(mediaPlayer.getCurrentPosition());
                         mytext1.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getCurrentPosition())));
+                        Log.e("getDuration",""+mediaPlayer.getDuration());
+                        Log.e("getCurrentDuration",""+mediaPlayer.getCurrentPosition());
+                        int current = mediaPlayer.getCurrentPosition();
+                        int total =  mediaPlayer.getDuration();
+                        if (current >= total){
+                            Log.e("girdi","calmaya devam et");
+
+                            calmayaDevamEt();
+                        }
+                        else if (total - current <= 300){
+                            calmayaDevamEt();
+                        }
                     }
 
                     handler.postDelayed(runnable,1000);
@@ -195,7 +267,4 @@ public class PlayMusic {
             };
             runnable.run();
     }
-
-
-
 }

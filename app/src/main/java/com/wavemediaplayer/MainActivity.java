@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public FolderFragment folderFragment;
     /** fat linstener event knk */
-    FPlayListener fPlayListener;
+    public static FPlayListener fPlayListener;
     MusicList musicList;
     /** default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır */
     static int pos = 0;
@@ -195,7 +195,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         fPlayListener = new FPlayListener(this,mainView);
 
         /** Herhangi bit posizyon yok ise default 0'dır */
+        FPlayListener.currentMusicPosition = pos;
         fPlayListener.f_ListenerEvent(pos);
+
         /** Listviewde coklu secim yapmak icin */
         multipleChoise();
         listviewOneClickListener();
@@ -209,8 +211,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     if (!isMulti){
                         Log.e("tiklandi",position+" "+"multi "+isMulti);
                         // pl.play(MusicList.locationList.get(position));
-                        fPlayListener.playMusic(position);
+                        FPlayListener.calmaListesiMuzik = false;
+                        FPlayListener.currentMusicPosition = position;
                         pos = position;
+                        fPlayListener.playMusic(position);
+
+
+
                         fPlayListener.f_ListenerEvent(position);
                         eventClick(view);
                     }

@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public FolderFragment folderFragment;
     /** fat linstener event knk */
     FPlayListener fPlayListener;
-    MusicList musicList;
+    public MusicList musicList;
     /** default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır */
     static int pos = 0;
 
@@ -92,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public FragmentListener fragmentListener;
     public MusicListSettingsFragment musicListSettingsFragment;
 
-    private FragmentListener fragmentListener;
 
 
     @Override
@@ -155,6 +154,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             }
         });
+    }
+
+    public void listsettingMusicDataDegistir(){
+        denememusicdata.clear();
+        denememusicdata.addAll(MusicList.musicData);
     }
 
     private void searchItem(String text){

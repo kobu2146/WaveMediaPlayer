@@ -3,14 +3,17 @@ package com.wavemediaplayer.settings;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.ArraySet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +29,8 @@ import android.widget.TextView;
 import com.wavemediaplayer.R;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MusicListSettingsFragment extends Fragment {
     private View view;
@@ -34,11 +39,15 @@ public class MusicListSettingsFragment extends Fragment {
     private ArrayList<String> arrayList;
     private Activity activity;
     private ListView listView;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         activity=getActivity();
+        sharedPreferences=PreferenceManager.getDefaultSharedPreferences(activity);
         linearLayout=new LinearLayout(activity);
         LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
         linearLayout.setLayoutParams(params);
@@ -97,6 +106,15 @@ public class MusicListSettingsFragment extends Fragment {
 
             }
             while (songCursor.moveToNext());
+
+
+
+
+
+
+
+
+
             myAdapter=new MyAdapter(activity, R.layout.fragment_settings_musiclist_item,arrayList);
             listView.setAdapter(myAdapter);
         }
@@ -109,6 +127,7 @@ public class MusicListSettingsFragment extends Fragment {
         private ArrayList<String> list;
         private Context context;
         private int resource;
+        private Set<String> adapterSet;
 
 
         public MyAdapter(@NonNull Context context, int resource,ArrayList<String> list) {
@@ -116,11 +135,12 @@ public class MusicListSettingsFragment extends Fragment {
             this.context=context;
             this.resource=resource;
             this.list=list;
+            adapterSet=sharedPreferences.getStringSet("listsettings",new HashSet<String>());
         }
 
         @NonNull
         @Override
-        public View getView(int position,@Nullable View convertView,@NonNull ViewGroup parent) {
+        public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             ViewHolder viewHolder;
             if(convertView==null){
                 viewHolder=new ViewHolder();
@@ -133,11 +153,43 @@ public class MusicListSettingsFragment extends Fragment {
             }
             viewHolder.holderTextView.setText(list.get(position));
 
+            for (String veri:adapterSet){
+                Log.e("oncreate",veri);
+            }
+
+            if(adapterSet.contains(arrayList.get(position))) viewHolder.holderCheckBox.setChecked(true);
+            else viewHolder.holderCheckBox.setChecked(false);
 
             viewHolder.holderCheckBox.setChecked(viewHolder.holderCheckBox.isChecked());
             viewHolder.holderCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    editor=sharedPreferences.edit();
+                    Set<String> set;
+                    set = sharedPreferences.getStringSet("listsettings",new HashSet<String>());
+                    if(isChecked){
+                        if(!set.contains(arrayList.get(position))) {
+                            set.add(arrayList.get(position));
+                        }
+
+                    }else{
+                        if(set.contains(arrayList.get(position))) {
+                            for (String veri:set){
+                                Log.e("checkremove oldu",veri);
+                            }
+                            set.remove(arrayList.get(position));
+
+                        }
+                    }
+
+                    editor.clear();
+                    editor.putStringSet("listsettings",set);
+                    editor.apply();
+                    editor.commit();
+
+                    for (String veri:sharedPreferences.getStringSet("listsettings",new HashSet<String>())){
+                        Log.e("son aşama",veri);
+                    }
 
                 }
             });

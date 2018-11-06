@@ -3,8 +3,10 @@ package com.wavemediaplayer.fragments;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 
 import com.wavemediaplayer.MainActivity;
+import com.wavemediaplayer.adapter.MusicList;
 
 public class FragmentListener implements FragmentInterface {
     private MainActivity mainActivity;
@@ -42,6 +44,10 @@ public class FragmentListener implements FragmentInterface {
                 if(frag.isAdded()){
                     fragmentTransaction.remove(frag);
                     fragmentTransaction.commit();
+                    if(frag.getClass().getSimpleName().equals("MusicListSettingsFragment")){
+                        mainActivity.musicList.getMusic("");
+                        mainActivity.listsettingMusicDataDegistir();
+                    }
                     return true;
                 }
             }

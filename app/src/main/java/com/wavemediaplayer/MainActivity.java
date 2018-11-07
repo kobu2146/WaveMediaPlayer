@@ -1,6 +1,7 @@
 package com.wavemediaplayer;
 
 
+import android.media.AudioManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -25,6 +26,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
+import com.sdsmdg.harjot.crollerTest.Croller;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
@@ -83,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public FolderFragment folderFragment;
     /** fat linstener event knk */
-    FPlayListener fPlayListener;
+    public static FPlayListener fPlayListener;
     public MusicList musicList;
     /** default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır */
     static int pos = 0;
@@ -101,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         tabsHeigh=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,50,getResources().getDisplayMetrics());
         context = this;
         mainView = getWindow().getDecorView().findViewById(android.R.id.content);
@@ -132,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //  PlayerFragment fragmentS1 = new PlayerFragment();
         //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
     }
+
+
 
 
     private void editTextDegisiklikKontrol(){

@@ -48,6 +48,7 @@
 
             <com.sdsmdg.harjot.crollerTest.Croller
                 android:id="@+id/equalizerVolume"
+                app:label="Volume"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 app:back_circle_color="#EDEDED"
@@ -62,6 +63,7 @@
                 app:start_offset="45" />
             <com.sdsmdg.harjot.crollerTest.Croller
                 android:id="@+id/equalizerRL"
+                app:label="Balance"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 app:back_circle_color="#EDEDED"
@@ -77,6 +79,7 @@
 
             <com.sdsmdg.harjot.crollerTest.Croller
                 android:id="@+id/equalizerBass"
+                app:label="Bass"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 app:back_circle_color="#EDEDED"

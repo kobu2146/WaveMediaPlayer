@@ -2,6 +2,7 @@ package com.wavemediaplayer.play;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
 import android.net.Uri;
@@ -57,6 +58,7 @@ public class PlayMusic {
         this.mytext2 = mytext2;
         this.myimageview = myimageview;
         this.handler = handler;
+
     }
 
 
@@ -115,8 +117,9 @@ public class PlayMusic {
         catch (Exception ex){
             Log.e("HATA",ex.getMessage());
         }
-        if(mediaPlayer!=null && initilationMediaPlayer==null){
+        if(initilationMediaPlayer==null){
             initilationMediaPlayer=new InitilationMediaPlayer(context).init(mediaPlayer);
+            Log.e("inittt","equalizer initlendi");
         }
 
     }

@@ -348,7 +348,11 @@ public class EqualizerFragment extends Fragment{
 
         // Create the Visualizer object and attach it to our media player.
         mVisualizer = new Visualizer(mediaPlayer.getAudioSessionId());
-        mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
+        try {
+            mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
+        }catch (Exception e){
+
+        }
 
         mVisualizer.setDataCaptureListener(new Visualizer.OnDataCaptureListener() {
             public void onWaveFormDataCapture(Visualizer visualizer, byte[] bytes,

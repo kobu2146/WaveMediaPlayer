@@ -8,6 +8,7 @@
         android:layout_width="@dimen/notification_expanded_height"
         android:layout_height="@dimen/notification_expanded_height"
         android:scaleType="centerCrop"
+        android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"/>
 
@@ -50,6 +51,7 @@
             android:scaleType="fitCenter"
             android:layout_weight="1.0" />
     </LinearLayout>
+
     <ImageView
         android:background="?android:dividerHorizontal"
         android:layout_width="wrap_content"
@@ -88,4 +90,5 @@
             android:singleLine="true"
             />
     </LinearLayout>
+
 </RelativeLayout>

@@ -35,6 +35,7 @@ import com.wavemediaplayer.fragments.PlayListsFragment;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mfcontroller.MainManager;
 import com.wavemediaplayer.settings.FolderFragment;
+import com.wavemediaplayer.settings.MusicListSettingsFragment;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
 import java.util.ArrayList;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static SlideAndDragListView musicListView;
     List<View> tempListLayout = new ArrayList<>();
     private MusicData mDraggedEntity;
+
     public EditText edit_search;
     ArrayList<ArrayList<MusicData>> geciciAramaSonuclari = new ArrayList<>();
     ArrayList<MusicData> tempData = new ArrayList<>();
@@ -79,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public FolderFragment folderFragment;
     /** fat linstener event knk */
-    public static FPlayListener fPlayListener;
+    FPlayListener fPlayListener;
     MusicList musicList;
     /** default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır */
     static int pos = 0;
@@ -87,8 +89,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     SlidingUpPanelLayout mLayout;
+    public FragmentListener fragmentListener;
+    public MusicListSettingsFragment musicListSettingsFragment;
 
-    private FragmentListener fragmentListener;
 
 
     @Override
@@ -103,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
         fragmentListener=new FragmentListener(this);
+        musicListSettingsFragment=new MusicListSettingsFragment();
         folderFragment=new FolderFragment();
         new MainManager(this);
 
@@ -152,6 +156,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
+    public void listsettingMusicDataDegistir(){
+        denememusicdata.clear();
+        denememusicdata.addAll(MusicList.musicData);
+    }
+
     private void searchItem(String text){
         MusicList.musicData.clear();
         for(int i=0;i<denememusicdata.size();i++){
@@ -193,7 +202,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void f_createListener(){
         mLayout =  findViewById(R.id.activity_main);
         fPlayListener = new FPlayListener(this,mainView);
-
+        /** burada equalizeri başlangıçta çalıştırıyorum ki sonradan equalizere tıkladığında ses değişmesin ayarlar önceden yapılsın diye*/
+        if(mediaPlayer!=null){
+            fragmentListener.addFragment(equalizerFragment);
+        }
         /** Herhangi bit posizyon yok ise default 0'dır */
         FPlayListener.currentMusicPosition = pos;
         fPlayListener.f_ListenerEvent(pos);
@@ -378,6 +390,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         {
             case R.id.menu_search: mainMenu.search(); break;
             case R.id.menu_folder: mainMenu.folder(); break;
+            case R.id.menu_musiclist: mainMenu.musiclist(); break;
         }
         return true;
     }

@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
+import com.sdsmdg.harjot.crollerTest.Croller;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
@@ -70,8 +71,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public EditText edit_search;
     ArrayList<ArrayList<MusicData>> geciciAramaSonuclari = new ArrayList<>();
     ArrayList<MusicData> tempData = new ArrayList<>();
-     /** Templist'te multi choise ile secilen coklu secimlerin pozisyonları tutuluyor */
-    ArrayList<Integer> tempList = new ArrayList<>();
+    /** Templist'te multi choise ile secilen coklu secimlerin pozisyonları tutuluyor */
+
+     ArrayList<Integer> tempList = new ArrayList<>();
 
     /** listview de secilen item sayısı multichoise icin */
     int list_selected_count = 0;
@@ -88,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public MusicList musicList;
     /** default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır */
     static int pos = 0;
+
     private ArrayList<MusicData> denememusicdata;
 
     public static final String KARISIK_CAL = "KARISIK CAL";
@@ -212,10 +215,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mainEqualizer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 //fat burası equalizeri açmak için
                 if(mediaPlayer!=null){
                     fragmentListener.addFragment(equalizerFragment);
                 }
+
+
             }
         });
     }
@@ -227,6 +233,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         /** burada equalizeri başlangıçta çalıştırıyorum ki sonradan equalizere tıkladığında ses değişmesin ayarlar önceden yapılsın diye*/
         if(mediaPlayer!=null){
             fragmentListener.addFragment(equalizerFragment);
+//            fragmentListener.hideFragment(equalizerFragment);
         }
         /** Herhangi bit posizyon yok ise default 0'dır */
         FPlayListener.currentMusicPosition = pos;
@@ -248,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         // pl.play(MusicList.locationList.get(position));
                         FPlayListener.calmaListesiMuzik = false;
                         FPlayListener.currentMusicPosition = position;
-                        PlayMusic.prevMusicDAta = MusicList.musicData.get(position);
+//                        fPlayListener.playMusic(position);
                         pos = position;
                         fPlayListener.playMusic(position);
 
@@ -309,6 +316,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         list_selected_count = 0;
                         mode.finish();
                         tempList.clear();
+
+
                         return true;
 
                     case R.id.itemPlayList:
@@ -316,6 +325,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         list_selected_count = 0;
                         layoutListClear(tempListLayout);
                         mode.finish();
+                        playlistInfo(tempList);
+
+
 
                     default:
                         return false;
@@ -376,7 +388,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onBackPressed() {
 
-        if(fragmentListener.removeFragment(folderFragment,equalizerFragment)){
+        if(fragmentListener.removeFragment(folderFragment,equalizerFragment,oynatmaListesiFragment,musicListSettingsFragment)){
             return;
         }
 
@@ -391,6 +403,39 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 return;
             }
         }
+
+//
+//        /** fragment işlemleri burada yapılacak sürekli Commit yapılmasın diye managerler falan ortak kullanılsın diye*/
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//
+//        if(folderFragment!=null){
+//            if(folderFragment.isAdded()){
+//                fragmentTransaction.remove(folderFragment);
+//                fragmentTransaction.commit();
+//                return;
+//            }
+//        }
+//
+//
+//
+//
+//        if( equalizerFragment!=null && !equalizerFragment.isHidden()){
+//            fragmentTransaction.hide(equalizerFragment);
+//            fragmentTransaction.commit();
+//            return;
+//        }
+//
+//
+//
+//        if( oynatmaListesiFragment!= null && !oynatmaListesiFragment.isHidden()){
+//            Log.e("hidden","deil");
+//            getSupportFragmentManager().beginTransaction().hide(oynatmaListesiFragment).commit();
+//            return;
+//        }
+//
+
+
         if (mLayout != null &&
                 (mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
             mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);

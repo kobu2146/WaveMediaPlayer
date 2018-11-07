@@ -1,6 +1,7 @@
 package com.wavemediaplayer.fragments;
 
 import android.content.SharedPreferences;
+import android.media.VolumeShaper;
 import android.os.Debug;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -29,6 +30,7 @@ import com.wavemediaplayer.visaulizer.VerticalSeekBar;
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.visaulizer.VisualizerView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static com.wavemediaplayer.play.PlayMusic.mediaPlayer;
@@ -48,6 +50,9 @@ public class EqualizerFragment extends Fragment{
     private Spinner equalizerPresetSpinner;
     private ArrayList<String> equalizerPresetNames;
     private boolean initSpinner=false;
+
+;
+
     //    private TextView mStatusTextView;
     // The onCreateView method is called when Fragment should create its View object hierarchy,
     // either dynamically or via XML layout inflation.
@@ -77,7 +82,6 @@ public class EqualizerFragment extends Fragment{
             }
         });
 
-
         clickListener();
         createCroller();
         return view;
@@ -104,42 +108,57 @@ public class EqualizerFragment extends Fragment{
 //
 //        m.setStereoVolume(leftVolume, rightVolume);
 
+//
+//        VolumeShaper.Configuration config =
+//                new VolumeShaper.Configuration.Builder()
+//                        .setDuration(3000)
+//                        .setCurve(new float[] {0.f, 1.f}, new float[] {0.f, 1.f})
+//                        .setInterpolatorType(VolumeShaper.Configuration.INTERPOLATOR_TYPE_LINEAR)
+//                        .build();
+//
+
+        final int prog=sharedPreferences.getInt("balance",50);
         equalizerRL=view.findViewById(R.id.equalizerRL);
         equalizerRL.setMax(100);
-        equalizerRL.setProgress(50);
+        equalizerRL.setProgress(prog);
         equalizerRL.setOnProgressChangedListener(new Croller.onProgressChangedListener() {
             @Override
             public void onProgressChanged(int progress) {
-                if(progress<50){
-                    mediaPlayer.setVolume(progress/50f,50/50f);
-                }else if(progress>50){
-                   mediaPlayer.setVolume(50/50f,(50-(progress-50))/50f);
+                sharedAdd("balance",progress);
+                if(progress<49){
+                    Log.e(String.valueOf((float)progress/50f),String.valueOf(1f-(float)progress/50f));
+                    mediaPlayer.setVolume((float)progress/50f,1f);
+                }else if(progress>51){
+                    Log.e("1",String.valueOf((50f-((float)progress-50f))/50f));
+                    mediaPlayer.setVolume(1f,(50f-((float)progress-50f))/50f);
                 }else{
-                    mediaPlayer.setVolume(50/50f,50/50f);
+                    equalizerRL.setProgress(50);
+                    mediaPlayer.setVolume(1f,1f);
                 }
+
+
             }
         });
 
 
         equalizerBass=view.findViewById(R.id.equalizerBass);
         equalizerBass.setMax(1000);
-
-
+        int bs=sharedPreferences.getInt("bass",500);
+        equalizerBass.setProgress(bs);
         final BassBoost bassBoost = new BassBoost(1, mediaPlayer.getAudioSessionId());
         bassBoost.setEnabled(true);
-
-
-
-
         equalizerBass.setOnProgressChangedListener(new Croller.onProgressChangedListener() {
             @Override
             public void onProgressChanged(int progress) {
+                sharedAdd("bass",progress);
                 bassBoost.setStrength((short)progress);
             }
         });
 
 
     }
+
+
 
     private void clickListener(){
 

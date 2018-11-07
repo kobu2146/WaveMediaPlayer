@@ -41,7 +41,7 @@ public class NotificationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
             showNotification();
-            Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
             mediaPlayer=PlayMusic.mediaPlayer;
             list=MusicList.musicData;
 

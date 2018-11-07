@@ -1,12 +1,15 @@
 package com.wavemediaplayer.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -19,6 +22,7 @@ import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.Adapter;
 import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.main.FPlayListener;
+import com.wavemediaplayer.play.PlayMusic;
 import com.yydcdut.sdlv.Menu;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
@@ -37,7 +41,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
 
 
     public static SlideAndDragListView oynatma_listesi;
-    ArrayList<String> oynat_list = new ArrayList<>();
+    public static ArrayList<String> oynat_list = new ArrayList<>();
     public static ArrayList<MusicData> music_oynat_list = new ArrayList<>();
 
 
@@ -45,6 +49,9 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
     private MusicData mDraggedEntity;
     Adapter adapterPlayList;
     public static Context context;
+
+    private boolean isMulti = false;
+    int list_selected_count = 0;
     // Tum oynatma listesini gpruntulemek icin
     public static boolean isList = true;
 
@@ -59,6 +66,9 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
         super.onCreate(savedInstanceState);
 
     }
+
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,8 +95,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
          return view;
     }
 
-    public void getCalmaListeleri(){
-
+    public static void getCalmaListeleri(){
         oynat_list.clear();
         SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences( "WAVE MUSIC PLAYLIST", Context.MODE_PRIVATE);
         /** tum playlistleri ve iceriklerini cekiyor cekiyor */
@@ -100,8 +109,45 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                 android.R.layout.simple_list_item_1, android.R.id.text1, oynat_list);
         oynatma_listesi.setMenu(new Menu(false));
         oynatma_listesi.setAdapter(adapter);
+
+
+
         isList = true;
     }
+
+    private void listviewMultiChoise(){
+        oynatma_listesi.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, android.view.Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, android.view.Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+
+            }
+        });
+    }
+
+    private void itemCheckedState(ActionMode mode, int position, long id, boolean checked){
+
+     }
+
 
     public void getCalmaListeleriSarkilari(){
         adapterPlayList = new Adapter(context,R.layout.custom_list_item,music_oynat_list,1);
@@ -114,50 +160,53 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
     }
 
     private void clickEvent(){
-
         oynatma_listesi.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                if (isList){
-                    music_oynat_list.clear();
-                    SharedPreferences sharedPreferences  = context.getSharedPreferences("WAVE MUSIC PLAYLIST", Context.MODE_PRIVATE);
-                    Map<String, ?> allEntries = sharedPreferences.getAll();
-                    for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-                        try {
-                            Log.e("map values", entry.getKey() + ": " + entry.getValue().toString());
-                            if (entry.getKey().equals(oynat_list.get(position))){
-                                JSONArray jsonArray = new JSONArray(entry.getValue().toString());
-                                Log.e("xxxxx",jsonArray.toString());
-                                for (int i = 0;i<jsonArray.length();i++){
+                if (!isMulti){
+                    if (isList){
+                        music_oynat_list.clear();
+                        SharedPreferences sharedPreferences  = context.getSharedPreferences("WAVE MUSIC PLAYLIST", Context.MODE_PRIVATE);
+                        Map<String, ?> allEntries = sharedPreferences.getAll();
+                        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+                            try {
+                                Log.e("map values", entry.getKey() + ": " + entry.getValue().toString());
+                                if (entry.getKey().equals(oynat_list.get(position))){
+                                    JSONArray jsonArray = new JSONArray(entry.getValue().toString());
+                                    Log.e("xxxxx",jsonArray.toString());
+                                    for (int i = 0;i<jsonArray.length();i++){
 
 
-                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    String title = jsonObject.getString("title");
-                                    String artist = jsonObject.getString("artist");
-                                    int thumbnail = jsonObject.getInt("thumbnail");
-                                    String duration = jsonObject.getString("duration");
-                                    String location = jsonObject.getString("location");
-                                    String ids = jsonObject.getString("id");
+                                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                        String title = jsonObject.getString("title");
+                                        String artist = jsonObject.getString("artist");
+                                        int thumbnail = jsonObject.getInt("thumbnail");
+                                        String duration = jsonObject.getString("duration");
+                                        String location = jsonObject.getString("location");
+                                        String ids = jsonObject.getString("id");
 
-                                    music_oynat_list.add(new MusicData(title,artist,thumbnail,duration,location,ids));
+                                        music_oynat_list.add(new MusicData(title,artist,thumbnail,duration,location,ids));
+                                    }
                                 }
-                            }
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
+                        getCalmaListeleriSarkilari();
+                        isList = false;
                     }
-                    getCalmaListeleriSarkilari();
-                    isList = false;
+                    else {
+                        FPlayListener.currentMusicPosition = position;
+                        PlayMusic.prevMusicDAta = music_oynat_list.get(position);
+                        fPlayListener.song_title.setText(music_oynat_list.get(position).getTitles());
+                        fPlayListener.song_artis.setText(music_oynat_list.get(position).getArtist());
+                        fPlayListener.playFromPlayList(music_oynat_list.get(position).getLocation());
+                    }
                 }
-                else {
-                    FPlayListener.currentMusicPosition = position;
-                    fPlayListener.song_title.setText(music_oynat_list.get(position).getTitles());
-                    fPlayListener.song_artis.setText(music_oynat_list.get(position).getArtist());
-                    fPlayListener.playFromPlayList(music_oynat_list.get(position).getLocation());
-                }
+
 
             }
         });
@@ -165,18 +214,27 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
 
     @Override
     public void onDragViewStart(int beginPosition) {
-        mDraggedEntity = music_oynat_list.get(beginPosition);
+        if (!isList){
+            mDraggedEntity = music_oynat_list.get(beginPosition);
+        }
+
     }
 
     @Override
     public void onDragDropViewMoved(int fromPosition, int toPosition) {
-        MusicData applicationInfo = music_oynat_list.remove(fromPosition);
-        music_oynat_list.add(toPosition, applicationInfo);
+        if (!isList){
+            MusicData applicationInfo = music_oynat_list.remove(fromPosition);
+            music_oynat_list.add(toPosition, applicationInfo);
+        }
+
     }
 
     @Override
     public void onDragViewDown(int finalPosition) {
-        music_oynat_list.set(finalPosition, mDraggedEntity);
+        if (!isList){
+            music_oynat_list.set(finalPosition, mDraggedEntity);
+        }
+
     }
 
     @Override
@@ -189,43 +247,51 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
 
     @Override
     public int onMenuItemClick(View v, int itemPosition, int buttonPosition, int direction) {
-
-        switch (direction) {
-            case com.yydcdut.sdlv.MenuItem.DIRECTION_LEFT:
-                switch (buttonPosition) {
-                    case 0:
-                        return com.yydcdut.sdlv.Menu.ITEM_NOTHING;
-                    case 1:
-                        return com.yydcdut.sdlv.Menu.ITEM_SCROLL_BACK;
-                }
-                break;
-            case com.yydcdut.sdlv.MenuItem.DIRECTION_RIGHT:
-                switch (buttonPosition) {
-                    case 0:
-                        return com.yydcdut.sdlv.Menu.ITEM_SCROLL_BACK;
-                    case 1:
-                        return com.yydcdut.sdlv.Menu.ITEM_DELETE_FROM_BOTTOM_TO_TOP;
-                }
+        if (!isList){
+            switch (direction) {
+                case com.yydcdut.sdlv.MenuItem.DIRECTION_LEFT:
+                    switch (buttonPosition) {
+                        case 0:
+                            return com.yydcdut.sdlv.Menu.ITEM_NOTHING;
+                        case 1:
+                            return com.yydcdut.sdlv.Menu.ITEM_SCROLL_BACK;
+                    }
+                    break;
+                case com.yydcdut.sdlv.MenuItem.DIRECTION_RIGHT:
+                    switch (buttonPosition) {
+                        case 0:
+                            return com.yydcdut.sdlv.Menu.ITEM_SCROLL_BACK;
+                        case 1:
+                            return com.yydcdut.sdlv.Menu.ITEM_DELETE_FROM_BOTTOM_TO_TOP;
+                    }
+            }
         }
+
         return com.yydcdut.sdlv.Menu.ITEM_NOTHING;
     }
 
     @Override
     public void onItemDeleteAnimationFinished(View view, int position) {
-        music_oynat_list.remove(position - oynatma_listesi.getHeaderViewsCount());
-        adapterPlayList.notifyDataSetChanged();
+        if (!isList){
+            music_oynat_list.remove(position - oynatma_listesi.getHeaderViewsCount());
+            adapterPlayList.notifyDataSetChanged();
+        }
+
     }
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        switch (scrollState) {
-            case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-                break;
-            case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-                break;
-            case AbsListView.OnScrollListener.SCROLL_STATE_FLING:
-                break;
+        if (!isList){
+            switch (scrollState) {
+                case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
+                    break;
+                case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
+                    break;
+                case AbsListView.OnScrollListener.SCROLL_STATE_FLING:
+                    break;
+            }
         }
+
     }
 
     @Override

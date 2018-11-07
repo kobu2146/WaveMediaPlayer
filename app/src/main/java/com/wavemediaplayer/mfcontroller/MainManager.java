@@ -39,8 +39,19 @@ public class MainManager {
                 }else{
                     activity.musicListView.setVisibility(View.GONE);
                     activity.edit_search.setVisibility(View.GONE);
+                    if (i == 1){
+                        Log.e("i",""+i);
+                        if (MainActivity.playList_Ekleme_Yapildi){
+                            OynatmaListesiFragment.getCalmaListeleri();
+                            MainActivity.playList_Ekleme_Yapildi = false;
+                        }
+
+                    }
+
+
                 }
-                Log.e(String.valueOf(i1),String.valueOf(i));
+
+               // Log.e(String.valueOf(i1),String.valueOf(i));
             }
 
             @Override

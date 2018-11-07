@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wavemediaplayer.MainActivity;
+import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.main.FPlayListener;
@@ -33,6 +34,7 @@ import java.util.Random;
 public class PlayMusic {
 
     public static boolean karisikCal = true;
+    public static int tekrarla = 0;
 
     private Context context;
     public static MediaPlayer mediaPlayer;
@@ -45,6 +47,9 @@ public class PlayMusic {
     private BassBoost bassBoost;
 
     private static String playPrev = "";
+    public static MusicData prevMusicDAta;
+
+
     /***/
 
 
@@ -105,8 +110,9 @@ public class PlayMusic {
                     }
                 }
                 else {
-                    Log.e("Dosya","Belirtilen dosya yok");
-                    Toast.makeText(context,"Hata",Toast.LENGTH_LONG).show();
+                    Log.e("File not found","Belirtilen dosya yok");
+                    Toast.makeText(context,"File not found",Toast.LENGTH_LONG).show();
+                    calmayaDevamEt(true);
                 }
         }
         catch (Exception ex){
@@ -114,60 +120,120 @@ public class PlayMusic {
         }
     }
 
-    private void calmayaDevamEt(){
-        Log.e("Music","bitti");
+    public void calmayaDevamEt(boolean ileriCal){
         if (!karisikCal){ // Sıralı calma aktifse
-            Log.e("sıralı","cal");
             if (!FPlayListener.calmaListesiMuzik){//Ana playerdan calınacaksa
-                FPlayListener.currentMusicPosition++;
-                Log.e("Ana","Music player");
+                if (tekrarla == 0 || tekrarla == 2){
+                    if (ileriCal){ FPlayListener.currentMusicPosition++; }
+                    else {
+                        if (  FPlayListener.currentMusicPosition != 0){FPlayListener.currentMusicPosition--;}
+                        else { FPlayListener.currentMusicPosition = 0; }
+                    }
+                }
+
+
                 if (FPlayListener.currentMusicPosition < MusicList.musicData.size()){
-                    Log.e("current position",""+FPlayListener.currentMusicPosition);
+                    prevMusicDAta = MusicList.musicData.get(FPlayListener.currentMusicPosition);
                     MainActivity.fPlayListener.song_artis.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getArtist());
                     MainActivity.fPlayListener.song_title.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getTitles());
                     playMusic(MusicList.musicData.get(FPlayListener.currentMusicPosition).getLocation());
                 }
                 else {
-                    FPlayListener.currentMusicPosition = 0;
-                    MainActivity.fPlayListener.song_artis.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getArtist());
-                    MainActivity.fPlayListener.song_title.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getTitles());
-                    playMusic(MusicList.musicData.get( FPlayListener.currentMusicPosition).getLocation());
+                    if (tekrarla == 0){
+                        FPlayListener.currentMusicPosition = 0;
+                        prevMusicDAta = MusicList.musicData.get(FPlayListener.currentMusicPosition);
+                        MainActivity.fPlayListener.song_artis.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getArtist());
+                        MainActivity.fPlayListener.song_title.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getTitles());
+                        playMusic(MusicList.musicData.get( FPlayListener.currentMusicPosition).getLocation());
+                    }
+
                 }
             }
             else { //Playlistden veya baska biryerden ise
+                if (tekrarla == 0 || tekrarla == 2){
+                    if (ileriCal){ FPlayListener.currentMusicPosition++; }
+                    else {
+                        if (  FPlayListener.currentMusicPosition != 0){FPlayListener.currentMusicPosition--;}
+                        else { FPlayListener.currentMusicPosition = 0; }
+                    }
+                }
                 FPlayListener.currentMusicPosition++;
                 if (OynatmaListesiFragment.music_oynat_list.size() > FPlayListener.currentMusicPosition){
+                    prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition);
                     MainActivity.fPlayListener.song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getArtist());
                     MainActivity.fPlayListener.song_title.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getTitles());
                     MainActivity.fPlayListener.playFromPlayList(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getLocation());
                 }
                 else {
-                    FPlayListener.currentMusicPosition = 0;
-                    MainActivity.fPlayListener.song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getArtist());
-                    MainActivity.fPlayListener.song_title.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getTitles());
-                    MainActivity.fPlayListener.playFromPlayList(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getLocation());
+                    if (tekrarla == 0){
+                        FPlayListener.currentMusicPosition = 0;
+                        prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition);
+                        MainActivity.fPlayListener.song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getArtist());
+                        MainActivity.fPlayListener.song_title.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getTitles());
+                        MainActivity.fPlayListener.playFromPlayList(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getLocation());
+                    }
+
                 }
 
             }
         }
+        // Karısık sarkı calma
         else {
+            Log.e("karisik","cal");
+            // ana music playerdan karısık calma
             if (!FPlayListener.calmaListesiMuzik){
-                int rndPositin = new Random().nextInt(MusicList.musicData.size());
-                Log.e("rnd",""+rndPositin);
-                if (rndPositin <= MusicList.musicData.size()){
-                    MainActivity.fPlayListener.song_artis.setText(MusicList.musicData.get(rndPositin).getArtist());
-                    MainActivity.fPlayListener.song_title.setText(MusicList.musicData.get(rndPositin).getTitles());
-                    playMusic(MusicList.musicData.get(rndPositin).getLocation());
+                if (tekrarla == 0 || tekrarla == 2 || tekrarla == 3){
+                    //İleri butonuna tıklandıgı zaman gecerli sarkıyı tekrarlada ise bir sonraki sarkıya atlattrırıp tekrala = 1 olacak
+                    if (tekrarla == 3){
+                        tekrarla = 1;
+                    }
+                    int  rndPositin = new Random().nextInt(MusicList.musicData.size());
+                    if (rndPositin <= MusicList.musicData.size()){
+                        prevMusicDAta = MusicList.musicData.get(rndPositin);
+                        Log.e("prevdata",MusicList.musicData.get(rndPositin).getArtist());
+                        MainActivity.fPlayListener.song_artis.setText(MusicList.musicData.get(rndPositin).getArtist());
+                        MainActivity.fPlayListener.song_title.setText(MusicList.musicData.get(rndPositin).getTitles());
+                        playMusic(MusicList.musicData.get(rndPositin).getLocation());
+                    }
+                }
+                else if (tekrarla == 1){
+                    if (prevMusicDAta != null){
+                        MainActivity.fPlayListener.song_artis.setText(prevMusicDAta.getArtist());
+                        MainActivity.fPlayListener.song_title.setText(prevMusicDAta.getTitles());
+                        playMusic(prevMusicDAta.getLocation());
+                    }
                 }
             }
+            // Calma listesinden karısık calma
             else {
-                int rndPositin = new Random().nextInt(OynatmaListesiFragment.music_oynat_list.size());
-                if (rndPositin <= OynatmaListesiFragment.music_oynat_list.size()){
-                    MainActivity.fPlayListener.song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(rndPositin).getArtist());
-                    MainActivity.fPlayListener.song_title.setText(OynatmaListesiFragment.music_oynat_list.get(rndPositin).getTitles());
-                    MainActivity.fPlayListener.playFromPlayList(OynatmaListesiFragment.music_oynat_list.get(rndPositin).getLocation());
+                if (tekrarla == 0 || tekrarla == 2 || tekrarla == 3){
+                    //İleri butonuna tıklandıgı zaman gecerli sarkıyı tekrarlada ise bir sonraki sarkıya atlattrırıp tekrala = 1 olacak
+                    if (tekrarla == 3){
+                        tekrarla = 1;
+                    }
+                    int  rndPositin = new Random().nextInt(OynatmaListesiFragment.music_oynat_list.size());
+                    if (rndPositin <= OynatmaListesiFragment.music_oynat_list.size()){
+                        prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(rndPositin);
+                        MainActivity.fPlayListener.song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(rndPositin).getArtist());
+                        MainActivity.fPlayListener.song_title.setText(OynatmaListesiFragment.music_oynat_list.get(rndPositin).getTitles());
+                        MainActivity.fPlayListener.playFromPlayList(OynatmaListesiFragment.music_oynat_list.get(rndPositin).getLocation());
+                    }
                 }
+                else if (tekrarla == 1){
+                    if (prevMusicDAta != null){
+                        MainActivity.fPlayListener.song_artis.setText(prevMusicDAta.getArtist());
+                        MainActivity.fPlayListener.song_title.setText(prevMusicDAta.getTitles());
+                        playMusic(prevMusicDAta.getLocation());
+                    }
+                }
+                //İleri butonuna tıklandıgı zaman gecerli sarkıyı tekrarlada ise bir sonraki sarkıya atlattrırıp tekrala = 1 olacak
+
+
             }
+
+
+
+
 
 
         }
@@ -188,7 +254,7 @@ public class PlayMusic {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
-            mediaPlayer = null;
+            //mediaPlayer = null;
             if (handler != null) {
                 handler.removeCallbacks(runnable);
             }
@@ -248,17 +314,16 @@ public class PlayMusic {
                     if(mediaPlayer!=null){
                         myseekbar.setProgress(mediaPlayer.getCurrentPosition());
                         mytext1.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getCurrentPosition())));
-                        Log.e("getDuration",""+mediaPlayer.getDuration());
-                        Log.e("getCurrentDuration",""+mediaPlayer.getCurrentPosition());
+
                         int current = mediaPlayer.getCurrentPosition();
                         int total =  mediaPlayer.getDuration();
                         if (current >= total){
-                            Log.e("girdi","calmaya devam et");
 
-                            calmayaDevamEt();
+
+                            calmayaDevamEt(true);
                         }
                         else if (total - current <= 300){
-                            calmayaDevamEt();
+                            calmayaDevamEt(true);
                         }
                     }
 

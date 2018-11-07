@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.adapter.MusicList;
 
 import org.json.JSONArray;
@@ -91,6 +92,8 @@ public class CreatePlayList {
         editor.putString(key,value);
 
         editor.apply();
+
+        MainActivity.playList_Ekleme_Yapildi = true;
 
 
 

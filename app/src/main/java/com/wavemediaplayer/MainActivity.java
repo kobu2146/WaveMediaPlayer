@@ -1,6 +1,7 @@
 package com.wavemediaplayer;
 
 
+import android.content.SharedPreferences;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -34,6 +35,7 @@ import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.fragments.PlayListsFragment;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mfcontroller.MainManager;
+import com.wavemediaplayer.play.PlayMusic;
 import com.wavemediaplayer.settings.FolderFragment;
 import com.wavemediaplayer.settings.MusicListSettingsFragment;
 import com.yydcdut.sdlv.SlideAndDragListView;
@@ -44,10 +46,19 @@ import java.util.List;
 import static com.wavemediaplayer.play.PlayMusic.mediaPlayer;
 
 
+
+
+
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,
         AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener,
         SlideAndDragListView.OnDragDropListener, SlideAndDragListView.OnSlideListener,
         SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnItemDeleteListener {
+
+    /***
+     * @param musicList: Tum muzik listesini
+     *
+     *
+     */
 
     /** Diger sınıflara context ve view gondermek icin */
     public static Context context;
@@ -81,16 +92,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public FolderFragment folderFragment;
     /** fat linstener event knk */
-    FPlayListener fPlayListener;
-    MusicList musicList;
+    public static FPlayListener fPlayListener;
+    public MusicList musicList;
     /** default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır */
     static int pos = 0;
     private ArrayList<MusicData> denememusicdata;
 
+    public static final String KARISIK_CAL = "KARISIK CAL";
+    public static final String SARKIYI_TEKRARLA = "SARKIYI TEKRAR";
 
     SlidingUpPanelLayout mLayout;
     public FragmentListener fragmentListener;
     public MusicListSettingsFragment musicListSettingsFragment;
+
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences2;
+
+    public static boolean playList_Ekleme_Yapildi = false;
+
 
 
 
@@ -103,6 +122,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mainView = getWindow().getDecorView().findViewById(android.R.id.content);
         musicListView = findViewById(R.id.main_musicListView);
         edit_search = findViewById(R.id.edit_search);
+
+        sharedPreferences  = context.getSharedPreferences(KARISIK_CAL, Context.MODE_PRIVATE);
+        sharedPreferences2  = context.getSharedPreferences(SARKIYI_TEKRARLA, Context.MODE_PRIVATE);
+        muzikCalmaBicimleri();
 
 
         fragmentListener=new FragmentListener(this);
@@ -128,6 +151,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         //  PlayerFragment fragmentS1 = new PlayerFragment();
         //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
+    }
+
+    private void muzikCalmaBicimleri(){
+        PlayMusic.karisikCal = sharedPreferences.getBoolean("karisik",true);
+        PlayMusic.tekrarla = sharedPreferences2.getInt("tekrarla",0);
+
+//        editor.putBoolean("karisik",true);
+//        editor2.putInt("tekrarla",0);
+//
+//        editor.apply();
+//        editor2.apply();
     }
 
 
@@ -208,6 +242,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         /** Herhangi bit posizyon yok ise default 0'dır */
         FPlayListener.currentMusicPosition = pos;
+        PlayMusic.prevMusicDAta = MusicList.musicData.get(pos);
         fPlayListener.f_ListenerEvent(pos);
 
         /** Listviewde coklu secim yapmak icin */
@@ -225,6 +260,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         // pl.play(MusicList.locationList.get(position));
                         FPlayListener.calmaListesiMuzik = false;
                         FPlayListener.currentMusicPosition = position;
+                        PlayMusic.prevMusicDAta = MusicList.musicData.get(position);
                         pos = position;
                         fPlayListener.playMusic(position);
 
@@ -332,6 +368,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         DialogFragment dialogFragment = new PlayListsFragment();
         ((PlayListsFragment) dialogFragment).setList(tempLists);
+
         dialogFragment.show(fragmentTransaction,"dialog");
 
 

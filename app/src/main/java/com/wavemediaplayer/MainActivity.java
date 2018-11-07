@@ -69,18 +69,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     ArrayList<ArrayList<MusicData>> geciciAramaSonuclari = new ArrayList<>();
     ArrayList<MusicData> tempData = new ArrayList<>();
     /** Templist'te multi choise ile secilen coklu secimlerin pozisyonları tutuluyor */
+
      ArrayList<Integer> tempList = new ArrayList<>();
+
+    /** listview de secilen item sayısı multichoise icin */
     int list_selected_count = 0;
+
     private Button mainEqualizer;
     private EqualizerFragment equalizerFragment;
     public FrameLayout mainFrame;
+    /** Calma listelerinin goorunecegi listi  oynatmaListesiFragment inde gosterilecek*/
     private OynatmaListesiFragment oynatmaListesiFragment;
+
     public FolderFragment folderFragment;
+    /** fat linstener event knk */
     FPlayListener fPlayListener;
     public MusicList musicList;
+    /** default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır */
     static int pos = 0;
 
     private ArrayList<MusicData> denememusicdata;
+
+
     SlidingUpPanelLayout mLayout;
     public FragmentListener fragmentListener;
     public MusicListSettingsFragment musicListSettingsFragment;
@@ -204,7 +214,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 //            fragmentListener.hideFragment(equalizerFragment);
         }
         /** Herhangi bit posizyon yok ise default 0'dır */
+        FPlayListener.currentMusicPosition = pos;
         fPlayListener.f_ListenerEvent(pos);
+
         /** Listviewde coklu secim yapmak icin */
         multipleChoise();
         listviewOneClickListener();
@@ -218,8 +230,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     if (!isMulti){
                         Log.e("tiklandi",position+" "+"multi "+isMulti);
                         // pl.play(MusicList.locationList.get(position));
-                        fPlayListener.playMusic(position);
+                        FPlayListener.calmaListesiMuzik = false;
+                        FPlayListener.currentMusicPosition = position;
+//                        fPlayListener.playMusic(position);
                         pos = position;
+                        fPlayListener.playMusic(position);
+
+
+
                         fPlayListener.f_ListenerEvent(position);
                         eventClick(view);
                     }
@@ -349,6 +367,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         if(fragmentListener.removeFragment(folderFragment,equalizerFragment,oynatmaListesiFragment,musicListSettingsFragment)){
             return;
+        }
+
+        if( oynatmaListesiFragment!= null && !oynatmaListesiFragment.isHidden()){
+            if (oynatmaListesiFragment.isList){
+                getSupportFragmentManager().beginTransaction().hide(oynatmaListesiFragment).commit();
+                return;
+            }
+            else {
+                oynatmaListesiFragment.getCalmaListeleri();
+                return;
+            }
         }
 
 //

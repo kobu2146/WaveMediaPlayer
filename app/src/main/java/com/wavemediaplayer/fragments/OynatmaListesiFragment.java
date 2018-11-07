@@ -39,7 +39,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
 
     public static SlideAndDragListView oynatma_listesi;
     ArrayList<String> oynat_list = new ArrayList<>();
-    ArrayList<MusicData> music_oynat_list = new ArrayList<>();
+    public static ArrayList<MusicData> music_oynat_list = new ArrayList<>();
 
 
     FPlayListener fPlayListener;
@@ -151,6 +151,9 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                     isList = false;
                 }
                 else {
+                    FPlayListener.currentMusicPosition = position;
+                    fPlayListener.song_title.setText(music_oynat_list.get(position).getTitles());
+                    fPlayListener.song_artis.setText(music_oynat_list.get(position).getArtist());
                     fPlayListener.playFromPlayList(music_oynat_list.get(position).getLocation());
                 }
 

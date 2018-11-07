@@ -1,5 +1,8 @@
 package com.wavemediaplayer.fragments;
 
+import android.content.SharedPreferences;
+import android.os.Debug;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
@@ -40,6 +43,11 @@ public class EqualizerFragment extends Fragment{
     private View view;
     private ArrayList<SeekBar> seekBars;
     private Croller equalizerVolume,equalizerRL,equalizerBass;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+    private Spinner equalizerPresetSpinner;
+    private ArrayList<String> equalizerPresetNames;
+    private boolean initSpinner=false;
     //    private TextView mStatusTextView;
     // The onCreateView method is called when Fragment should create its View object hierarchy,
     // either dynamically or via XML layout inflation.
@@ -47,6 +55,7 @@ public class EqualizerFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
         view=inflater.inflate(R.layout.fragment_equalizer, parent, false);
+        sharedPreferences=PreferenceManager.getDefaultSharedPreferences(view.getContext());
 
         seekBars=new ArrayList<>();
 //        create the equalizer with default priority of 0 & attach to our media player
@@ -151,19 +160,22 @@ public class EqualizerFragment extends Fragment{
      to those of the selected preset*/
     private void equalizeSound() {
 //        set up the spinner
-        ArrayList<String> equalizerPresetNames = new ArrayList<>();
+        equalizerPresetNames = new ArrayList<>();
         ArrayAdapter<String> equalizerPresetSpinnerAdapter
                 = new ArrayAdapter<>(view.getContext(),
                 android.R.layout.simple_spinner_item,
                 equalizerPresetNames);
         equalizerPresetSpinnerAdapter
                 .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner equalizerPresetSpinner =view.findViewById(R.id.spinner);
+        equalizerPresetSpinner =view.findViewById(R.id.spinner);
 
 //        get list of the device's equalizer presets
         for (short i = 0; i < mEqualizer.getNumberOfPresets(); i++) {
             equalizerPresetNames.add(mEqualizer.getPresetName(i));
         }
+        /**custom equlizer ayarları için*/
+        equalizerPresetNames.add("Custom");
+
 
         equalizerPresetSpinner.setAdapter(equalizerPresetSpinnerAdapter);
 
@@ -173,23 +185,42 @@ public class EqualizerFragment extends Fragment{
             @Override
             public void onItemSelected(AdapterView<?> parent,
                                        View view, int position, long id) {
-                //first list item selected by default and sets the preset accordingly
-                mEqualizer.usePreset((short) position);
-//                get the number of frequency bands for this equalizer engine
-                short numberFrequencyBands = mEqualizer.getNumberOfBands();
-//                get the lower gain setting for this equalizer band
-                final short lowerEqualizerBandLevel = mEqualizer.getBandLevelRange()[0];
+                equalizerPresetSpinner.setTag("false");
+                    //first list item selected by default and sets the preset accordingly
+                    sharedAdd("EqualizerPreset",position);
 
-                short equalizerBandIndex;
+                final short lowerEqualizerBandLevel = mEqualizer.getBandLevelRange()[0];
+                final short upperEqualizerBandLevel = mEqualizer.getBandLevelRange()[1];
+
+                    if(!equalizerPresetNames.get(position).equals("Custom")){
+                        mEqualizer.usePreset((short) position);
+
+//                get the number of frequency bands for this equalizer engine
+                        short numberFrequencyBands = mEqualizer.getNumberOfBands();
+//                get the lower gain setting for this equalizer band
+
+
+
+                        short equalizerBandIndex;
 //                set seekBar indicators according to selected preset
-                for (short i = 0; i < numberFrequencyBands; i++) {
-                    equalizerBandIndex = i;
-                    SeekBar seekBar = seekBars.get(i);
+                        for (short i = 0; i < numberFrequencyBands; i++) {
+                            equalizerBandIndex = i;
+                            SeekBar seekBar = seekBars.get(i);
 //                    get current gain setting for this equalizer band
 //                    set the progress indicator of this seekBar to indicate the current gain value
-                    Log.e(String.valueOf(equalizerBandIndex),String.valueOf(mEqualizer.getBandLevel(equalizerBandIndex) - lowerEqualizerBandLevel));
-                    seekBar.setProgress(mEqualizer.getBandLevel(equalizerBandIndex) - lowerEqualizerBandLevel);
-                }
+                            seekBar.setProgress(mEqualizer.getBandLevel(equalizerBandIndex) - lowerEqualizerBandLevel);
+                        }
+                    }else{
+                        for(int i=0;i<seekBars.size();i++){
+                            SeekBar seekBar = seekBars.get(i);
+//                            seekBar.setMax(upperEqualizerBandLevel - lowerEqualizerBandLevel);
+                            Log.e("apsdfpoasjdfpos",String.valueOf((short)sharedPreferences.getInt("band"+String.valueOf(i),1500)));
+                            seekBar.setProgress((short)sharedPreferences.getInt("band"+String.valueOf(i),1500));
+                        }
+                    }
+                equalizerPresetSpinner.setTag("true");
+
+
             }
 
             @Override
@@ -197,6 +228,17 @@ public class EqualizerFragment extends Fragment{
 //                not used
             }
         });
+
+        equalizerPresetSpinner.setSelection(sharedPreferences.getInt("EqualizerPreset",0));
+        initSpinner=true;
+
+    }
+
+    private void sharedAdd(String veri,int i){
+        editor=sharedPreferences.edit();
+        editor.putInt(veri,i);
+        editor.apply();
+        editor.commit();
     }
 
 
@@ -307,9 +349,34 @@ public class EqualizerFragment extends Fragment{
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 public void onProgressChanged(SeekBar seekBar, int progress,
                                               boolean fromUser) {
-                    mEqualizer.setBandLevel(equalizerBandIndex,
-                            (short) (progress + lowerEqualizerBandLevel));
-                    Log.e("naberrrr",String.valueOf(11));
+
+                    mEqualizer.setBandLevel(equalizerBandIndex, (short) (progress + lowerEqualizerBandLevel));
+
+                    if(equalizerPresetSpinner.getTag()!=null && !equalizerPresetSpinner.getTag().equals("false")){
+                        int selection=equalizerPresetSpinner.getSelectedItemPosition();
+                        if(!equalizerPresetNames.get(selection).equals("Custom")){
+
+                            if(equalizerPresetSpinner.getSelectedItemPosition()!=equalizerPresetNames.indexOf("Custom")){
+                                equalizerPresetSpinner.setTag("false");
+                                equalizerPresetSpinner.setSelection(equalizerPresetNames.indexOf("Custom"));
+                                equalizerPresetSpinner.setTag("true");
+
+
+                            }
+
+                            for(int i=0;i<seekBars.size();i++){
+                                sharedAdd("band"+String.valueOf(i),seekBars.get(i).getProgress());
+                            }
+
+                        }else{
+                            sharedAdd("band"+String.valueOf(equalizerBandIndex), (progress));
+                        }
+
+
+                    }
+
+
+//                    sharedAdd("Band"+String.valueOf(equalizerBandIndex),progress+lowerEqualizerBandLevel);
 
                 }
 

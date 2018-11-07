@@ -129,6 +129,7 @@ public class MusicList {
                     editor.commit();
                 }
             }
+            songCursor.close();
         }
 
 

@@ -1,5 +1,6 @@
 package com.wavemediaplayer.fragments;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -53,15 +54,14 @@ public class PlayListsFragment extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_play_lists,
-                container);
+        View view = inflater.inflate(R.layout.fragment_play_lists,container);
         return view;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState){
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
 
        playListView = view.findViewById(R.id.playListView);
        btn_add = view.findViewById(R.id.btn_add);

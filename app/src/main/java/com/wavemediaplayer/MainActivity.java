@@ -37,6 +37,7 @@ import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mfcontroller.MainManager;
 import com.wavemediaplayer.play.PlayMusic;
 import com.wavemediaplayer.settings.FolderFragment;
+import com.wavemediaplayer.settings.InitilationMediaPlayer;
 import com.wavemediaplayer.settings.MusicListSettingsFragment;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
@@ -46,19 +47,10 @@ import java.util.List;
 import static com.wavemediaplayer.play.PlayMusic.mediaPlayer;
 
 
-
-
-
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,
         AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener,
         SlideAndDragListView.OnDragDropListener, SlideAndDragListView.OnSlideListener,
         SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnItemDeleteListener {
-
-    /***
-     * @param musicList: Tum muzik listesini
-     *
-     *
-     */
 
     /** Diger sınıflara context ve view gondermek icin */
     public static Context context;
@@ -92,8 +84,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public FolderFragment folderFragment;
     /** fat linstener event knk */
-    public static FPlayListener fPlayListener;
-    public MusicList musicList;
+    FPlayListener fPlayListener;
+    MusicList musicList;
     /** default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır */
     static int pos = 0;
     private ArrayList<MusicData> denememusicdata;
@@ -242,7 +234,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         /** Herhangi bit posizyon yok ise default 0'dır */
         FPlayListener.currentMusicPosition = pos;
-        PlayMusic.prevMusicDAta = MusicList.musicData.get(pos);
         fPlayListener.f_ListenerEvent(pos);
 
         /** Listviewde coklu secim yapmak icin */
@@ -260,7 +251,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         // pl.play(MusicList.locationList.get(position));
                         FPlayListener.calmaListesiMuzik = false;
                         FPlayListener.currentMusicPosition = position;
-                        PlayMusic.prevMusicDAta = MusicList.musicData.get(position);
                         pos = position;
                         fPlayListener.playMusic(position);
 
@@ -368,7 +358,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         DialogFragment dialogFragment = new PlayListsFragment();
         ((PlayListsFragment) dialogFragment).setList(tempLists);
-
         dialogFragment.show(fragmentTransaction,"dialog");
 
 

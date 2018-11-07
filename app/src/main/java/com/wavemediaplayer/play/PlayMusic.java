@@ -19,13 +19,13 @@ import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.playlist.PlayList;
-
 import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
+import com.wavemediaplayer.settings.InitilationMediaPlayer;
 
 /**
  *
@@ -45,6 +45,7 @@ public class PlayMusic {
     private  Runnable runnable;
     private  Handler handler;
     private BassBoost bassBoost;
+    public InitilationMediaPlayer initilationMediaPlayer;
 
     private static String playPrev = "";
     public static MusicData prevMusicDAta;
@@ -72,9 +73,10 @@ public class PlayMusic {
         try {
             if(isMyServiceRunning(NotificationService.class)){
                 mediaPlayer=NotificationService.mediaPlayer;
-
-
             }
+
+
+
                 if (file.exists()){
                     if (!playPrev.equals(link)){
                         playPrev = link;
@@ -114,10 +116,15 @@ public class PlayMusic {
                     Toast.makeText(context,"File not found",Toast.LENGTH_LONG).show();
                     calmayaDevamEt(true);
                 }
+
         }
         catch (Exception ex){
-            Log.e("FILE NOT FOUND",ex.getMessage());
+            Log.e("HATA",ex.getMessage());
         }
+        if(mediaPlayer!=null && initilationMediaPlayer==null){
+            initilationMediaPlayer=new InitilationMediaPlayer(context).init(mediaPlayer);
+        }
+
     }
 
     public void calmayaDevamEt(boolean ileriCal){
@@ -239,6 +246,7 @@ public class PlayMusic {
         }
     }
 
+
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -250,6 +258,8 @@ public class PlayMusic {
         return false;
     }
 
+
+
     private void stopPlaying() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
@@ -259,13 +269,14 @@ public class PlayMusic {
                 handler.removeCallbacks(runnable);
             }
         }
+
     }
 
     private void seekBarChange(){
-
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
-            public void onPrepared(final MediaPlayer mp) {
+            public void onPrepared(MediaPlayer mp) {
+                Log.e("qqqq","qqqqqqq");
                 myseekbar.setMax(mediaPlayer.getDuration());
                 myseekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                     @Override
@@ -289,6 +300,8 @@ public class PlayMusic {
                     }
                 });
                 mytext2.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getDuration())));
+
+
                 mediaPlayer.start();
             }
         });
@@ -304,6 +317,10 @@ public class PlayMusic {
             }
         }
     }
+
+
+
+
 
     private void setChangeSeconds(){
 
@@ -332,4 +349,7 @@ public class PlayMusic {
             };
             runnable.run();
     }
+
+
+
 }

@@ -42,7 +42,7 @@ public class MainManager {
                     if (i == 1){
                         Log.e("i",""+i);
                         if (MainActivity.playList_Ekleme_Yapildi){
-                            OynatmaListesiFragment.getCalmaListeleri();
+                          new  OynatmaListesiFragment().getCalmaListeleri();
                             MainActivity.playList_Ekleme_Yapildi = false;
                         }
 

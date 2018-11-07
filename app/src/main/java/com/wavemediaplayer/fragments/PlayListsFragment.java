@@ -113,7 +113,6 @@ public class PlayListsFragment extends DialogFragment {
     }
 
     public void setList(ArrayList<Integer> tempList){
-
         music_position = tempList;
 
         for (int i : music_position){

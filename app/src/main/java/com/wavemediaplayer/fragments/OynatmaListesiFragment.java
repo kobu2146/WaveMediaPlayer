@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +22,11 @@ import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.Adapter;
 import com.wavemediaplayer.adapter.MusicData;
+import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.play.PlayMusic;
+import com.wavemediaplayer.playlist.CreatePlayList;
+import com.wavemediaplayer.playlist.PlayList;
 import com.yydcdut.sdlv.Menu;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
@@ -31,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -50,8 +55,13 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
     Adapter adapterPlayList;
     public static Context context;
 
+    private int calma_listesi_pos = 0;
+
+    private ArrayList<Integer> temp_position_list = new ArrayList<>();
+
     private boolean isMulti = false;
     int list_selected_count = 0;
+    List<View> tempListLayout = new ArrayList<>();
     // Tum oynatma listesini gpruntulemek icin
     public static boolean isList = true;
 
@@ -88,15 +98,18 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
         fPlayListener = new FPlayListener(MainActivity.context,MainActivity.mainView);
 
 
-
+        listviewMultiChoise();
+        clickEvent();
 
          getCalmaListeleri();
-         clickEvent();
+
          return view;
     }
 
-    public static void getCalmaListeleri(){
+    public  void getCalmaListeleri(){
+        temp_position_list.clear();
         oynat_list.clear();
+        isList = true;
         SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences( "WAVE MUSIC PLAYLIST", Context.MODE_PRIVATE);
         /** tum playlistleri ve iceriklerini cekiyor cekiyor */
         Map<String, ?> allEntries = sharedPreferences.getAll();
@@ -111,8 +124,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
         oynatma_listesi.setAdapter(adapter);
 
 
-
-        isList = true;
     }
 
     private void listviewMultiChoise(){
@@ -120,11 +131,17 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
 
+                isMulti = true;
+                itemCheckedState(mode, position, id, checked);
             }
 
             @Override
             public boolean onCreateActionMode(ActionMode mode, android.view.Menu menu) {
-                return false;
+                MenuInflater inflater = mode.getMenuInflater();
+                if (isList){inflater.inflate(R.menu.playlist_menu,menu);}
+                else {inflater.inflate(R.menu.calma_listesi_menu,menu); }
+
+                return true;
             }
 
             @Override
@@ -134,17 +151,117 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
 
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                return false;
+                MenuInflater inflater = mode.getMenuInflater();
+                switch (item.getItemId()){
+                    case R.id.item_sil:
+                        calmaListeleriniSil();
+                        list_selected_count = 0;
+                        mode.finish();
+                        temp_position_list.clear();
+                        return true;
+
+                    case R.id.item_kaldır:
+                        calmaListesiMuzikleriniSil();
+                        list_selected_count = 0;
+                        temp_position_list.clear();
+                        mode.finish();
+                    case R.id.item_paylas:
+                        list_selected_count = 0;
+                        temp_position_list.clear();
+                        mode.finish();
+
+                    default:
+                        return false;
+                }
             }
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
+                temp_position_list.clear();
+                list_selected_count = 0;
+                isMulti = false;
 
             }
         });
     }
 
+    private void calmaListeleriniSil(){
+        for (Integer s: temp_position_list){
+            String key = oynat_list.get(s);
+            SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences( "WAVE MUSIC PLAYLIST", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove(key);
+            editor.apply();
+        }
+        getCalmaListeleri();
+
+    }
+
+    private void calmaListesiMuzikleriniSil(){
+        ArrayList<MusicData> data = new ArrayList<>();
+        for (int s: temp_position_list){
+           data.add(music_oynat_list.get(s));
+        }
+        for (MusicData d : data){
+            music_oynat_list.remove(d);
+        }
+
+        new CreatePlayList(MainActivity.context).muzikleriKaldır(music_oynat_list,oynat_list.get(calma_listesi_pos));
+
+        calmaListesiMuzikleriniGetir(oynat_list.get(calma_listesi_pos));
+        getCalmaListeleriSarkilari();
+
+
+    }
+
+
+
     private void itemCheckedState(ActionMode mode, int position, long id, boolean checked){
+
+
+           // Oynatma listelerini gosterecek liste ise
+        try{
+            if (isList){
+                if (!temp_position_list.contains(position)){
+                    list_selected_count = list_selected_count + 1;
+                    mode.setTitle(list_selected_count + "item selected");
+                    oynatma_listesi.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.background_grey));
+                    tempListLayout.add( oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout));
+                    temp_position_list.add(position);
+                }
+                else {
+                    list_selected_count = list_selected_count - 1;
+                    mode.setTitle(list_selected_count + "item selected");
+                    oynatma_listesi.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.transparent));
+                    tempListLayout.remove(oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout));
+                    temp_position_list.remove((Object)position);
+                }
+            }
+            else {
+                if (!temp_position_list.contains(position)){
+                    list_selected_count = list_selected_count + 1;
+                    mode.setTitle(list_selected_count + "item selected");
+                    oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.background_grey));
+                    tempListLayout.add( oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout));
+                    temp_position_list.add(position);
+                }
+                else {
+                    list_selected_count = list_selected_count - 1;
+                    mode.setTitle(list_selected_count + "item selected");
+                    oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
+                    tempListLayout.remove(oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout));
+                    temp_position_list.remove((Object)position);
+                }
+            }
+        }
+        catch (Exception ex){
+            Log.e("OYNATMA LISTESIFRAGMENT",ex.getMessage());
+        }
+        finally {
+
+            Log.e("FINALLY","mesage");
+        }
+
 
      }
 
@@ -153,6 +270,40 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
         adapterPlayList = new Adapter(context,R.layout.custom_list_item,music_oynat_list,1);
         oynatma_listesi.setMenu(new Menu(false));
         oynatma_listesi.setAdapter(adapterPlayList);
+        adapterPlayList.notifyDataSetChanged();
+
+    }
+
+    private void calmaListesiMuzikleriniGetir(String liste_key){
+        music_oynat_list.clear();
+        SharedPreferences sharedPreferences  = context.getSharedPreferences("WAVE MUSIC PLAYLIST", Context.MODE_PRIVATE);
+        Map<String, ?> allEntries = sharedPreferences.getAll();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            try {
+             //   Log.e("map values", entry.getKey() + ": " + entry.getValue().toString());
+                if (entry.getKey().equals(liste_key)){
+                    JSONArray jsonArray = new JSONArray(entry.getValue().toString());
+                  //  Log.e("xxxxx",jsonArray.toString());
+                    for (int i = 0;i<jsonArray.length();i++){
+
+
+
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        String title = jsonObject.getString("title");
+                        String artist = jsonObject.getString("artist");
+                        int thumbnail = jsonObject.getInt("thumbnail");
+                        String duration = jsonObject.getString("duration");
+                        String location = jsonObject.getString("location");
+                        String ids = jsonObject.getString("id");
+
+                        music_oynat_list.add(new MusicData(title,artist,thumbnail,duration,location,ids));
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -166,44 +317,26 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 if (!isMulti){
+
+                    Log.e("multi",isMulti+"");
                     if (isList){
                         music_oynat_list.clear();
-                        SharedPreferences sharedPreferences  = context.getSharedPreferences("WAVE MUSIC PLAYLIST", Context.MODE_PRIVATE);
-                        Map<String, ?> allEntries = sharedPreferences.getAll();
-                        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-                            try {
-                                Log.e("map values", entry.getKey() + ": " + entry.getValue().toString());
-                                if (entry.getKey().equals(oynat_list.get(position))){
-                                    JSONArray jsonArray = new JSONArray(entry.getValue().toString());
-                                    Log.e("xxxxx",jsonArray.toString());
-                                    for (int i = 0;i<jsonArray.length();i++){
 
-
-                                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                        String title = jsonObject.getString("title");
-                                        String artist = jsonObject.getString("artist");
-                                        int thumbnail = jsonObject.getInt("thumbnail");
-                                        String duration = jsonObject.getString("duration");
-                                        String location = jsonObject.getString("location");
-                                        String ids = jsonObject.getString("id");
-
-                                        music_oynat_list.add(new MusicData(title,artist,thumbnail,duration,location,ids));
-                                    }
-                                }
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        getCalmaListeleriSarkilari();
+                        calma_listesi_pos = position;
+                        calmaListesiMuzikleriniGetir(oynat_list.get(position));
                         isList = false;
+                        getCalmaListeleriSarkilari();
+
                     }
                     else {
-                        FPlayListener.currentMusicPosition = position;
-                        PlayMusic.prevMusicDAta = music_oynat_list.get(position);
-                        fPlayListener.song_title.setText(music_oynat_list.get(position).getTitles());
-                        fPlayListener.song_artis.setText(music_oynat_list.get(position).getArtist());
-                        fPlayListener.playFromPlayList(music_oynat_list.get(position).getLocation());
+                        if (music_oynat_list.size() > 0){
+                            FPlayListener.currentMusicPosition = position;
+                            PlayMusic.prevMusicDAta = music_oynat_list.get(position);
+                            fPlayListener.song_title.setText(music_oynat_list.get(position).getTitles());
+                            fPlayListener.song_artis.setText(music_oynat_list.get(position).getArtist());
+                            fPlayListener.playFromPlayList(music_oynat_list.get(position).getLocation());
+                        }
+
                     }
                 }
 

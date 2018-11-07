@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.wavemediaplayer.MainActivity;
+import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
 
 import org.json.JSONArray;
@@ -21,8 +22,10 @@ public class CreatePlayList {
      private String STORE_FILE_NAME = "WAVE MUSIC PLAYLIST";
     private  SharedPreferences sharedPreferences;
     private  SharedPreferences.Editor editor;
+    ArrayList<PlayList> plList;
     public CreatePlayList(Context context){
         this.context = context;
+        plList = new ArrayList<>();
         sharedPreferences  = context.getSharedPreferences(STORE_FILE_NAME, Context.MODE_PRIVATE);
 
 
@@ -31,27 +34,33 @@ public class CreatePlayList {
 
     public void createAndAddList(String listName, ArrayList<Integer> playLists){
 
-        ArrayList<PlayList> plList = new ArrayList<>();
+
         for (int i : playLists){
             String title = MusicList.musicData.get(i).getTitles();
-            Log.e("title1",title);
+          //  Log.e("title1",title);
             String artirst = MusicList.musicData.get(i).getArtist();
-            Log.e("artirst1",artirst);
+         //   Log.e("artirst1",artirst);
             Integer thumbnail = MusicList.musicData.get(i).getImages();
-            Log.e("thumbnail1",""+thumbnail);
+          //  Log.e("thumbnail1",""+thumbnail);
             String duration = MusicList.musicData.get(i).getDuration();
-            Log.e("duration1",duration);
+          //  Log.e("duration1",duration);
             String location = MusicList.musicData.get(i).getLocation();
-            Log.e("location1",location);
+          //  Log.e("location1",location);
             String id = MusicList.musicData.get(i).getIds();
-            Log.e("id1",id);
+           // Log.e("id1",id);
 
             plList.add(new PlayList(title,artirst,thumbnail,duration,location,id));
 
         }
 
+        eskiMuzikleriYukle(listName);
 
+        Gson gson = new Gson();
+        String json = gson.toJson(plList);
+        set(listName,json);
+    }
 
+    public void eskiMuzikleriYukle(String listName){
         Map<String, ?> allEntries = sharedPreferences.getAll();
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
             try {
@@ -70,6 +79,7 @@ public class CreatePlayList {
                         String location = jsonObject.getString("location");
                         String id = jsonObject.getString("id");
 
+
                         plList.add(new PlayList(title,artist,thumbnail,duration,location,id));
 
                     }
@@ -79,10 +89,35 @@ public class CreatePlayList {
                 e.printStackTrace();
             }
         }
+    }
 
+    public void muzikleriKaldır(ArrayList<MusicData> md,String listName){
+        plList.clear();
+        for (MusicData m : md){
+            String title = m.getTitles();
+            Log.e("title1",title);
+            String artirst = m.getArtist();
+            Log.e("artirst1",artirst);
+            Integer thumbnail = m.getImages();
+            Log.e("thumbnail1",""+thumbnail);
+            String duration = m.getDuration();
+            Log.e("duration1",duration);
+            String location = m.getLocation();
+            Log.e("location1",location);
+            String id = m.getIds();
+            Log.e("id1",id);
+
+            plList.add(new PlayList(title,artirst,thumbnail,duration,location,id));
+
+         }
         Gson gson = new Gson();
         String json = gson.toJson(plList);
-        set(listName,json);
+        editor  = sharedPreferences.edit();
+        Log.e("key",listName);
+        editor.remove(listName);
+        editor.putString(listName,json);
+
+        editor.apply();
     }
 
 

@@ -84,8 +84,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public FolderFragment folderFragment;
     /** fat linstener event knk */
-    FPlayListener fPlayListener;
-    MusicList musicList;
+    public static FPlayListener fPlayListener;
+    public MusicList musicList;
     /** default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır */
     static int pos = 0;
     private ArrayList<MusicData> denememusicdata;
@@ -149,11 +149,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         PlayMusic.karisikCal = sharedPreferences.getBoolean("karisik",true);
         PlayMusic.tekrarla = sharedPreferences2.getInt("tekrarla",0);
 
-//        editor.putBoolean("karisik",true);
-//        editor2.putInt("tekrarla",0);
-//
-//        editor.apply();
-//        editor2.apply();
+
     }
 
 
@@ -234,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         /** Herhangi bit posizyon yok ise default 0'dır */
         FPlayListener.currentMusicPosition = pos;
+        PlayMusic.prevMusicDAta = MusicList.musicData.get(pos);
         fPlayListener.f_ListenerEvent(pos);
 
         /** Listviewde coklu secim yapmak icin */
@@ -251,6 +248,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         // pl.play(MusicList.locationList.get(position));
                         FPlayListener.calmaListesiMuzik = false;
                         FPlayListener.currentMusicPosition = position;
+                        PlayMusic.prevMusicDAta = MusicList.musicData.get(position);
                         pos = position;
                         fPlayListener.playMusic(position);
 
@@ -389,6 +387,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
             else {
                 oynatmaListesiFragment.getCalmaListeleri();
+                OynatmaListesiFragment.isList = true;
                 return;
             }
         }

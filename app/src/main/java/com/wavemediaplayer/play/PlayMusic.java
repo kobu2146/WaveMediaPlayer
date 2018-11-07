@@ -19,13 +19,13 @@ import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.playlist.PlayList;
+
 import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
-import com.wavemediaplayer.settings.InitilationMediaPlayer;
 
 /**
  *
@@ -45,7 +45,6 @@ public class PlayMusic {
     private  Runnable runnable;
     private  Handler handler;
     private BassBoost bassBoost;
-    public InitilationMediaPlayer initilationMediaPlayer;
 
     private static String playPrev = "";
     public static MusicData prevMusicDAta;
@@ -73,58 +72,52 @@ public class PlayMusic {
         try {
             if(isMyServiceRunning(NotificationService.class)){
                 mediaPlayer=NotificationService.mediaPlayer;
+
+
             }
-
-
-
-                if (file.exists()){
-                    if (!playPrev.equals(link)){
-                        playPrev = link;
-                        stopPlaying();
-                        mediaPlayer = new MediaPlayer();
-                        bassBoost = new BassBoost(1, mediaPlayer.getAudioSessionId());
-                        bassBoost.setEnabled(true);
-                        BassBoost.Settings bassBoostSettingTemp =  bassBoost.getProperties();
-                        BassBoost.Settings bassBoostSetting = new BassBoost.Settings(bassBoostSettingTemp.toString());
-                        bassBoostSetting.strength=1000;
-                        bassBoost.setStrength((short)1000);
-                        bassBoost.setProperties(bassBoostSetting);
-                        mediaPlayer.setAuxEffectSendLevel(1.0f);
-                        mediaPlayer.attachAuxEffect(bassBoost.getId());
-                        mediaPlayer.setDataSource(context,Uri.parse(link));
-                        mediaPlayer.prepareAsync();
+            if (file.exists()){
+                if (!playPrev.equals(link)){
+                    playPrev = link;
+                    stopPlaying();
+                    mediaPlayer = new MediaPlayer();
+                    bassBoost = new BassBoost(1, mediaPlayer.getAudioSessionId());
+                    bassBoost.setEnabled(true);
+                    BassBoost.Settings bassBoostSettingTemp =  bassBoost.getProperties();
+                    BassBoost.Settings bassBoostSetting = new BassBoost.Settings(bassBoostSettingTemp.toString());
+                    bassBoostSetting.strength=1000;
+                    bassBoost.setStrength((short)1000);
+                    bassBoost.setProperties(bassBoostSetting);
+                    mediaPlayer.setAuxEffectSendLevel(1.0f);
+                    mediaPlayer.attachAuxEffect(bassBoost.getId());
+                    mediaPlayer.setDataSource(context,Uri.parse(link));
+                    mediaPlayer.prepareAsync();
 //                    mediaPlayer=MediaPlayer.create(context,Uri.parse(link));
 
-                    }
-                    else {
-                        if (mediaPlayer != null){
-                            if (!mediaPlayer.isPlaying()){
-
-                                mediaPlayer.start();
-
-                            }
-                        }
-                    }
-                    seekBarChange();
-                    setChangeSeconds();
-                    if(isMyServiceRunning(NotificationService.class)){
-                        NotificationService.mediaPlayer=mediaPlayer;
-                    }
                 }
                 else {
-                    Log.e("File not found","Belirtilen dosya yok");
-                    Toast.makeText(context,"File not found",Toast.LENGTH_LONG).show();
-                    calmayaDevamEt(true);
-                }
+                    if (mediaPlayer != null){
+                        if (!mediaPlayer.isPlaying()){
 
+                            mediaPlayer.start();
+
+                        }
+                    }
+                }
+                seekBarChange();
+                setChangeSeconds();
+                if(isMyServiceRunning(NotificationService.class)){
+                    NotificationService.mediaPlayer=mediaPlayer;
+                }
+            }
+            else {
+                Log.e("File not found","Belirtilen dosya yok");
+                Toast.makeText(context,"File not found",Toast.LENGTH_LONG).show();
+                calmayaDevamEt(true);
+            }
         }
         catch (Exception ex){
-            Log.e("HATA",ex.getMessage());
+            Log.e("FILE NOT FOUND",ex.getMessage());
         }
-        if(mediaPlayer!=null && initilationMediaPlayer==null){
-            initilationMediaPlayer=new InitilationMediaPlayer(context).init(mediaPlayer);
-        }
-
     }
 
     public void calmayaDevamEt(boolean ileriCal){
@@ -195,6 +188,7 @@ public class PlayMusic {
                         tekrarla = 1;
                     }
                     int  rndPositin = new Random().nextInt(MusicList.musicData.size());
+                    FPlayListener.currentMusicPosition = rndPositin;
                     if (rndPositin <= MusicList.musicData.size()){
                         prevMusicDAta = MusicList.musicData.get(rndPositin);
                         Log.e("prevdata",MusicList.musicData.get(rndPositin).getArtist());
@@ -219,6 +213,7 @@ public class PlayMusic {
                         tekrarla = 1;
                     }
                     int  rndPositin = new Random().nextInt(OynatmaListesiFragment.music_oynat_list.size());
+                    FPlayListener.currentMusicPosition = rndPositin;
                     if (rndPositin <= OynatmaListesiFragment.music_oynat_list.size()){
                         prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(rndPositin);
                         MainActivity.fPlayListener.song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(rndPositin).getArtist());
@@ -233,19 +228,9 @@ public class PlayMusic {
                         playMusic(prevMusicDAta.getLocation());
                     }
                 }
-                //İleri butonuna tıklandıgı zaman gecerli sarkıyı tekrarlada ise bir sonraki sarkıya atlattrırıp tekrala = 1 olacak
-
-
             }
-
-
-
-
-
-
         }
     }
-
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -258,8 +243,6 @@ public class PlayMusic {
         return false;
     }
 
-
-
     private void stopPlaying() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
@@ -269,14 +252,13 @@ public class PlayMusic {
                 handler.removeCallbacks(runnable);
             }
         }
-
     }
 
     private void seekBarChange(){
+
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
-            public void onPrepared(MediaPlayer mp) {
-                Log.e("qqqq","qqqqqqq");
+            public void onPrepared(final MediaPlayer mp) {
                 myseekbar.setMax(mediaPlayer.getDuration());
                 myseekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                     @Override
@@ -300,8 +282,6 @@ public class PlayMusic {
                     }
                 });
                 mytext2.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getDuration())));
-
-
                 mediaPlayer.start();
             }
         });
@@ -318,38 +298,31 @@ public class PlayMusic {
         }
     }
 
-
-
-
-
     private void setChangeSeconds(){
 
-            runnable=new Runnable() {
-                @Override
-                public void run()
-                {
-                    if(mediaPlayer!=null){
-                        myseekbar.setProgress(mediaPlayer.getCurrentPosition());
-                        mytext1.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getCurrentPosition())));
+        runnable=new Runnable() {
+            @Override
+            public void run()
+            {
+                if(mediaPlayer!=null){
+                    myseekbar.setProgress(mediaPlayer.getCurrentPosition());
+                    mytext1.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getCurrentPosition())));
 
-                        int current = mediaPlayer.getCurrentPosition();
-                        int total =  mediaPlayer.getDuration();
-                        if (current >= total){
+                    int current = mediaPlayer.getCurrentPosition();
+                    int total =  mediaPlayer.getDuration();
+                    if (current >= total){
 
 
-                            calmayaDevamEt(true);
-                        }
-                        else if (total - current <= 300){
-                            calmayaDevamEt(true);
-                        }
+                        calmayaDevamEt(true);
                     }
-
-                    handler.postDelayed(runnable,1000);
+                    else if (total - current <= 300){
+                        calmayaDevamEt(true);
+                    }
                 }
-            };
-            runnable.run();
+
+                handler.postDelayed(runnable,1000);
+            }
+        };
+        runnable.run();
     }
-
-
-
 }

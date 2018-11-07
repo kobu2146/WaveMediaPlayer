@@ -1,7 +1,7 @@
 package com.wavemediaplayer.adapter;
 
-import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -10,11 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
-
 import java.util.ArrayList;
 
 public class Adapter extends ArrayAdapter<MusicData> {
@@ -30,24 +28,20 @@ public class Adapter extends ArrayAdapter<MusicData> {
         this.kaynak = kaynak;
     }
 
-
-
-
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         // TODO Auto-generated method stub
 
         return getCustomView(position, convertView, parent);
     }
 
-
     @Override
-    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+    public View getDropDownView(int position, View convertView,@NonNull ViewGroup parent) {
         // TODO Auto-generated method stub
         return getCustomView(position, convertView, parent);
     }
 
-    public View getCustomView(int position,  View convertView, ViewGroup parent) {
+    private View getCustomView(int position,  View convertView, ViewGroup parent) {
 
 
         ViewHolder holder = null;

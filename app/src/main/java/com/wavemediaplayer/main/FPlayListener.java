@@ -96,6 +96,12 @@ public class FPlayListener {
             play.setVisibility(View.GONE);
             pause.setVisibility(View.VISIBLE);
         }
+
+        if(!isMyServiceRunning(NotificationService.class)){
+            Intent serviceIntent = new Intent(context, NotificationService.class);
+            serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+            context.startService(serviceIntent);
+        }
     }
 
     public void playMusic(int position){

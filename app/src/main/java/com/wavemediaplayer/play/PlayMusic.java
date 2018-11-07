@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wavemediaplayer.mservices.NotificationService;
+import com.wavemediaplayer.settings.InitilationMediaPlayer;
 
 import java.io.File;
 
@@ -31,6 +32,7 @@ public class PlayMusic {
     private  Runnable runnable;
     private  Handler handler;
     private BassBoost bassBoost;
+    public InitilationMediaPlayer initilationMediaPlayer;
 
     private static String playPrev = "";
     /***/
@@ -101,6 +103,10 @@ public class PlayMusic {
         }
 
 
+
+        if(mediaPlayer!=null && initilationMediaPlayer==null){
+            initilationMediaPlayer=new InitilationMediaPlayer(context).init(mediaPlayer);
+        }
 
 
 

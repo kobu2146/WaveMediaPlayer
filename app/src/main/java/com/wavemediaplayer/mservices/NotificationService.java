@@ -10,6 +10,8 @@ import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Debug;
+import android.os.Handler;
 import android.os.IBinder;
 import android.app.Service;
 import android.content.Intent;
@@ -37,6 +39,7 @@ public class NotificationService extends Service {
     private RemoteViews bigViews;
     private PendingIntent pendingIntent;
 
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
@@ -44,6 +47,8 @@ public class NotificationService extends Service {
             Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
             mediaPlayer=PlayMusic.mediaPlayer;
             list=MusicList.musicData;
+
+
 
         } else if (intent.getAction().equals(Constants.ACTION.PREV_ACTION)) {
             previousSong();

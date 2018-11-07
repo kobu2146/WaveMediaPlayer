@@ -3,6 +3,7 @@ package com.wavemediaplayer.fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -110,7 +111,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState){
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
     }
 
     private void clickEvent(){
@@ -131,8 +132,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                                 JSONArray jsonArray = new JSONArray(entry.getValue().toString());
                                 Log.e("xxxxx",jsonArray.toString());
                                 for (int i = 0;i<jsonArray.length();i++){
-
-
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     String title = jsonObject.getString("title");
                                     String artist = jsonObject.getString("artist");
@@ -140,7 +139,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                                     String duration = jsonObject.getString("duration");
                                     String location = jsonObject.getString("location");
                                     String ids = jsonObject.getString("id");
-
                                     music_oynat_list.add(new MusicData(title,artist,thumbnail,duration,location,ids));
                                 }
                             }

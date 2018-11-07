@@ -53,13 +53,10 @@ public class MusicListSettingsFragment extends Fragment {
         linearLayout.setLayoutParams(params);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         linearLayout.setBackgroundColor(Color.WHITE);
-
         listView=new ListView(getActivity());
         listView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
-
         linearLayout.addView(listView);
         view=linearLayout;
-
         getMusic();
 
 
@@ -74,12 +71,11 @@ public class MusicListSettingsFragment extends Fragment {
         arrayList=new ArrayList<>();
 
 
+        /**buradaki amaç müzik olan klasörleri elde tutmak bunları kapatarak o klasöre ait müzikleri listenden çıkarabilirsin*/
 
-        ContentResolver contentResolver = getContext().getContentResolver();
+        ContentResolver contentResolver = view.getContext().getContentResolver();
         Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-
         Cursor songCursor = contentResolver.query(songUri,null,null,null,null);
-
         if (songCursor != null && songCursor.moveToFirst()){
             int songTitle = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
@@ -117,6 +113,7 @@ public class MusicListSettingsFragment extends Fragment {
 
             myAdapter=new MyAdapter(activity, R.layout.fragment_settings_musiclist_item,arrayList);
             listView.setAdapter(myAdapter);
+            songCursor.close();
         }
 
     }

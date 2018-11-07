@@ -35,6 +35,7 @@ import com.wavemediaplayer.fragments.PlayListsFragment;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mfcontroller.MainManager;
 import com.wavemediaplayer.settings.FolderFragment;
+import com.wavemediaplayer.settings.InitilationMediaPlayer;
 import com.wavemediaplayer.settings.MusicListSettingsFragment;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
@@ -68,23 +69,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     ArrayList<ArrayList<MusicData>> geciciAramaSonuclari = new ArrayList<>();
     ArrayList<MusicData> tempData = new ArrayList<>();
     /** Templist'te multi choise ile secilen coklu secimlerin pozisyonları tutuluyor */
-
      ArrayList<Integer> tempList = new ArrayList<>();
-
-    /** listview de secilen item sayısı multichoise icin */
     int list_selected_count = 0;
-
     private Button mainEqualizer;
     private EqualizerFragment equalizerFragment;
     public FrameLayout mainFrame;
-    /** Calma listelerinin goorunecegi listi  oynatmaListesiFragment inde gosterilecek*/
     private OynatmaListesiFragment oynatmaListesiFragment;
-
     public FolderFragment folderFragment;
-    /** fat linstener event knk */
     FPlayListener fPlayListener;
     public MusicList musicList;
-    /** default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır */
     static int pos = 0;
 
     private ArrayList<MusicData> denememusicdata;
@@ -208,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         /** burada equalizeri başlangıçta çalıştırıyorum ki sonradan equalizere tıkladığında ses değişmesin ayarlar önceden yapılsın diye*/
         if(mediaPlayer!=null){
             fragmentListener.addFragment(equalizerFragment);
+//            fragmentListener.hideFragment(equalizerFragment);
         }
         /** Herhangi bit posizyon yok ise default 0'dır */
         fPlayListener.f_ListenerEvent(pos);

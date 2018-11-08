@@ -230,11 +230,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void f_createListener(){
         mLayout =  findViewById(R.id.activity_main);
         fPlayListener = new FPlayListener(this,mainView);
-        /** burada equalizeri başlangıçta çalıştırıyorum ki sonradan equalizere tıkladığında ses değişmesin ayarlar önceden yapılsın diye*/
-        if(mediaPlayer!=null){
-            fragmentListener.addFragment(equalizerFragment);
-//            fragmentListener.hideFragment(equalizerFragment);
-        }
         /** Herhangi bit posizyon yok ise default 0'dır */
         FPlayListener.currentMusicPosition = pos;
         PlayMusic.prevMusicDAta = MusicList.musicData.get(pos);

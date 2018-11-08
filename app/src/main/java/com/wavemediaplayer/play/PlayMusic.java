@@ -19,6 +19,7 @@ import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.playlist.PlayList;
+import com.wavemediaplayer.settings.InitilationMediaPlayer;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -48,6 +49,7 @@ public class PlayMusic {
 
     private static String playPrev = "";
     public static MusicData prevMusicDAta;
+    private InitilationMediaPlayer initilationMediaPlayer;
 
 
     /***/
@@ -80,6 +82,8 @@ public class PlayMusic {
                     playPrev = link;
                     stopPlaying();
                     mediaPlayer = new MediaPlayer();
+                    /**initilation mediaplyer sharedtteki ayarları alıp mediaplayere entegre ediyorumki equalizer açıldığında yeni ayarlar orda aktifleşiyordu bullshit*/
+                    if(initilationMediaPlayer==null) initilationMediaPlayer=new InitilationMediaPlayer(context).init(mediaPlayer);
                     bassBoost = new BassBoost(1, mediaPlayer.getAudioSessionId());
                     bassBoost.setEnabled(true);
                     BassBoost.Settings bassBoostSettingTemp =  bassBoost.getProperties();

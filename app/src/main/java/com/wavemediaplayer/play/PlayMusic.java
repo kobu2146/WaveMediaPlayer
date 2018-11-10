@@ -7,46 +7,37 @@ import android.media.audiofx.BassBoost;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mservices.NotificationService;
-import com.wavemediaplayer.playlist.PlayList;
 import com.wavemediaplayer.settings.InitilationMediaPlayer;
-
 import java.io.File;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Random;
-
 /**
  *
  * Gonderilen dosya linkine gore muzik calma islemi
  * */
 public class PlayMusic {
-
     public static boolean karisikCal = true;
     public static int tekrarla = 0;
-
     private Context context;
     public static MediaPlayer mediaPlayer;
     private SeekBar myseekbar;
     private TextView mytext1;
     private TextView mytext2;
     private ImageView myimageview;
-    private  Runnable runnable;
+    private static Runnable runnable;
+    private static Handler myHandler;
     private  Handler handler;
     private BassBoost bassBoost;
-
     private static String playPrev = "";
     public static MusicData prevMusicDAta;
     private InitilationMediaPlayer initilationMediaPlayer;
@@ -63,17 +54,25 @@ public class PlayMusic {
         this.mytext2 = mytext2;
         this.myimageview = myimageview;
         this.handler = handler;
+
     }
+
+
 
 
     /** Dosya var mı yok mu belirtilecek varsa calmaya baslar */
     public void playMusic(String link){
+
+
 
         Log.e("music yolu",link);
         File file =  new File(link);
         try {
             if(isMyServiceRunning(NotificationService.class)){
                 mediaPlayer=NotificationService.mediaPlayer;
+                stopRunable();
+                startRunable();
+                Log.e("qqqqqqqqqq","sssssstart eser11");
 
 
             }
@@ -108,7 +107,8 @@ public class PlayMusic {
                     }
                 }
                 seekBarChange();
-                setChangeSeconds();
+                stopRunable();
+                startRunable();
                 if(isMyServiceRunning(NotificationService.class)){
                     NotificationService.mediaPlayer=mediaPlayer;
                 }
@@ -294,39 +294,96 @@ public class PlayMusic {
     public void pauseMusic(){
         if (mediaPlayer != null){
             if(mediaPlayer.isPlaying()){
-                handler.removeCallbacks(runnable);
-                runnable = null;
+//                handler.removeCallbacks(runnable);
+//                runnable = null;
 
                 mediaPlayer.pause();
             }
         }
     }
 
-    private void setChangeSeconds(){
+    private void iconKapat(boolean acikmi){
+        if(acikmi){
+            MainActivity.fPlayListener.play.setVisibility(View.GONE);
+            MainActivity.fPlayListener.play_main.setVisibility(View.GONE);
+            MainActivity.fPlayListener.pause.setVisibility(View.VISIBLE);
+            MainActivity.fPlayListener.pause_main.setVisibility(View.VISIBLE);
+        }else{
+            MainActivity.fPlayListener.play.setVisibility(View.VISIBLE);
+            MainActivity.fPlayListener.play_main.setVisibility(View.VISIBLE);
+            MainActivity.fPlayListener.pause.setVisibility(View.GONE);
+            MainActivity.fPlayListener.pause_main.setVisibility(View.GONE);
+        }
 
-        runnable=new Runnable() {
-            @Override
-            public void run()
-            {
-                if(mediaPlayer!=null){
-                    myseekbar.setProgress(mediaPlayer.getCurrentPosition());
-                    mytext1.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getCurrentPosition())));
-
-                    int current = mediaPlayer.getCurrentPosition();
-                    int total =  mediaPlayer.getDuration();
-                    if (current >= total){
 
 
-                        calmayaDevamEt(true);
-                    }
-                    else if (total - current <= 300){
-                        calmayaDevamEt(true);
-                    }
-                }
-
-                handler.postDelayed(runnable,1000);
-            }
-        };
-        runnable.run();
     }
+
+
+    public void startRunableWithMediaPlayer(){
+
+        if(mediaPlayer!=null){
+            myseekbar.setMax(mediaPlayer.getDuration());
+            if(mediaPlayer.isPlaying()){
+                iconKapat(true);
+            }else{
+                iconKapat(false);
+            }
+        }else{
+            iconKapat(false);
+        }
+        if (runnable == null) {
+
+            myHandler = new Handler();
+            runnable = new Runnable() {
+                @Override
+                public void run() {
+                    if (mediaPlayer != null) {
+                        Log.e("qqqqqq", "null deil mediaplyer");
+
+                        myseekbar.setProgress(mediaPlayer.getCurrentPosition());
+                        mytext1.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getCurrentPosition())));
+
+                        int current = mediaPlayer.getCurrentPosition();
+                        int total = mediaPlayer.getDuration();
+                        if (current >= total) {
+                            calmayaDevamEt(true);
+                        } else if (total - current <= 300) {
+                            calmayaDevamEt(true);
+                        }
+
+
+                    } else {
+                    }
+
+                    Log.e("qqqqqq", "nulllllllllll");
+
+
+                    myHandler.postDelayed(runnable, 1000);
+                }
+            };
+            runnable.run();
+        }
+
+    }
+
+    public void startRunable(){
+        startRunableWithMediaPlayer();
+        Log.e("qweqwe","startrunable");
+
+
+    }
+
+    public void stopRunable(){
+        if(myHandler!=null){
+            myHandler.removeCallbacks(runnable);
+            myHandler=null;
+            runnable=null;
+            Log.e("qweqwe","stoprunable");
+        }
+
+    }
+
+
+
 }

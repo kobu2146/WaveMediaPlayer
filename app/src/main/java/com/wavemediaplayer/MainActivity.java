@@ -1,7 +1,11 @@
 package com.wavemediaplayer;
 
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.os.IBinder;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -36,6 +40,7 @@ import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.fragments.PlayListsFragment;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mfcontroller.MainManager;
+import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.play.PlayMusic;
 import com.wavemediaplayer.settings.FolderFragment;
 import com.wavemediaplayer.settings.InitilationMediaPlayer;
@@ -51,7 +56,7 @@ import static com.wavemediaplayer.play.PlayMusic.mediaPlayer;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,
         AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener,
         SlideAndDragListView.OnDragDropListener, SlideAndDragListView.OnSlideListener,
-        SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnItemDeleteListener {
+        SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnItemDeleteListener,ServiceConnection {
 
     /** Diger sınıflara context ve view gondermek icin */
     public static Context context;
@@ -59,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private boolean isMulti = false;
 
     public static int tabsHeigh;
+    private NotificationService s;
 
     private MainMenu mainMenu;
 
@@ -122,7 +128,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         sharedPreferences2  = context.getSharedPreferences(SARKIYI_TEKRARLA, Context.MODE_PRIVATE);
         muzikCalmaBicimleri();
 
-
         fragmentListener=new FragmentListener(this);
         musicListSettingsFragment=new MusicListSettingsFragment();
         folderFragment=new FolderFragment();
@@ -147,6 +152,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //  PlayerFragment fragmentS1 = new PlayerFragment();
         //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
     }
+
+
 
     private void muzikCalmaBicimleri(){
         PlayMusic.karisikCal = sharedPreferences.getBoolean("karisik",true);
@@ -198,12 +205,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         MusicList.adapter.notifyDataSetChanged();
     }
 
-    /** Uygulama arka plana dusup tekrar acıldıgında musicleri yeniden secme */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        musicList.getMusic("notification","ringtone");
-    }
+
 
     /** Musanın olusturdugu listener fonksyonu */
     private void m_createListener(){
@@ -216,10 +218,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onClick(View v) {
 
-                //fat burası equalizeri açmak için
-                if(mediaPlayer!=null){
-                    fragmentListener.addFragment(equalizerFragment);
-                }
+                if(s!=null) s.tesx();
+//                //fat burası equalizeri açmak için
+//                if(mediaPlayer!=null){
+//                    fragmentListener.addFragment(equalizerFragment);
+//                }
 
 
             }
@@ -320,7 +323,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         list_selected_count = 0;
                         layoutListClear(tempListLayout);
                         mode.finish();
-                        playlistInfo(tempList);
 
 
 
@@ -539,6 +541,49 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        fPlayListener.pl.startRunable();
+//        Log.e("oooooon","start");
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        fPlayListener.pl.stopRunable();
+//        Log.e("oooooon","stop");
+//
+//    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        fPlayListener.pl.stopRunable();
+        unbindService(this);
 
 
+    }
+
+    /** Uygulama arka plana dusup tekrar acıldıgında musicleri yeniden secme */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        musicList.getMusic("notification","ringtone");
+        fPlayListener.pl.startRunable();
+        Intent intent= new Intent(this, NotificationService.class);
+        bindService(intent, this, Context.BIND_AUTO_CREATE);
+    }
+
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        NotificationService.MyBinder b = (NotificationService.MyBinder) service;
+        s = b.getService();
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        s = null;
+    }
 }

@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Debug;
 import android.os.Handler;
@@ -38,6 +39,23 @@ public class NotificationService extends Service {
     private RemoteViews views;
     private RemoteViews bigViews;
     private PendingIntent pendingIntent;
+    private final IBinder mBinder = new MyBinder();
+
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
+
+    public class MyBinder extends Binder {
+        public NotificationService getService() {
+            return NotificationService.this;
+        }
+    }
+
+    public void tesx(){
+        Log.e("test","tsest");
+    }
 
 
     @Override
@@ -227,9 +245,6 @@ public class NotificationService extends Service {
         super.onDestroy();
     }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
+
 
 }

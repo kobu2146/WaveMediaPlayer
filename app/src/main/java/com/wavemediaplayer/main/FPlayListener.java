@@ -30,16 +30,16 @@ import com.wavemediaplayer.play.PlayMusic;
 
 public class FPlayListener {
 
-    private  PlayMusic pl;
+    public  PlayMusic pl;
 
     private ImageButton like;
     private ImageButton notlike;
     private ImageButton dislike;
     private ImageButton notdislike;
-    private ImageButton play;
-    private ImageButton pause;
-    private ImageButton play_main;
-    private ImageButton pause_main;
+    public ImageButton play;
+    public ImageButton pause;
+    public ImageButton play_main;
+    public ImageButton pause_main;
     private ImageButton song_next;
     private ImageButton song_prev;
     private ImageButton tekrarla;
@@ -53,9 +53,9 @@ public class FPlayListener {
     private  Runnable runnable;
     private Handler handler;
 
+
     public static int currentMusicPosition; //Sıralı calmada tutulacak pozisyon
     public static boolean calmaListesiMuzik = false; //Music calma listesinden mi ana listeden mi?
-
 
     private Context context;
     private View view;

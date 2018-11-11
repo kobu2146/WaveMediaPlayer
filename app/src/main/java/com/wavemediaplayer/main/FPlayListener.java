@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -59,9 +60,11 @@ public class FPlayListener {
 
     private Context context;
     private View view;
+    public MainActivity mainActivity;
 
-    public FPlayListener(Context context, View view){
-        this.context = context;
+    public FPlayListener(MainActivity mainActivity, View view){
+        this.mainActivity=mainActivity;
+        this.context = MainActivity.context;
         this.view = view;
         init();
     }
@@ -90,7 +93,7 @@ public class FPlayListener {
         myseekbar= view.findViewById(R.id.sample_main_seekBar3);
         handler = new Handler();
 
-        pl = new PlayMusic(context,myseekbar,mytext1,mytext2,play,handler);
+        pl = new PlayMusic(mainActivity,myseekbar,mytext1,mytext2,play,handler);
     }
 
 
@@ -115,11 +118,11 @@ public class FPlayListener {
             pause.setVisibility(View.VISIBLE);
         }
 
-        if(!isMyServiceRunning(NotificationService.class)){
-            Intent serviceIntent = new Intent(context, NotificationService.class);
-            serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-            context.startService(serviceIntent);
-        }
+//        if(!isMyServiceRunning(NotificationService.class)){
+//            Intent serviceIntent = new Intent(context, NotificationService.class);
+//            serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+//            context.startService(serviceIntent);
+//        }
     }
 
 
@@ -150,11 +153,11 @@ public class FPlayListener {
             pause.setVisibility(View.VISIBLE);
         }
 
-        if(!isMyServiceRunning(NotificationService.class)){
-            Intent serviceIntent = new Intent(context, NotificationService.class);
-            serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-            context.startService(serviceIntent);
-        }
+//        if(!isMyServiceRunning(NotificationService.class)){
+//            Intent serviceIntent = new Intent(context, NotificationService.class);
+//            serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+//            context.startService(serviceIntent);
+//        }
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -169,6 +172,18 @@ public class FPlayListener {
     }
 
 
+    public void icerikDegistirme(){
+        if(!MusicList.musicData.isEmpty()){
+            if(!calmaListesiMuzik){
+                song_title.setText(MusicList.musicData.get(currentMusicPosition).getTitles());
+                song_artis.setText(MusicList.musicData.get(currentMusicPosition).getArtist());
+            }else{
+                song_title.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getTitles());
+                song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getArtist());
+            }
+        }
+
+    }
 
 
     public void f_ListenerEvent(final int position){
@@ -263,25 +278,32 @@ public class FPlayListener {
             @Override
             public void onClick(View view) {
 
+
                 if (!calmaListesiMuzik){
                     PlayMusic.prevMusicDAta = MusicList.musicData.get(currentMusicPosition);
                     song_title.setText(MusicList.musicData.get(currentMusicPosition).getTitles());
                     song_artis.setText(MusicList.musicData.get(currentMusicPosition).getArtist());
                     pl.playMusic(MusicList.musicData.get(currentMusicPosition).getLocation());
+                    if(mainActivity.s!=null) mainActivity.s.listeDegistir(MusicList.musicData,currentMusicPosition);
+
                 }
                 else {
                     PlayMusic.prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition);
                     song_title.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getTitles());
                     song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getArtist());
                     pl.playMusic(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getLocation());
+                    if(mainActivity.s!=null) mainActivity.s.listeDegistir(OynatmaListesiFragment.music_oynat_list,currentMusicPosition);
+
                 }
 
 
                 play.setVisibility(View.GONE);
                 pause.setVisibility(View.VISIBLE);
+                if(mainActivity.s!=null) mainActivity.s.activityPlay();
                 if (play_main.getVisibility() == View.VISIBLE){
                     play_main.setVisibility(View.GONE);
                     pause_main.setVisibility(View.VISIBLE);
+
                 }
 
             }
@@ -296,6 +318,8 @@ public class FPlayListener {
                 if (pause_main.getVisibility() == View.VISIBLE){
                     pause_main.setVisibility(View.GONE);
                     play_main.setVisibility(View.VISIBLE);
+                    if(mainActivity.s!=null) mainActivity.s.activityPause();
+
                 }
             }
         });
@@ -303,25 +327,37 @@ public class FPlayListener {
         play_main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(mainActivity.s==null){
+                    Log.e("qqqqqq","sss Null");
+                }else{
+                    Log.e("qqqqqq","sss Null degil");
+
+                }
+
                 if (!calmaListesiMuzik){
                     PlayMusic.prevMusicDAta = MusicList.musicData.get(currentMusicPosition);
                     song_title.setText(MusicList.musicData.get(currentMusicPosition).getTitles());
                     song_artis.setText(MusicList.musicData.get(currentMusicPosition).getArtist());
                     pl.playMusic(MusicList.musicData.get(currentMusicPosition).getLocation());
+                    if(mainActivity.s!=null) mainActivity.s.listeDegistir(MusicList.musicData,currentMusicPosition);
                 }
                 else {
                     PlayMusic.prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition);
                     song_title.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getTitles());
                     song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getArtist());
                     pl.playMusic(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getLocation());
+                    if(mainActivity.s!=null) mainActivity.s.listeDegistir(OynatmaListesiFragment.music_oynat_list,currentMusicPosition);
                 }
 
 
                 play_main.setVisibility(View.GONE);
                 pause_main.setVisibility(View.VISIBLE);
+                if(mainActivity.s!=null) mainActivity.s.activityPlay();
+
                 if (play.getVisibility() == View.VISIBLE){
                     play.setVisibility(View.GONE);
                     pause.setVisibility(View.VISIBLE);
+
                 }
             }
         });
@@ -335,6 +371,7 @@ public class FPlayListener {
                 if (pause.getVisibility() == View.VISIBLE){
                     pause.setVisibility(View.GONE);
                     play.setVisibility(View.VISIBLE);
+                    if(mainActivity.s!=null) mainActivity.s.activityPause();
                 }
             }
         });

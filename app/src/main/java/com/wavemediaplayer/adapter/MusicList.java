@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -23,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -265,12 +267,17 @@ public class MusicList {
     }
 
     public void removeFromAdapter(int s) {
-        File file = new File(MusicList.musicData.get(s).getLocation());
-        Log.e("FILE", MusicList.musicData.get(s).getLocation());
+        Uri uri=Uri.parse(MusicList.musicData.get(s).getLocation());
+        File file = new File(uri.getPath());
+        Log.e("FILE", uri.getPath());
 
         if (file.exists()) {
             Log.e("File", "var");
             if (file.delete()) {
+                if(file.exists()){
+                    context.deleteFile(file.getName());
+                }
+                scanaddedFile(MusicList.musicData.get(s).getLocation()); // bu mediadanda siliyor
                 Log.e(MusicList.musicData.remove(s).toString(), "silindi");
                 // burdaki parametreler simdilik boyle
                 getMusic("notification", "ringtone");
@@ -278,9 +285,25 @@ public class MusicList {
                 Log.e("silindi", "hayır");
             }
         } else {
+
             Log.e("File", "yok");
         }
 
+    }
+    private void scanaddedFile(String path) {
+        try {
+            MediaScannerConnection.scanFile(context, new String[] { path },
+                    null, new MediaScannerConnection.OnScanCompletedListener() {
+                        public void onScanCompleted(String path, Uri uri) {
+                            Log.i("ExternalStorage", "Scanned " + path + ":");
+                            Log.i("ExternalStorage", "-> uri=" + uri);
+                            context.getContentResolver()
+                                    .delete(uri, null, null);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }

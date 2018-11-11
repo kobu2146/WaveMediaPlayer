@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.app.Service;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -35,11 +36,13 @@ public class NotificationService extends Service {
     private final String LOG_TAG = "NotificationService";
     public static MediaPlayer mediaPlayer;
     private ArrayList<MusicData> list;
-    private int i=0;
+    public static int currentPos=0;
     private RemoteViews views;
     private RemoteViews bigViews;
     private PendingIntent pendingIntent;
     private final IBinder mBinder = new MyBinder();
+    private MusicData mData;
+    private boolean calmaListesiMuzik;
 
 
     @Override
@@ -53,44 +56,128 @@ public class NotificationService extends Service {
         }
     }
 
-    public void tesx(){
-        Log.e("test","tsest");
+    public void activityPlay(){
+        views.setImageViewResource(R.id.status_bar_play,
+                R.drawable.svgpause);
+        bigViews.setImageViewResource(R.id.status_bar_play,
+                R.drawable.svgpause);
+        Log.e("test","play");
+        create();
+
+    }
+    public void activityPause(){
+        views.setImageViewResource(R.id.status_bar_play,
+                R.drawable.svgplay);
+        bigViews.setImageViewResource(R.id.status_bar_play,
+                R.drawable.svgplay);
+        Log.e("test","pause");
+        create();
+
+    }
+
+    public void listeDegistir(ArrayList<MusicData> musicData,int currentPos){
+        list=musicData;
+        this.currentPos=currentPos;
+        this.calmaListesiMuzik=FPlayListener.calmaListesiMuzik;
+        FPlayListener.currentMusicPosition = currentPos;
+        mData=musicData.get(currentPos);
+        views.setTextViewText(R.id.status_bar_track_name, musicData.get(currentPos).getTitles());
+        bigViews.setTextViewText(R.id.status_bar_track_name, musicData.get(currentPos).getTitles());
+        views.setTextViewText(R.id.status_bar_artist_name, musicData.get(currentPos).getArtist());
+        bigViews.setTextViewText(R.id.status_bar_artist_name, musicData.get(currentPos).getArtist());
+        bigViews.setTextViewText(R.id.status_bar_artist_name, "");
+        Log.e("qqqqqqqqmusaqqq",musicData.get(currentPos).getTitles());
+        create();
+    }
+
+
+    private void servicePause(){
+        Intent myIntent = new Intent("speedExceeded");
+        myIntent.putExtra("servicePause", "servicePause");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(myIntent);
+    }
+    private void servicePlay(){
+        Intent myIntent = new Intent("speedExceeded");
+        myIntent.putExtra("servicePlay", "servicePlay");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(myIntent);
+    }
+    private void serviceNext(){
+        FPlayListener.calmaListesiMuzik = this.calmaListesiMuzik;
+        FPlayListener.currentMusicPosition = currentPos;
+
+        Intent myIntent = new Intent("speedExceeded");
+        myIntent.putExtra("serviceNext", "serviceNext");
+        myIntent.putExtra("serviceNextpos", FPlayListener.currentMusicPosition);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(myIntent);
+    }
+    private void serviceBefore(){
+        Intent myIntent = new Intent("speedExceeded");
+        myIntent.putExtra("serviceBefore", "serviceBefore");
+        myIntent.putExtra("serviceBeforepos", currentPos);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(myIntent);
     }
 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
-            showNotification();
-           // Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
-            mediaPlayer=PlayMusic.mediaPlayer;
-            list=MusicList.musicData;
+        if(intent.getAction()!=null){
+            switch (intent.getAction()) {
+                case Constants.ACTION.STARTFOREGROUND_ACTION:
+                    showNotification();
+                    // Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
+                    mediaPlayer = PlayMusic.mediaPlayer;
 
+                    break;
+                case Constants.ACTION.PREV_ACTION:
+                    previousSong();
+                    serviceBefore();
+                    break;
+                case Constants.ACTION.PLAY_ACTION:
+                    pauseSong();
+                    break;
+                case Constants.ACTION.NEXT_ACTION:
+                    nextSong();
+                    serviceNext();
+                    break;
+                case Constants.ACTION.STOPFOREGROUND_ACTION:
+                    exitPlayer();
+                    break;
+            }
 
-
-        } else if (intent.getAction().equals(Constants.ACTION.PREV_ACTION)) {
-            previousSong();
-        } else if (intent.getAction().equals(Constants.ACTION.PLAY_ACTION)) {
-            pauseSong();
-        } else if (intent.getAction().equals(Constants.ACTION.NEXT_ACTION)) {
-            nextSong();
-        } else if (intent.getAction().equals(
-                Constants.ACTION.STOPFOREGROUND_ACTION)) {
-            exitPlayer();
+//            if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
+//                showNotification();
+//                // Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
+//                mediaPlayer=PlayMusic.mediaPlayer;
+//
+//            } else if (intent.getAction().equals(Constants.ACTION.PREV_ACTION)) {
+//                previousSong();
+//                serviceBefore();
+//            } else if (intent.getAction().equals(Constants.ACTION.PLAY_ACTION)) {
+//                pauseSong();
+//            } else if (intent.getAction().equals(Constants.ACTION.NEXT_ACTION)) {
+//                nextSong();
+//                serviceNext();
+//            } else if (intent.getAction().equals(
+//                    Constants.ACTION.STOPFOREGROUND_ACTION)) {
+//                exitPlayer();
+//            }
         }
+
+        Log.e("qqqq","service started");
         return START_STICKY;
     }
 
     private void nextSong(){
-        if(list.size()-1>i){
-            i++;
+        if(list.size()-1>currentPos){
+            currentPos++;
         }else{
-            i=0;
+            currentPos=0;
         }
         if(mediaPlayer!=null){
             mediaPlayer.stop();
-            mediaPlayer=MediaPlayer.create(getApplicationContext(), Uri.parse(list.get(i).getLocation()));
+            mediaPlayer=MediaPlayer.create(getApplicationContext(), Uri.parse(list.get(currentPos).getLocation()));
             mediaPlayer.start();
+            listeDegistir(list,currentPos);
         }
         Toast.makeText(this, "Clicked Next", Toast.LENGTH_SHORT).show();
         Log.i(LOG_TAG, "Clicked Next");
@@ -99,16 +186,12 @@ public class NotificationService extends Service {
         if(mediaPlayer!=null){
             if(mediaPlayer.isPlaying()){
                 mediaPlayer.pause();
-                views.setImageViewResource(R.id.status_bar_play,
-                        R.drawable.apollo_holo_dark_play);
-                bigViews.setImageViewResource(R.id.status_bar_play,
-                        R.drawable.apollo_holo_dark_play);
+                activityPause();
+                servicePause();
             }else{
                 mediaPlayer.start();
-                views.setImageViewResource(R.id.status_bar_play,
-                        R.drawable.apollo_holo_dark_pause);
-                bigViews.setImageViewResource(R.id.status_bar_play,
-                        R.drawable.apollo_holo_dark_pause);
+                activityPlay();
+                servicePlay();
             }
             create();
         }
@@ -116,15 +199,16 @@ public class NotificationService extends Service {
         Log.i(LOG_TAG, "Clicked Play");
     }
     private void previousSong(){
-        if(i>0){
-            i--;
+        if(currentPos>0){
+            currentPos--;
         }else{
-            i=list.size()-1;
+            currentPos=list.size()-1;
         }
         if(mediaPlayer!=null){
             mediaPlayer.stop();
-            mediaPlayer=MediaPlayer.create(getApplicationContext(), Uri.parse(list.get(i).getLocation()));
+            mediaPlayer=MediaPlayer.create(getApplicationContext(), Uri.parse(list.get(currentPos).getLocation()));
             mediaPlayer.start();
+            listeDegistir(list,currentPos);
         }
         Toast.makeText(this, "Clicked Previous", Toast.LENGTH_SHORT).show();
         Log.i(LOG_TAG, "Clicked Previous");
@@ -148,8 +232,8 @@ public class NotificationService extends Service {
                 R.layout.status_bar_expanded);
 
 // showing default album image
-        views.setViewVisibility(R.id.status_bar_icon, View.VISIBLE);
-        views.setViewVisibility(R.id.status_bar_album_art, View.GONE);
+//        views.setViewVisibility(R.id.status_bar_icon, View.VISIBLE);
+//        views.setViewVisibility(R.id.status_bar_album_art, View.GONE);
         bigViews.setImageViewBitmap(R.id.status_bar_album_art,
                 Constants.getDefaultAlbumArt(this));
 
@@ -193,17 +277,17 @@ public class NotificationService extends Service {
         bigViews.setOnClickPendingIntent(R.id.status_bar_collapse, pcloseIntent);
 
         views.setImageViewResource(R.id.status_bar_play,
-                R.drawable.apollo_holo_dark_pause);
+                R.drawable.svgpause);
         bigViews.setImageViewResource(R.id.status_bar_play,
-                R.drawable.apollo_holo_dark_pause);
+                R.drawable.svgpause);
 
-        views.setTextViewText(R.id.status_bar_track_name, "Song Title");
-        bigViews.setTextViewText(R.id.status_bar_track_name, "Song Title");
+        views.setTextViewText(R.id.status_bar_track_name, "");
+        bigViews.setTextViewText(R.id.status_bar_track_name, "");
 
-        views.setTextViewText(R.id.status_bar_artist_name, "Artist Name");
-        bigViews.setTextViewText(R.id.status_bar_artist_name, "Artist Name");
+        views.setTextViewText(R.id.status_bar_artist_name, "");
+        bigViews.setTextViewText(R.id.status_bar_artist_name, "");
 
-        bigViews.setTextViewText(R.id.status_bar_artist_name, "Album Name");
+        bigViews.setTextViewText(R.id.status_bar_artist_name, "");
         create();
 
 

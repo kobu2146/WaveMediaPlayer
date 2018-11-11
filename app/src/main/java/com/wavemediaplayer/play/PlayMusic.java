@@ -41,14 +41,16 @@ public class PlayMusic {
     private static String playPrev = "";
     public static MusicData prevMusicDAta;
     private InitilationMediaPlayer initilationMediaPlayer;
+    private MainActivity mainActivity;
 
 
     /***/
 
 
 
-    public PlayMusic(Context context, SeekBar myseekbar,TextView mytext1, TextView mytext2, ImageView myimageview,Handler handler){
-        this.context = context;
+    public PlayMusic(MainActivity mainActivity, SeekBar myseekbar,TextView mytext1, TextView mytext2, ImageView myimageview,Handler handler){
+        this.mainActivity=mainActivity;
+        this.context = mainActivity.getApplicationContext();
         this.myseekbar = myseekbar;
         this.mytext1 = mytext1;
         this.mytext2 = mytext2;
@@ -70,8 +72,7 @@ public class PlayMusic {
         try {
             if(isMyServiceRunning(NotificationService.class)){
                 mediaPlayer=NotificationService.mediaPlayer;
-                stopRunable();
-                startRunable();
+
                 Log.e("qqqqqqqqqq","sssssstart eser11");
 
 
@@ -107,8 +108,6 @@ public class PlayMusic {
                     }
                 }
                 seekBarChange();
-                stopRunable();
-                startRunable();
                 if(isMyServiceRunning(NotificationService.class)){
                     NotificationService.mediaPlayer=mediaPlayer;
                 }
@@ -141,6 +140,7 @@ public class PlayMusic {
                     MainActivity.fPlayListener.song_artis.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getArtist());
                     MainActivity.fPlayListener.song_title.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getTitles());
                     playMusic(MusicList.musicData.get(FPlayListener.currentMusicPosition).getLocation());
+                    if(mainActivity.s!=null) mainActivity.s.listeDegistir(MusicList.musicData,FPlayListener.currentMusicPosition);
                 }
                 else {
                     if (tekrarla == 0){
@@ -149,6 +149,7 @@ public class PlayMusic {
                         MainActivity.fPlayListener.song_artis.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getArtist());
                         MainActivity.fPlayListener.song_title.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getTitles());
                         playMusic(MusicList.musicData.get( FPlayListener.currentMusicPosition).getLocation());
+                        if(mainActivity.s!=null) mainActivity.s.listeDegistir(MusicList.musicData,FPlayListener.currentMusicPosition);
                     }
 
                 }
@@ -167,6 +168,7 @@ public class PlayMusic {
                     MainActivity.fPlayListener.song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getArtist());
                     MainActivity.fPlayListener.song_title.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getTitles());
                     MainActivity.fPlayListener.playFromPlayList(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getLocation());
+                    if(mainActivity.s!=null) mainActivity.s.listeDegistir(OynatmaListesiFragment.music_oynat_list,FPlayListener.currentMusicPosition);
                 }
                 else {
                     if (tekrarla == 0){
@@ -175,6 +177,7 @@ public class PlayMusic {
                         MainActivity.fPlayListener.song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getArtist());
                         MainActivity.fPlayListener.song_title.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getTitles());
                         MainActivity.fPlayListener.playFromPlayList(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getLocation());
+                        if(mainActivity.s!=null) mainActivity.s.listeDegistir(OynatmaListesiFragment.music_oynat_list,FPlayListener.currentMusicPosition);
                     }
 
                 }
@@ -199,6 +202,7 @@ public class PlayMusic {
                         MainActivity.fPlayListener.song_artis.setText(MusicList.musicData.get(rndPositin).getArtist());
                         MainActivity.fPlayListener.song_title.setText(MusicList.musicData.get(rndPositin).getTitles());
                         playMusic(MusicList.musicData.get(rndPositin).getLocation());
+                        if(mainActivity.s!=null) mainActivity.s.listeDegistir(MusicList.musicData,FPlayListener.currentMusicPosition);
                     }
                 }
                 else if (tekrarla == 1){
@@ -206,6 +210,7 @@ public class PlayMusic {
                         MainActivity.fPlayListener.song_artis.setText(prevMusicDAta.getArtist());
                         MainActivity.fPlayListener.song_title.setText(prevMusicDAta.getTitles());
                         playMusic(prevMusicDAta.getLocation());
+                        if(mainActivity.s!=null) mainActivity.s.listeDegistir(MusicList.musicData,FPlayListener.currentMusicPosition);
                     }
                 }
             }
@@ -223,6 +228,7 @@ public class PlayMusic {
                         MainActivity.fPlayListener.song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(rndPositin).getArtist());
                         MainActivity.fPlayListener.song_title.setText(OynatmaListesiFragment.music_oynat_list.get(rndPositin).getTitles());
                         MainActivity.fPlayListener.playFromPlayList(OynatmaListesiFragment.music_oynat_list.get(rndPositin).getLocation());
+                        if(mainActivity.s!=null) mainActivity.s.listeDegistir(OynatmaListesiFragment.music_oynat_list,FPlayListener.currentMusicPosition);
                     }
                 }
                 else if (tekrarla == 1){
@@ -230,6 +236,7 @@ public class PlayMusic {
                         MainActivity.fPlayListener.song_artis.setText(prevMusicDAta.getArtist());
                         MainActivity.fPlayListener.song_title.setText(prevMusicDAta.getTitles());
                         playMusic(prevMusicDAta.getLocation());
+                        if(mainActivity.s!=null) mainActivity.s.listeDegistir(OynatmaListesiFragment.music_oynat_list,FPlayListener.currentMusicPosition);
                     }
                 }
             }
@@ -302,7 +309,7 @@ public class PlayMusic {
         }
     }
 
-    private void iconKapat(boolean acikmi){
+    public void iconKapat(boolean acikmi){
         if(acikmi){
             MainActivity.fPlayListener.play.setVisibility(View.GONE);
             MainActivity.fPlayListener.play_main.setVisibility(View.GONE);
@@ -320,7 +327,19 @@ public class PlayMusic {
     }
 
 
+
     public void startRunableWithMediaPlayer(){
+
+
+
+        if(isMyServiceRunning(NotificationService.class)) {
+            mediaPlayer = NotificationService.mediaPlayer;
+            FPlayListener.currentMusicPosition=NotificationService.currentPos;
+        }
+
+        MainActivity.fPlayListener.icerikDegistirme();
+
+
 
         if(mediaPlayer!=null){
             myseekbar.setMax(mediaPlayer.getDuration());
@@ -339,7 +358,7 @@ public class PlayMusic {
                 @Override
                 public void run() {
                     if (mediaPlayer != null) {
-                        Log.e("qqqqqq", "null deil mediaplyer");
+
 
                         myseekbar.setProgress(mediaPlayer.getCurrentPosition());
                         mytext1.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getCurrentPosition())));
@@ -354,9 +373,10 @@ public class PlayMusic {
 
 
                     } else {
+
                     }
 
-                    Log.e("qqqqqq", "nulllllllllll");
+                    Log.e("qqqqqq", "runableeeeewq");
 
 
                     myHandler.postDelayed(runnable, 1000);

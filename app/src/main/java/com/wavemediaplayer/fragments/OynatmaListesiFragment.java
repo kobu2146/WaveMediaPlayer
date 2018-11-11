@@ -51,7 +51,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
     public static ArrayList<MusicData> music_oynat_list = new ArrayList<>();
 
 
-    FPlayListener fPlayListener;
     private MusicData mDraggedEntity;
     Adapter adapterPlayList;
     public static Context context;
@@ -96,7 +95,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
 
 
         context = view.getContext();
-        fPlayListener = new FPlayListener(MainActivity.context,MainActivity.mainView);
 
 
         listviewMultiChoise();
@@ -311,17 +309,16 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState){
     }
-
-    private void clickEvent(){
+    private void clickEvent() {
         oynatma_listesi.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                if (!isMulti){
+                if (!isMulti) {
 
-                    Log.e("multi",isMulti+"");
-                    if (isList){
+                    Log.e("multi", isMulti + "");
+                    if (isList) {
                         music_oynat_list.clear();
 
                         calma_listesi_pos = position;
@@ -329,15 +326,14 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                         isList = false;
                         getCalmaListeleriSarkilari();
 
-                    }
-                    else {
-                        if (music_oynat_list.size() > 0){
+                    } else {
+                        if (music_oynat_list.size() > 0) {
                             FPlayListener.currentMusicPosition = position;
                             PlayMusic.prevMusicDAta = music_oynat_list.get(position);
                             MainActivity.fPlayListener.song_title.setText(music_oynat_list.get(position).getTitles());
                             MainActivity.fPlayListener.song_artis.setText(music_oynat_list.get(position).getArtist());
                             MainActivity.fPlayListener.playFromPlayList(music_oynat_list.get(position).getLocation());
-                        }
+                            if(((MainActivity)MainActivity.context).s!=null) ((MainActivity)MainActivity.context).s.listeDegistir(OynatmaListesiFragment.music_oynat_list,FPlayListener.currentMusicPosition);
                         }
 
                     }
@@ -347,6 +343,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
             }
         });
     }
+
 
     @Override
     public void onDragViewStart(int beginPosition) {

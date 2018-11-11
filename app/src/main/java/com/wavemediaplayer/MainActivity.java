@@ -1,8 +1,11 @@
 package com.wavemediaplayer;
 
 
+import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.IBinder;
@@ -13,6 +16,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -41,6 +45,7 @@ import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.fragments.PlayListsFragment;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mfcontroller.MainManager;
+import com.wavemediaplayer.mservices.Constants;
 import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.play.PlayMusic;
 import com.wavemediaplayer.playlist.PlayList;
@@ -71,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private boolean isMulti = false;
 
     public static int tabsHeigh;
-    private NotificationService s;
+    public NotificationService s;
 
     private MainMenu mainMenu;
 
@@ -120,6 +125,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public static boolean playList_Ekleme_Yapildi = false;
 
+    private IntentFilter intentFilter;
+
 
 
 
@@ -134,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         edit_search = findViewById(R.id.edit_search);
 
 
+        Log.e("qqqqqqqq","oncreate çalıştı");
         muzikCalmaBicimleri();
 
 
@@ -160,8 +168,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         editTextDegisiklikKontrol();
         mainMenu=new MainMenu(this);
 
+        if(!isMyServiceRunning(NotificationService.class)){
+            Intent serviceIntent = new Intent(context, NotificationService.class);
+            serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+            context.startService(serviceIntent);
+        }
+
         //  PlayerFragment fragmentS1 = new PlayerFragment();
         //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
+
+        intentFilter=new IntentFilter("speedExceeded");
+
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+
+                return true;
+            }
+        }
+        return false;
     }
 
     private void muzikCalmaBicimleri() {
@@ -217,11 +245,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     /** Uygulama arka plana dusup tekrar acıldıgında musicleri yeniden secme */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        musicList.getMusic("notification","ringtone");
-    }
+
 
     /** Musanın olusturdugu listener fonksyonu */
     private void m_createListener(){
@@ -233,7 +257,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mainEqualizer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(s!=null) s.tesx();
                 //fat burası equalizeri açmak için
                 if(mediaPlayer!=null){
                     fragmentListener.addFragment(equalizerFragment);
@@ -280,9 +303,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         pos = position;
                         fPlayListener.playMusic(position);
 
-
-
                         fPlayListener.f_ListenerEvent(position);
+                        if(s!=null) s.listeDegistir(MusicList.musicData,FPlayListener.currentMusicPosition);
                         eventClick(view);
                     }
                 }
@@ -346,7 +368,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         list_selected_count = 0;
                         layoutListClear(tempListLayout);
                         mode.finish();
-                        playlistInfo(tempList);
 
 
 
@@ -440,38 +461,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 return;
             }
         }
-
-//
-//        /** fragment işlemleri burada yapılacak sürekli Commit yapılmasın diye managerler falan ortak kullanılsın diye*/
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//
-//        if(folderFragment!=null){
-//            if(folderFragment.isAdded()){
-//                fragmentTransaction.remove(folderFragment);
-//                fragmentTransaction.commit();
-//                return;
-//            }
-//        }
-//
-//
-//
-//
-//        if( equalizerFragment!=null && !equalizerFragment.isHidden()){
-//            fragmentTransaction.hide(equalizerFragment);
-//            fragmentTransaction.commit();
-//            return;
-//        }
-//
-//
-//
-//        if( oynatmaListesiFragment!= null && !oynatmaListesiFragment.isHidden()){
-//            Log.e("hidden","deil");
-//            getSupportFragmentManager().beginTransaction().hide(oynatmaListesiFragment).commit();
-//            return;
-//        }
-//
-
 
         if (mLayout != null &&
                 (mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
@@ -581,6 +570,70 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         return false;
     }
+
+
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        NotificationService.MyBinder b = (NotificationService.MyBinder) service;
+        s = b.getService();
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        s = null;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent= new Intent(this, NotificationService.class);
+        bindService(intent, this, Context.BIND_AUTO_CREATE);
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mMessageReceiver,intentFilter );
+        musicList.getMusic("notification","ringtone");
+        fPlayListener.pl.stopRunable();
+        fPlayListener.pl.startRunable();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        fPlayListener.pl.stopRunable();
+        unbindService(this);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //buradaki amaç runable activity sonlandırldığında dahi calısıyor o yüzden açık bırakıyorum servisteki işlemler için
+        fPlayListener.pl.startRunable();
+
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getStringExtra("servicePause")!=null){
+                fPlayListener.pl.iconKapat(false);
+
+            }else if(intent.getStringExtra("servicePlay")!=null){
+                fPlayListener.pl.iconKapat(true);
+            }
+
+            else if(intent.getStringExtra("serviceNext")!=null){
+                fPlayListener.icerikDegistirme();
+
+            }else if(intent.getStringExtra("serviceBefore")!=null){
+                fPlayListener.icerikDegistirme();
+            }
+        }
+    };
+
+
+
 
 
 

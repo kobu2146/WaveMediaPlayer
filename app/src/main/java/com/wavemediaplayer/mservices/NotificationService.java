@@ -80,13 +80,14 @@ public class NotificationService extends Service {
         this.currentPos=currentPos;
         this.calmaListesiMuzik=FPlayListener.calmaListesiMuzik;
         FPlayListener.currentMusicPosition = currentPos;
-        mData=musicData.get(currentPos);
-        views.setTextViewText(R.id.status_bar_track_name, musicData.get(currentPos).getTitles());
-        bigViews.setTextViewText(R.id.status_bar_track_name, musicData.get(currentPos).getTitles());
-        views.setTextViewText(R.id.status_bar_artist_name, musicData.get(currentPos).getArtist());
-        bigViews.setTextViewText(R.id.status_bar_artist_name, musicData.get(currentPos).getArtist());
-        bigViews.setTextViewText(R.id.status_bar_artist_name, "");
-        Log.e("qqqqqqqqmusaqqq",musicData.get(currentPos).getTitles());
+        if(views!=null && bigViews!=null){
+            mData=musicData.get(currentPos);
+            views.setTextViewText(R.id.status_bar_track_name, musicData.get(currentPos).getTitles());
+            bigViews.setTextViewText(R.id.status_bar_track_name, musicData.get(currentPos).getTitles());
+            views.setTextViewText(R.id.status_bar_artist_name, musicData.get(currentPos).getArtist());
+            bigViews.setTextViewText(R.id.status_bar_artist_name, musicData.get(currentPos).getArtist());
+            bigViews.setTextViewText(R.id.status_bar_artist_name, "");
+        }
         create();
     }
 

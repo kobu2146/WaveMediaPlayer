@@ -86,10 +86,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_oynatma_listesi, container, false);
-
-
         oynatma_listesi = view.findViewById(R.id.oynatma_listesi);
-
 
         oynatma_listesi.setOnDragDropListener(this);
         oynatma_listesi.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -237,21 +234,21 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                 if (!temp_position_list.contains(position)) {
                     list_selected_count = list_selected_count + 1;
                     mode.setTitle(list_selected_count + "item selected");
-                    oynatma_listesi.getChildAt(position).findViewById(R.id.basic_listview_layout).setBackgroundColor(getResources().getColor(R.color.bar2));
-                    tempListLayout.add(oynatma_listesi.getChildAt(position));
+                    oynatma_listesi.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.background_grey));
+                    tempListLayout.add(oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout));
                     temp_position_list.add(position);
                 } else {
                     list_selected_count = list_selected_count - 1;
                     mode.setTitle(list_selected_count + "item selected");
-                    oynatma_listesi.getChildAt(position).findViewById(R.id.basic_listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
-                    tempListLayout.remove(oynatma_listesi.getChildAt(position));
+                    oynatma_listesi.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.transparent));
+                    tempListLayout.remove(oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout));
                     temp_position_list.remove((Object) position);
                 }
             } else {
                 if (!temp_position_list.contains(position)) {
                     list_selected_count = list_selected_count + 1;
                     mode.setTitle(list_selected_count + "item selected");
-                    oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.bar2));
+                    oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.background_grey));
                     tempListLayout.add(oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout));
                     temp_position_list.add(position);
                 } else {
@@ -307,6 +304,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                     for (int i = 0; i < jsonArray.length(); i++) {
 
 
+
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         String title = jsonObject.getString("title");
                         String artist = jsonObject.getString("artist");
@@ -354,18 +352,24 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                             MainActivity.fPlayListener.song_title.setText(music_oynat_list.get(position).getTitles());
                             MainActivity.fPlayListener.song_artis.setText(music_oynat_list.get(position).getArtist());
                             MainActivity.fPlayListener.playFromPlayList(music_oynat_list.get(position).getLocation());
+                            if(((MainActivity)MainActivity.context).s!=null) ((MainActivity)MainActivity.context).s.listeDegistir(OynatmaListesiFragment.music_oynat_list,FPlayListener.currentMusicPosition);
                         }
+
                     }
                 }
+
+
             }
         });
     }
+
 
     @Override
     public void onDragViewStart(int beginPosition) {
         if (!isList) {
             mDraggedEntity = music_oynat_list.get(beginPosition);
         }
+
     }
 
     @Override
@@ -374,6 +378,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
             MusicData applicationInfo = music_oynat_list.remove(fromPosition);
             music_oynat_list.add(toPosition, applicationInfo);
         }
+
     }
 
     @Override
@@ -382,6 +387,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
             music_oynat_list.set(finalPosition, mDraggedEntity);
             new CreatePlayList(MainActivity.context).muzikleriKaldır(music_oynat_list, oynat_list.get(calma_listesi_pos));
         }
+
     }
 
     @Override

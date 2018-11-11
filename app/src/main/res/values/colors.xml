@@ -27,7 +27,6 @@
     <color name="songTimerColor" tools:ignore="MissingDefaultResource">#484848</color>
 
 
-
     <!-- A transparent black -->
     <color name="transparent_black">#aa000000</color>
 
@@ -44,7 +43,12 @@
 
     <!-- Black -->
     <color name="black">#ff000000</color>
-
     <!-- White -->
     <color name="white">#ffffffff</color>
+
+
+
+    <color name="bar7">#2B2B2B</color>
+    <color name="iconColor">#df3527</color>
+    <color name="iconSvgColor">#4d4d4d</color>
 </resources>

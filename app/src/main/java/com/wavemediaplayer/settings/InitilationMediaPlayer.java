@@ -49,7 +49,6 @@ public class InitilationMediaPlayer {
 
                 mEqualizer.usePreset((short) sharedPreferences.getInt("EqualizerPreset",0));
                 break;
-
             }
         }
 
@@ -59,12 +58,10 @@ public class InitilationMediaPlayer {
         setBalance();
         setBass();
 
-        /**Bass ayarlarını al*/
-
-
         return this;
     }
 
+    /**Bass ayarlarını al*/
     private void setBass(){
         int progress=sharedPreferences.getInt("bass",50);
         BassBoost bassBoost = new BassBoost(1, mediaPlayer.getAudioSessionId());

@@ -5,11 +5,11 @@
         android:pathData="m127.027,64.006a63.015,63.015 56.393,1 1,-126.031 0,63.015 63.015,56.393 1,1 126.031,0z"
         android:strokeAlpha="1" android:strokeColor="#000000"
         android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeWidth="1.99465585"/>
-    <path android:fillAlpha="1" android:fillColor="#4d4d4d"
+    <path android:fillAlpha="1" android:fillColor="#ffff"
         android:fillType="nonZero"
         android:pathData="M36.443,32.671 l23.191,0 0,60 -23.191,0z"
         android:strokeColor="#00000000" android:strokeWidth="8"/>
-    <path android:fillAlpha="1" android:fillColor="#4d4d4d"
+    <path android:fillAlpha="1" android:fillColor="#ffff"
         android:fillType="nonZero"
         android:pathData="M66.443,32.049 l23.191,0 0,60 -23.191,0z"
         android:strokeColor="#00000000" android:strokeWidth="8"/>

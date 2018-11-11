@@ -234,7 +234,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                 if (!temp_position_list.contains(position)) {
                     list_selected_count = list_selected_count + 1;
                     mode.setTitle(list_selected_count + "item selected");
-                    oynatma_listesi.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.background_grey));
+                    oynatma_listesi.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.holo_gray_light));
                     tempListLayout.add(oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout));
                     temp_position_list.add(position);
                 } else {
@@ -248,7 +248,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                 if (!temp_position_list.contains(position)) {
                     list_selected_count = list_selected_count + 1;
                     mode.setTitle(list_selected_count + "item selected");
-                    oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.background_grey));
+                    oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.holo_gray_light));
                     tempListLayout.add(oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout));
                     temp_position_list.add(position);
                 } else {

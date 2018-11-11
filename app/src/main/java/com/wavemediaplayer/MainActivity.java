@@ -322,7 +322,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 if (!tempList.contains(position)){
                     list_selected_count = list_selected_count + 1;
                     mode.setTitle(list_selected_count + "item selected");
-                    musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.background_grey));
+                    musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.holo_gray_light));
                     tempListLayout.add( musicListView.getChildAt(position).findViewById(R.id.listview_layout));
                     tempList.add(position);
                 }

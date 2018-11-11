@@ -104,7 +104,7 @@
                     android:focusable="true"
                     android:layout_height="50dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/round_play_arrow_black_48dp" />
+                    android:src="@drawable/svgplay" />
 
                 <ImageButton
                     android:id="@+id/sample_main_pause_button"
@@ -114,7 +114,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/round_pause_black_48dp"
+                    android:src="@drawable/svgpause"
                     android:visibility="gone" />
             </LinearLayout>
 
@@ -336,7 +336,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/play_button" />
+                        android:src="@drawable/svgplay" />
                     <ImageButton
                         android:id="@+id/sample_main_pause_button_main"
                         android:layout_width="55dp"
@@ -346,7 +346,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/pause_button" />
+                        android:src="@drawable/svgpause" />
                 </LinearLayout>
 
                 <ImageButton
@@ -358,11 +358,11 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="15dp"
+                    android:padding="10dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/backword_button"
+                    android:src="@drawable/svgprev"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/sample_main_linearLayout5"
                     app:layout_constraintHorizontal_bias="0.754"
@@ -381,9 +381,9 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="15dp"
+                    android:padding="10dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/forword_button"
+                    android:src="@drawable/svgnext"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/sample_main_button"
                     app:layout_constraintHorizontal_bias="0.25"

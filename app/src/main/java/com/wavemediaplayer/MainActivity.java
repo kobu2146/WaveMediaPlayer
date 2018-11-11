@@ -30,6 +30,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
+import com.google.gson.Gson;
 import com.sdsmdg.harjot.crollerTest.Croller;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.wavemediaplayer.adapter.MusicData;
@@ -42,13 +43,19 @@ import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mfcontroller.MainManager;
 import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.play.PlayMusic;
+import com.wavemediaplayer.playlist.PlayList;
 import com.wavemediaplayer.settings.FolderFragment;
 import com.wavemediaplayer.settings.InitilationMediaPlayer;
 import com.wavemediaplayer.settings.MusicListSettingsFragment;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.wavemediaplayer.play.PlayMusic.mediaPlayer;
 
@@ -68,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private MainMenu mainMenu;
 
+    private static boolean devam = false;
 
     /** Main musiclistview */
     public static SlideAndDragListView musicListView;
@@ -101,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public static final String KARISIK_CAL = "KARISIK CAL";
     public static final String SARKIYI_TEKRARLA = "SARKIYI TEKRAR";
+    public static final String DUZENLENMIS_LISTE = "DUZENLENMIS LISTE";
 
     SlidingUpPanelLayout mLayout;
     public FragmentListener fragmentListener;
@@ -124,18 +133,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         musicListView = findViewById(R.id.main_musicListView);
         edit_search = findViewById(R.id.edit_search);
 
-        sharedPreferences  = context.getSharedPreferences(KARISIK_CAL, Context.MODE_PRIVATE);
-        sharedPreferences2  = context.getSharedPreferences(SARKIYI_TEKRARLA, Context.MODE_PRIVATE);
+
         muzikCalmaBicimleri();
+
 
         fragmentListener=new FragmentListener(this);
         musicListSettingsFragment=new MusicListSettingsFragment();
         folderFragment=new FolderFragment();
         new MainManager(this);
 
-        musicList = new MusicList(musicListView,this);
-        musicList.getMusic("notification","ringtone");
-        denememusicdata=new ArrayList<>();
+        musicList = new MusicList(musicListView, this);
+
+        musicList.getMusic("notification", "ringtone");
+        //   duzenlenmisListeyiCek();
+        denememusicdata = new ArrayList<>();
         denememusicdata.addAll(MusicList.musicData);
         musicListView.setOnDragDropListener(this);
         musicListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -153,11 +164,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
     }
 
-
-
-    private void muzikCalmaBicimleri(){
-        PlayMusic.karisikCal = sharedPreferences.getBoolean("karisik",true);
-        PlayMusic.tekrarla = sharedPreferences2.getInt("tekrarla",0);
+    private void muzikCalmaBicimleri() {
+        sharedPreferences = getSharedPreferences(KARISIK_CAL, Context.MODE_PRIVATE);
+        sharedPreferences2 = getSharedPreferences(SARKIYI_TEKRARLA, Context.MODE_PRIVATE);
+        PlayMusic.karisikCal = sharedPreferences.getBoolean("karisik", true);
+        PlayMusic.tekrarla = sharedPreferences2.getInt("tekrarla", 0);
 
 
     }
@@ -205,7 +216,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         MusicList.adapter.notifyDataSetChanged();
     }
 
-
+    /** Uygulama arka plana dusup tekrar acıldıgında musicleri yeniden secme */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        musicList.getMusic("notification","ringtone");
+    }
 
     /** Musanın olusturdugu listener fonksyonu */
     private void m_createListener(){
@@ -217,12 +233,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mainEqualizer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if(s!=null) s.tesx();
-//                //fat burası equalizeri açmak için
-//                if(mediaPlayer!=null){
-//                    fragmentListener.addFragment(equalizerFragment);
-//                }
+                //fat burası equalizeri açmak için
+                if(mediaPlayer!=null){
+                    fragmentListener.addFragment(equalizerFragment);
+                }
 
 
             }
@@ -233,10 +248,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void f_createListener(){
         mLayout =  findViewById(R.id.activity_main);
         fPlayListener = new FPlayListener(this,mainView);
+        /** burada equalizeri başlangıçta çalıştırıyorum ki sonradan equalizere tıkladığında ses değişmesin ayarlar önceden yapılsın diye*/
+        if(mediaPlayer!=null){
+            fragmentListener.addFragment(equalizerFragment);
+//            fragmentListener.hideFragment(equalizerFragment);
+        }
         /** Herhangi bit posizyon yok ise default 0'dır */
-        FPlayListener.currentMusicPosition = pos;
-        PlayMusic.prevMusicDAta = MusicList.musicData.get(pos);
-        fPlayListener.f_ListenerEvent(pos);
+        if (MusicList.musicData.size() > 0) {
+            FPlayListener.currentMusicPosition = pos;
+            PlayMusic.prevMusicDAta = MusicList.musicData.get(pos);
+            fPlayListener.f_ListenerEvent(pos);
+        }
+
 
         /** Listviewde coklu secim yapmak icin */
         multipleChoise();
@@ -323,6 +346,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         list_selected_count = 0;
                         layoutListClear(tempListLayout);
                         mode.finish();
+                        playlistInfo(tempList);
 
 
 
@@ -343,6 +367,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
     }
+
+    private void duzenlenmisListeKaydet() {
+
+        sharedPreferences = getSharedPreferences(DUZENLENMIS_LISTE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(MusicList.musicData);
+        if (sharedPreferences.getString("main_liste", null) != null) {
+            editor.remove("main_liste");
+        }
+
+        editor.putString("main_liste", json);
+        editor.apply();
+    }
+
 
     private void layoutListClear(List<View> layoutList){
         for (View v :layoutList){
@@ -476,6 +516,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onDragViewDown(int finalPosition) {
         MusicList.musicData.set(finalPosition, mDraggedEntity);
+        Log.e("bıraktı", "evet");
+        duzenlenmisListeKaydet();
     }
 
     @Override
@@ -541,49 +583,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        fPlayListener.pl.startRunable();
-//        Log.e("oooooon","start");
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        fPlayListener.pl.stopRunable();
-//        Log.e("oooooon","stop");
-//
-//    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        fPlayListener.pl.stopRunable();
-        unbindService(this);
 
 
-    }
-
-    /** Uygulama arka plana dusup tekrar acıldıgında musicleri yeniden secme */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        musicList.getMusic("notification","ringtone");
-        fPlayListener.pl.startRunable();
-        Intent intent= new Intent(this, NotificationService.class);
-        bindService(intent, this, Context.BIND_AUTO_CREATE);
-    }
-
-
-    @Override
-    public void onServiceConnected(ComponentName name, IBinder service) {
-        NotificationService.MyBinder b = (NotificationService.MyBinder) service;
-        s = b.getService();
-    }
-
-    @Override
-    public void onServiceDisconnected(ComponentName name) {
-        s = null;
-    }
 }

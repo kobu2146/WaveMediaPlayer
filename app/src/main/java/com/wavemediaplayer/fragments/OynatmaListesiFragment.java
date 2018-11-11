@@ -1,5 +1,6 @@
 package com.wavemediaplayer.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -17,13 +18,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.google.gson.Gson;
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.Adapter;
 import com.wavemediaplayer.adapter.MusicData;
+import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.play.PlayMusic;
 import com.wavemediaplayer.playlist.CreatePlayList;
+import com.wavemediaplayer.playlist.PlayList;
 import com.yydcdut.sdlv.Menu;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
@@ -47,6 +51,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
     public static ArrayList<MusicData> music_oynat_list = new ArrayList<>();
 
 
+    FPlayListener fPlayListener;
     private MusicData mDraggedEntity;
     Adapter adapterPlayList;
     public static Context context;
@@ -79,7 +84,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_oynatma_listesi, container, false);
+        View view = inflater.inflate(R.layout.fragment_oynatma_listesi, container, false);
         oynatma_listesi = view.findViewById(R.id.oynatma_listesi);
 
         oynatma_listesi.setOnDragDropListener(this);
@@ -91,7 +96,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
 
 
         context = view.getContext();
-
+        fPlayListener = new FPlayListener(MainActivity.context,MainActivity.mainView);
 
 
         listviewMultiChoise();
@@ -302,6 +307,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
         }
     }
 
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState){
     }
@@ -331,6 +337,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                             MainActivity.fPlayListener.song_title.setText(music_oynat_list.get(position).getTitles());
                             MainActivity.fPlayListener.song_artis.setText(music_oynat_list.get(position).getArtist());
                             MainActivity.fPlayListener.playFromPlayList(music_oynat_list.get(position).getLocation());
+                        }
                         }
 
                     }
@@ -362,6 +369,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
     public void onDragViewDown(int finalPosition) {
         if (!isList){
             music_oynat_list.set(finalPosition, mDraggedEntity);
+            new CreatePlayList(MainActivity.context).muzikleriKaldır(music_oynat_list, oynat_list.get(calma_listesi_pos));
         }
 
     }
@@ -436,5 +444,9 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         return false;
     }
+
+
+
+
 
 }

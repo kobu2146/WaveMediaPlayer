@@ -13,6 +13,17 @@
     <color name="holo_gray_light">#33999999</color>
     <color name="backgroundColor">#ffff</color>
     <color name="tectColor">#000</color>
+
+
+    <color name="bar1">#59616C</color>
+    <color name="bar2">#474B5B</color>
+    <color name="bar3">#BA6D7E</color>
+    <color name="bar4">#FA566F</color>
+    <color name="bar5">#31303E</color>
+    <color name="bar6">#2F3126</color>
+    <color name="bar7">#2B2B2B</color>
+    <color name="bar8">#2a3636</color>
+    <color name="turuncu">#F55730</color>
     <color name="songTimerColor" tools:ignore="MissingDefaultResource">#484848</color>
 
 

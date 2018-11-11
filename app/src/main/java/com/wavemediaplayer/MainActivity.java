@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private MainMenu mainMenu;
 
-    private static boolean devam = false;
 
     /**
      * Main musiclistview
@@ -175,8 +174,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         sharedPreferences2 = getSharedPreferences(SARKIYI_TEKRARLA, Context.MODE_PRIVATE);
         PlayMusic.karisikCal = sharedPreferences.getBoolean("karisik", true);
         PlayMusic.tekrarla = sharedPreferences2.getInt("tekrarla", 0);
-
-
     }
 
 
@@ -192,11 +189,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     musicList.getMusic("notification", "ringtone");
                     geciciAramaSonuclari.clear();
                 } else {
-
                     searchItem(s.toString().toLowerCase());
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) {
 
@@ -215,7 +210,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (denememusicdata.get(i).getTitles().toLowerCase().contains(text.toString().toLowerCase())) {
                 MusicList.musicData.add(denememusicdata.get(i));
                 MusicList.adapter.notifyDataSetChanged();
-
             }
         }
         MusicList.adapter.notifyDataSetChanged();
@@ -228,8 +222,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onResume() {
         super.onResume();
         musicList.getMusic("notification", "ringtone");
-
-
     }
 
 
@@ -241,17 +233,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         oynatmaListesiFragment = new OynatmaListesiFragment();
         mainEqualizer = findViewById(R.id.mainEqualizer);
         mainFrame = findViewById(R.id.mainFrame);
-
         mainEqualizer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //fat burası equalizeri açmak için
                 if (mediaPlayer != null) {
                     fragmentListener.addFragment(equalizerFragment);
                 }
-
-
             }
         });
     }
@@ -315,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 if (!tempList.contains(position)) {
                     list_selected_count = list_selected_count + 1;
                     mode.setTitle(list_selected_count + "item selected");
-                    musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.background_grey));
+                    musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.bar2));
                     tempListLayout.add(musicListView.getChildAt(position).findViewById(R.id.listview_layout));
                     tempList.add(position);
                 } else {
@@ -351,8 +339,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         list_selected_count = 0;
                         mode.finish();
                         tempList.clear();
-
-
                         return true;
 
                     case R.id.itemPlayList:
@@ -360,18 +346,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         list_selected_count = 0;
                         layoutListClear(tempListLayout);
                         mode.finish();
-
-
                     default:
                         return false;
                 }
-
             }
 
             /** Multichoise islemi iptal edildiginde secilen tum itemler sıfırlanacak  */
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-
                 tempList = new ArrayList<>();
                 layoutListClear(tempListLayout);
                 list_selected_count = 0;

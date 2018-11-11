@@ -5,17 +5,11 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/layout_background2"
     android:gravity="bottom"
     tools:context=".MainActivity"
     app:umanoPanelHeight="70dp"
     app:umanoShadowHeight="5dp">
-
-
-
-
-
-
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -44,9 +38,13 @@
 
         <EditText
             android:id="@+id/edit_search"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="60dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:background="@drawable/rounded_edittext"
             android:hint="search"/>
 
         <com.yydcdut.sdlv.SlideAndDragListView
@@ -59,9 +57,10 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="45dp"
             android:background="@android:color/transparent"
-            android:divider="#DDDDDD"
+            android:divider="@color/bar1"
+            android:dividerHeight="1.5dp"
             android:textColor="#FFF"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"

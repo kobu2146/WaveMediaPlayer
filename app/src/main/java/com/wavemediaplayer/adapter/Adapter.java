@@ -62,7 +62,7 @@ public class Adapter extends ArrayAdapter<MusicData> {
         }
 
         holder.title.setText(musicData.get(position).getTitles());
-        holder.image.setImageResource(musicData.get(position).getImages());
+        holder.image.setImageDrawable(Utils.getDrawable(context,R.drawable.ic_music_nota_1));
         holder.artist.setText(musicData.get(position).getArtist());
         holder.image_logo.setImageDrawable(Utils.getDrawable(context,R.drawable.ic_reorder_grey_500_24dp));
         holder.image_logo.setTag(Integer.parseInt(position + ""));

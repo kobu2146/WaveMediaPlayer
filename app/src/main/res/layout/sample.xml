@@ -21,7 +21,7 @@
         android:orientation="horizontal"
         android:clickable="true"
         android:onClick="eventClick"
-        android:background="@color/backgroundColor"
+        android:background="@color/bar8"
         android:gravity="center">
 
         <android.support.constraint.ConstraintLayout
@@ -67,7 +67,7 @@
                     android:lines="1"
                     android:onClick="eventClick"
                     android:text="Havana (Camila Cabello song)"
-                    android:textColor="@color/tectColor"
+                    android:textColor="@color/backgroundColor"
                     android:textSize="22dp" />
 
                 <TextView
@@ -75,6 +75,7 @@
                     android:layout_width="match_parent"
                     android:onClick="eventClick"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/backgroundColor"
                     android:lines="1"
                     android:text="Camila Cabello" />
 
@@ -125,43 +126,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp">
 
-        <ImageButton
-            android:id="@+id/sample_tekrarla"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:scaleType="centerCrop"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/baseline_repeat_white_48dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.023"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.811" />
 
-        <ImageButton
-            android:id="@+id/sample_karisik_cal"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:scaleType="centerCrop"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/baseline_shuffle_white_48dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.976"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.811" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
@@ -185,9 +154,47 @@
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@color/bar8">
 
                 <ImageButton
+                    android:id="@+id/sample_tekrarla"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/baseline_repeat_white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.023"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.811" />
+
+                <ImageButton
+                    android:id="@+id/sample_karisik_cal"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/baseline_shuffle_white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.976"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.811" />
+
+                <ImageButton
+                    android:visibility="gone"
                     android:id="@+id/sample_main_imageButton2"
                     android:layout_width="55dp"
                     android:layout_height="55dp"
@@ -207,6 +214,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/sample_main_StartTime"
                     app:layout_constraintVertical_bias="0.56" />
                 <ImageButton
+
                     android:id="@+id/sample_main_imageButton2new"
                     android:layout_width="55dp"
                     android:layout_height="55dp"
@@ -227,6 +235,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/sample_main_StartTime"
                     app:layout_constraintVertical_bias="0.56" />
                 <ImageButton
+                    android:visibility="gone"
                     android:id="@+id/sample_main_button"
                     android:layout_width="55dp"
                     android:layout_height="55dp"
@@ -275,7 +284,7 @@
                     android:layout_marginTop="8dp"
                     android:fontFamily="sans-serif"
                     android:text="1:05"
-                    android:textColor="@color/songTimerColor"
+                    android:textColor="@color/backgroundColor"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -294,7 +303,7 @@
                     android:layout_marginTop="8dp"
                     android:fontFamily="sans-serif"
                     android:text="3:06"
-                    android:textColor="@color/songTimerColor"
+                    android:textColor="@color/backgroundColor"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

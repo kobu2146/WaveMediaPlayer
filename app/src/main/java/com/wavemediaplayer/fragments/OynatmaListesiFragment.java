@@ -3,6 +3,7 @@ package com.wavemediaplayer.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,11 +18,13 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.Adapter;
+import com.wavemediaplayer.adapter.ListAdapter;
 import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.main.FPlayListener;
@@ -51,7 +54,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
     public static ArrayList<MusicData> music_oynat_list = new ArrayList<>();
 
 
-    FPlayListener fPlayListener;
+
     private MusicData mDraggedEntity;
     Adapter adapterPlayList;
     public static Context context;
@@ -83,7 +86,10 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_oynatma_listesi, container, false);
+
+
         oynatma_listesi = view.findViewById(R.id.oynatma_listesi);
+
 
         oynatma_listesi.setOnDragDropListener(this);
         oynatma_listesi.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -94,7 +100,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
 
 
         context = view.getContext();
-        fPlayListener = new FPlayListener(MainActivity.context, MainActivity.mainView);
 
 
         listviewMultiChoise();
@@ -117,10 +122,13 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
             oynat_list.add(entry.getKey());
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
-                android.R.layout.simple_list_item_1, android.R.id.text1, oynat_list);
+        ListAdapter adapter2 = new ListAdapter(context,
+                R.layout.basic_list, oynat_list);
+//        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(context,
+//                android.R.layout.simple_list_item_1, android.R.id.text1, oynat_list);
+
         oynatma_listesi.setMenu(new Menu(false));
-        oynatma_listesi.setAdapter(adapter);
+        oynatma_listesi.setAdapter(adapter2);
 
 
     }
@@ -156,6 +164,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                 MenuInflater inflater = mode.getMenuInflater();
                 switch (item.getItemId()) {
                     case R.id.item_sil:
+                        layoutListClear(tempListLayout);
                         calmaListeleriniSil();
                         list_selected_count = 0;
                         mode.finish();
@@ -163,13 +172,14 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                         return true;
 
                     case R.id.item_kaldır:
+                        layoutListClear(tempListLayout);
                         calmaListesiMuzikleriniSil();
                         list_selected_count = 0;
                         temp_position_list.clear();
                         mode.finish();
                     case R.id.item_paylas:
                         list_selected_count = 0;
-                        temp_position_list.clear();
+                        layoutListClear(tempListLayout);
                         mode.finish();
 
                     default:
@@ -180,6 +190,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
             @Override
             public void onDestroyActionMode(ActionMode mode) {
                 temp_position_list.clear();
+                layoutListClear(tempListLayout);
                 list_selected_count = 0;
                 isMulti = false;
 
@@ -226,21 +237,21 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                 if (!temp_position_list.contains(position)) {
                     list_selected_count = list_selected_count + 1;
                     mode.setTitle(list_selected_count + "item selected");
-                    oynatma_listesi.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.background_grey));
-                    tempListLayout.add(oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout));
+                    oynatma_listesi.getChildAt(position).findViewById(R.id.basic_listview_layout).setBackgroundColor(getResources().getColor(R.color.bar2));
+                    tempListLayout.add(oynatma_listesi.getChildAt(position));
                     temp_position_list.add(position);
                 } else {
                     list_selected_count = list_selected_count - 1;
                     mode.setTitle(list_selected_count + "item selected");
-                    oynatma_listesi.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.transparent));
-                    tempListLayout.remove(oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout));
+                    oynatma_listesi.getChildAt(position).findViewById(R.id.basic_listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
+                    tempListLayout.remove(oynatma_listesi.getChildAt(position));
                     temp_position_list.remove((Object) position);
                 }
             } else {
                 if (!temp_position_list.contains(position)) {
                     list_selected_count = list_selected_count + 1;
                     mode.setTitle(list_selected_count + "item selected");
-                    oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.background_grey));
+                    oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.bar2));
                     tempListLayout.add(oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout));
                     temp_position_list.add(position);
                 } else {
@@ -258,6 +269,20 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
         }
 
 
+    }
+
+    private void layoutListClear(List<View> layoutList) {
+        for (View v : layoutList) {
+            if (isList){
+                v.findViewById(R.id.basic_listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
+            }
+            else {
+                v.findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
+            }
+
+        }
+        tempListLayout.clear();
+        tempListLayout = new ArrayList<>();
     }
 
 
@@ -330,11 +355,8 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                             MainActivity.fPlayListener.song_artis.setText(music_oynat_list.get(position).getArtist());
                             MainActivity.fPlayListener.playFromPlayList(music_oynat_list.get(position).getLocation());
                         }
-
                     }
                 }
-
-
             }
         });
     }
@@ -344,7 +366,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
         if (!isList) {
             mDraggedEntity = music_oynat_list.get(beginPosition);
         }
-
     }
 
     @Override
@@ -353,7 +374,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
             MusicData applicationInfo = music_oynat_list.remove(fromPosition);
             music_oynat_list.add(toPosition, applicationInfo);
         }
-
     }
 
     @Override
@@ -362,7 +382,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
             music_oynat_list.set(finalPosition, mDraggedEntity);
             new CreatePlayList(MainActivity.context).muzikleriKaldır(music_oynat_list, oynat_list.get(calma_listesi_pos));
         }
-
     }
 
     @Override

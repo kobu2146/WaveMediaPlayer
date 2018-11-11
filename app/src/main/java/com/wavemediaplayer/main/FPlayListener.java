@@ -177,7 +177,7 @@ public class FPlayListener {
         karisik_cal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (PlayMusic.karisikCal){PlayMusic.karisikCal = false; Toast.makeText(context,"Sıralı calacak",Toast.LENGTH_SHORT).show();}
+                if   (PlayMusic.karisikCal){PlayMusic.karisikCal = false; Toast.makeText(context,"Sıralı calacak",Toast.LENGTH_SHORT).show();}
                 else {PlayMusic.karisikCal = true; Toast.makeText(context,"Karışık calacak",Toast.LENGTH_SHORT).show();}
                 SharedPreferences sharedPreferences;
                 SharedPreferences.Editor editor;
@@ -192,9 +192,9 @@ public class FPlayListener {
         tekrarla.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (PlayMusic.tekrarla == 0){PlayMusic.tekrarla = 1; Toast.makeText(context,"Gecerli sarkıyı tekrarlayacak",Toast.LENGTH_SHORT).show();}
+                if      (PlayMusic.tekrarla == 0){PlayMusic.tekrarla = 1; Toast.makeText(context,"Gecerli sarkıyı tekrarlayacak",Toast.LENGTH_SHORT).show();}
                 else if (PlayMusic.tekrarla == 1){PlayMusic.tekrarla = 2; Toast.makeText(context,"Liste bittikten sonra duracak",Toast.LENGTH_SHORT).show();}
-                else   {PlayMusic.tekrarla = 0; Toast.makeText(context,"Tum sarkıyı tekrarlayacak",Toast.LENGTH_SHORT).show();}
+                else    {PlayMusic.tekrarla = 0; Toast.makeText(context,"Tum sarkıyı tekrarlayacak",Toast.LENGTH_SHORT).show();}
 
 
 
@@ -211,7 +211,10 @@ public class FPlayListener {
         song_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PlayMusic.tekrarla = 3;
+                if (PlayMusic.tekrarla == 1){
+                    PlayMusic.tekrarla = 3;
+                }
+
                 pl.calmayaDevamEt(true);
             }
         });
@@ -219,7 +222,9 @@ public class FPlayListener {
         song_prev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PlayMusic.tekrarla = 3;
+                if (PlayMusic.tekrarla == 1){
+                    PlayMusic.tekrarla = 3;
+                }
                 pl.calmayaDevamEt(false);
             }
         });

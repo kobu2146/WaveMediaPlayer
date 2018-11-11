@@ -122,9 +122,11 @@ public class PlayMusic {
 
     public void calmayaDevamEt(boolean ileriCal){
         if (!karisikCal){ // Sıralı calma aktifse
+            Log.e("sirali","cal");
             if (!FPlayListener.calmaListesiMuzik){//Ana playerdan calınacaksa
+                Log.e("ana","music");
                 if (tekrarla == 0 || tekrarla == 2){
-                    if (ileriCal){ FPlayListener.currentMusicPosition++; }
+                    if (ileriCal){ FPlayListener.currentMusicPosition++; Log.e("current","arttı"); }
                     else {
                         if (  FPlayListener.currentMusicPosition != 0){FPlayListener.currentMusicPosition--;}
                         else { FPlayListener.currentMusicPosition = 0; }
@@ -150,6 +152,7 @@ public class PlayMusic {
                 }
             }
             else { //Playlistden veya baska biryerden ise
+                Log.e("playlist","music");
                 if (tekrarla == 0 || tekrarla == 2){
                     if (ileriCal){ FPlayListener.currentMusicPosition++; }
                     else {
@@ -191,7 +194,6 @@ public class PlayMusic {
                     FPlayListener.currentMusicPosition = rndPositin;
                     if (rndPositin <= MusicList.musicData.size()){
                         prevMusicDAta = MusicList.musicData.get(rndPositin);
-                        Log.e("prevdata",MusicList.musicData.get(rndPositin).getArtist());
                         MainActivity.fPlayListener.song_artis.setText(MusicList.musicData.get(rndPositin).getArtist());
                         MainActivity.fPlayListener.song_title.setText(MusicList.musicData.get(rndPositin).getTitles());
                         playMusic(MusicList.musicData.get(rndPositin).getLocation());

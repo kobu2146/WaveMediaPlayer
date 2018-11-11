@@ -158,10 +158,10 @@ public class MusicList {
                                 }
                             }
                             if (ekle) {
-                                musicData.add(new MusicData(currentTitle, currentArtist, R.drawable.music, currentDuration, currentLocation, currentId));
+                                musicData.add(new MusicData(currentTitle, currentArtist, R.drawable.ic_music_nota_1, currentDuration, currentLocation, currentId));
                             }
                         } else {
-                            musicData.add(new MusicData(currentTitle, currentArtist, R.drawable.music, currentDuration, currentLocation, currentId));
+                            musicData.add(new MusicData(currentTitle, currentArtist, R.drawable.ic_music_nota_1, currentDuration, currentLocation, currentId));
                             // Log.e("qqqqqqElse" + musicData.get(count).getTitles() + "-->" + currentTitle, musicData.get(count).getIds() + "-->" + currentId);
 
                         }

@@ -143,7 +143,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mp3BaslangictaOlustur();
         tabsHeigh=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,50,getResources().getDisplayMetrics());
         context = this;
         mainView = getWindow().getDecorView().findViewById(android.R.id.content);
@@ -197,21 +196,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-    private void mp3BaslangictaOlustur(){
-//        PlayMusic.mediaPlayer=new MediaPlayer();
-//        PlayMusic.mediaPlayer.getAudioSessionId();
-
-//        Uri mediaPath = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.boracay);
-//        try {
-//            PlayMusic.mediaPlayer.setDataSource(getApplicationContext(),mediaPath);
-//            PlayMusic.mediaPlayer.prepare();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        PlayMusic.mediaPlayer.start();
-
-
-    }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);

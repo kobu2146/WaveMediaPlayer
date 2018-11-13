@@ -52,7 +52,7 @@ public class MusicListSettingsFragment extends Fragment {
         LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
         linearLayout.setLayoutParams(params);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
-        linearLayout.setBackgroundColor(Color.WHITE);
+        linearLayout.setBackgroundColor(getResources().getColor(R.color.bar7));
         listView=new ListView(getActivity());
         listView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
         linearLayout.addView(listView);

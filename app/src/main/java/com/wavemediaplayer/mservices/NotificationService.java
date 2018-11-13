@@ -20,7 +20,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
@@ -125,7 +124,6 @@ public class NotificationService extends Service {
             switch (intent.getAction()) {
                 case Constants.ACTION.STARTFOREGROUND_ACTION:
                     showNotification();
-                    // Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
                     mediaPlayer = PlayMusic.mediaPlayer;
 
                     break;
@@ -180,8 +178,6 @@ public class NotificationService extends Service {
             mediaPlayer.start();
             listeDegistir(list,currentPos);
         }
-        Toast.makeText(this, "Clicked Next", Toast.LENGTH_SHORT).show();
-        Log.i(LOG_TAG, "Clicked Next");
     }
     private void pauseSong(){
         if(mediaPlayer!=null){
@@ -196,8 +192,7 @@ public class NotificationService extends Service {
             }
             create();
         }
-        Toast.makeText(this, "Clicked Play", Toast.LENGTH_SHORT).show();
-        Log.i(LOG_TAG, "Clicked Play");
+
     }
     private void previousSong(){
         if(currentPos>0){
@@ -211,15 +206,11 @@ public class NotificationService extends Service {
             mediaPlayer.start();
             listeDegistir(list,currentPos);
         }
-        Toast.makeText(this, "Clicked Previous", Toast.LENGTH_SHORT).show();
-        Log.i(LOG_TAG, "Clicked Previous");
     }
     private void exitPlayer(){
         if(mediaPlayer!=null){
             mediaPlayer.stop();
         }
-        Log.i(LOG_TAG, "Received Stop Foreground Intent");
-        Toast.makeText(this, "Service Stoped", Toast.LENGTH_SHORT).show();
         stopForeground(true);
         stopSelf();
     }
@@ -295,31 +286,44 @@ public class NotificationService extends Service {
     }
 
     private void create(){
+        Notification.Builder nBuilder=new Notification.Builder(this);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
             String name = "Wave ";
             int importance = NotificationManager.IMPORTANCE_LOW;
             NotificationChannel mChannel = new NotificationChannel("com.wavemediaplayer", name, importance);
             mNotificationManager.createNotificationChannel(mChannel);
-            status = new Notification.Builder(this).setChannelId(mChannel.getId()).build();
 
-            status.contentView = views;
-            status.bigContentView = bigViews;
-            status.flags = Notification.FLAG_ONGOING_EVENT;
-            status.icon = R.drawable.ic_launcher;
-            status.contentIntent = pendingIntent;
-            startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
+            nBuilder.setChannelId(mChannel.getId());
+
+
+
+//            status = new Notification.Builder(this).setPublicVersion().setChannelId(mChannel.getId()).build();
+
 
         }else{
+//            status = new Notification.Builder(this).build();
 
-            status = new Notification.Builder(this).build();
-            status.contentView = views;
-            status.bigContentView = bigViews;
-            status.flags = Notification.FLAG_ONGOING_EVENT;
-            status.icon = R.drawable.ic_launcher;
-            status.contentIntent = pendingIntent;
-            startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
+
+
         }
+
+        status=new Notification();
+
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            nBuilder.setVisibility(Notification.VISIBILITY_PUBLIC);
+            nBuilder.setPublicVersion(status);
+        }
+        status=nBuilder.build();
+
+        status.contentView = views;
+        status.bigContentView = bigViews;
+        status.flags = Notification.FLAG_ONGOING_EVENT;
+        status.icon = R.drawable.ic_launcher;
+        status.contentIntent = pendingIntent;
+        startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
+
 
 
 

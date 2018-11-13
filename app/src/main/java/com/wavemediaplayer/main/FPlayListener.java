@@ -5,10 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +21,8 @@ import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
+import com.wavemediaplayer.fragments.PlayListsFragment;
+import com.wavemediaplayer.fragments.SettingsFragment;
 import com.wavemediaplayer.mservices.Constants;
 import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.play.PlayMusic;
@@ -47,6 +53,7 @@ public class FPlayListener {
     private ImageButton song_prev;
     private ImageButton tekrarla;
     private ImageButton karisik_cal;
+    private ImageView sample_main_settings;
     public static TextView song_title;
     public static TextView song_artis;
 
@@ -89,6 +96,7 @@ public class FPlayListener {
         tekrarla = (ImageButton) view.findViewById(R.id.sample_tekrarla);
         song_title = view.findViewById(R.id.songs_title);
         song_artis = view.findViewById(R.id.songs_artist_name);
+        sample_main_settings = view.findViewById(R.id.sample_main_settings);
 
 
         mytext1= view.findViewById(R.id.sample_main_StartTime);
@@ -191,6 +199,15 @@ public class FPlayListener {
 
     public void f_ListenerEvent(final int position){
 
+        sample_main_settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = mainActivity.getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.addToBackStack(null);
+                DialogFragment dialogFragment = new SettingsFragment();
+                dialogFragment.show(fragmentTransaction,"SettingsFragment");
+            }
+        });
 
         karisik_cal.setOnClickListener(new View.OnClickListener() {
             @Override

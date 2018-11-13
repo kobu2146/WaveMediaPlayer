@@ -1,5 +1,6 @@
 package com.wavemediaplayer.fragments;
 
+import android.app.Dialog;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.content.Context;
@@ -44,6 +45,14 @@ public class PlayListsFragment extends DialogFragment {
 
     public PlayListsFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState)
+    {
+        final Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        return dialog;
     }
 
 

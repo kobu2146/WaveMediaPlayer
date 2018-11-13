@@ -35,10 +35,11 @@ public class MainManager {
                 if(i==0){
                     activity.musicListView.setX(-i1);
                     activity.musicListView.setVisibility(View.VISIBLE);
-                    activity.edit_search.setVisibility(View.VISIBLE);
+                    activity.mainSearchLayout.setX(-i1);
+                    activity.mainSearchLayout.setVisibility(View.VISIBLE);
                 }else{
                     activity.musicListView.setVisibility(View.GONE);
-                    activity.edit_search.setVisibility(View.GONE);
+                    activity.mainSearchLayout.setVisibility(View.GONE);
                     if (i == 1){
                         Log.e("i",""+i);
                         if (MainActivity.playList_Ekleme_Yapildi){

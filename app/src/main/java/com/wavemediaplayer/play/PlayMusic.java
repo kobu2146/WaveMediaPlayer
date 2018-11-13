@@ -367,7 +367,8 @@ public class PlayMusic {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    if (mediaPlayer != null) {
+                    if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+
 
 
                         myseekbar.setProgress(mediaPlayer.getCurrentPosition());

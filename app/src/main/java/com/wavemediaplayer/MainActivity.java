@@ -11,10 +11,8 @@ import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -33,9 +31,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-
 import com.google.gson.Gson;
-import com.sdsmdg.harjot.crollerTest.Croller;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
@@ -48,19 +44,12 @@ import com.wavemediaplayer.mfcontroller.MainManager;
 import com.wavemediaplayer.mservices.Constants;
 import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.play.PlayMusic;
-import com.wavemediaplayer.playlist.PlayList;
 import com.wavemediaplayer.settings.FolderFragment;
-import com.wavemediaplayer.settings.InitilationMediaPlayer;
 import com.wavemediaplayer.settings.MusicListSettingsFragment;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static com.wavemediaplayer.play.PlayMusic.mediaPlayer;
 
@@ -68,9 +57,11 @@ import static com.wavemediaplayer.play.PlayMusic.mediaPlayer;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,
         AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener,
         SlideAndDragListView.OnDragDropListener, SlideAndDragListView.OnSlideListener,
-        SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnItemDeleteListener,ServiceConnection {
+        SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnItemDeleteListener, ServiceConnection {
 
-    /** Diger sınıflara context ve view gondermek icin */
+    /**
+     * Diger sınıflara context ve view gondermek icin
+     */
     public static Context context;
     public static View mainView;
     private boolean isMulti = false;
@@ -79,10 +70,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public NotificationService s;
 
     private MainMenu mainMenu;
-
-    private static boolean devam = false;
-
-    /** Main musiclistview */
+    /**
+     * Main musiclistview
+     */
     public static SlideAndDragListView musicListView;
     List<View> tempListLayout = new ArrayList<>();
     private MusicData mDraggedEntity;
@@ -90,24 +80,34 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public EditText edit_search;
     ArrayList<ArrayList<MusicData>> geciciAramaSonuclari = new ArrayList<>();
     ArrayList<MusicData> tempData = new ArrayList<>();
-    /** Templist'te multi choise ile secilen coklu secimlerin pozisyonları tutuluyor */
+    /**
+     * Templist'te multi choise ile secilen coklu secimlerin pozisyonları tutuluyor
+     */
 
-     ArrayList<Integer> tempList = new ArrayList<>();
+    ArrayList<Integer> tempList = new ArrayList<>();
 
-    /** listview de secilen item sayısı multichoise icin */
+    /**
+     * listview de secilen item sayısı multichoise icin
+     */
     int list_selected_count = 0;
 
-    private Button mainEqualizer;
+    Button mainEqualizer;
     private EqualizerFragment equalizerFragment;
     public FrameLayout mainFrame;
-    /** Calma listelerinin goorunecegi listi  oynatmaListesiFragment inde gosterilecek*/
+    /**
+     * Calma listelerinin goorunecegi listi  oynatmaListesiFragment inde gosterilecek
+     */
     private OynatmaListesiFragment oynatmaListesiFragment;
 
     public FolderFragment folderFragment;
-    /** fat linstener event knk */
+    /**
+     * fat linstener event knk
+     */
     public static FPlayListener fPlayListener;
     public MusicList musicList;
-    /** default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır */
+    /**
+     * default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır
+     */
     static int pos = 0;
 
     private ArrayList<MusicData> denememusicdata;
@@ -128,26 +128,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private IntentFilter intentFilter;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tabsHeigh=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,50,getResources().getDisplayMetrics());
+        tabsHeigh = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
         context = this;
         mainView = getWindow().getDecorView().findViewById(android.R.id.content);
         musicListView = findViewById(R.id.main_musicListView);
         edit_search = findViewById(R.id.edit_search);
 
 
-        Log.e("qqqqqqqq","oncreate çalıştı");
+        Log.e("qqqqqqqq", "oncreate çalıştı");
         muzikCalmaBicimleri();
 
 
-        fragmentListener=new FragmentListener(this);
-        musicListSettingsFragment=new MusicListSettingsFragment();
-        folderFragment=new FolderFragment();
+        fragmentListener = new FragmentListener(this);
+        musicListSettingsFragment = new MusicListSettingsFragment();
+        folderFragment = new FolderFragment();
         new MainManager(this);
 
         musicList = new MusicList(musicListView, this);
@@ -163,12 +161,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         musicListView.setOnItemDeleteListener(this);
         musicListView.setOnScrollListener(this);
 
+
         m_createListener();
         f_createListener();
         editTextDegisiklikKontrol();
-        mainMenu=new MainMenu(this);
+        mainMenu = new MainMenu(this);
 
-        if(!isMyServiceRunning(NotificationService.class)){
+        if (!isMyServiceRunning(NotificationService.class)) {
             Intent serviceIntent = new Intent(context, NotificationService.class);
             serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
             context.startService(serviceIntent);
@@ -177,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //  PlayerFragment fragmentS1 = new PlayerFragment();
         //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
 
-        intentFilter=new IntentFilter("speedExceeded");
+        intentFilter = new IntentFilter("speedExceeded");
 
     }
 
@@ -202,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    private void editTextDegisiklikKontrol(){
+    private void editTextDegisiklikKontrol() {
         edit_search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -210,11 +209,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")){
-                    musicList.getMusic("notification","ringtone");
+                if (s.toString().equals("")) {
+                    musicList.getMusic("notification", "ringtone");
                     geciciAramaSonuclari.clear();
-                }
-                else {
+                } else {
 
                     searchItem(s.toString().toLowerCase());
                 }
@@ -227,15 +225,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
-    public void listsettingMusicDataDegistir(){
+    public void listsettingMusicDataDegistir() {
         denememusicdata.clear();
         denememusicdata.addAll(MusicList.musicData);
     }
 
-    private void searchItem(String text){
+    private void searchItem(String text) {
         MusicList.musicData.clear();
-        for(int i=0;i<denememusicdata.size();i++){
-            if(denememusicdata.get(i).getTitles().toLowerCase().contains(text.toString().toLowerCase())){
+        for (int i = 0; i < denememusicdata.size(); i++) {
+            if (denememusicdata.get(i).getTitles().toLowerCase().contains(text.toString().toLowerCase())) {
                 MusicList.musicData.add(denememusicdata.get(i));
                 MusicList.adapter.notifyDataSetChanged();
 
@@ -247,18 +245,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     /** Uygulama arka plana dusup tekrar acıldıgında musicleri yeniden secme */
 
 
-    /** Musanın olusturdugu listener fonksyonu */
-    private void m_createListener(){
-        equalizerFragment=new EqualizerFragment();
+    /**
+     * Musanın olusturdugu listener fonksyonu
+     */
+    private void m_createListener() {
+        equalizerFragment = new EqualizerFragment();
         oynatmaListesiFragment = new OynatmaListesiFragment();
-        mainEqualizer=findViewById(R.id.mainEqualizer);
-        mainFrame=findViewById(R.id.mainFrame);
+        mainEqualizer = findViewById(R.id.mainEqualizer);
+        mainFrame = findViewById(R.id.mainFrame);
 
         mainEqualizer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //fat burası equalizeri açmak için
-                if(mediaPlayer!=null){
+                if (mediaPlayer != null) {
                     fragmentListener.addFragment(equalizerFragment);
                 }
 
@@ -267,12 +267,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
-    /** Fatihin olusturdugu listener fonksiyonu */
-    private void f_createListener(){
-        mLayout =  findViewById(R.id.activity_main);
-        fPlayListener = new FPlayListener(this,mainView);
+    /**
+     * Fatihin olusturdugu listener fonksiyonu
+     */
+    private void f_createListener() {
+        mLayout = findViewById(R.id.activity_main);
+        fPlayListener = new FPlayListener(this, mainView);
         /** burada equalizeri başlangıçta çalıştırıyorum ki sonradan equalizere tıkladığında ses değişmesin ayarlar önceden yapılsın diye*/
-        if(mediaPlayer!=null){
+        if (mediaPlayer != null) {
             fragmentListener.addFragment(equalizerFragment);
 //            fragmentListener.hideFragment(equalizerFragment);
         }
@@ -289,56 +291,67 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         listviewOneClickListener();
     }
 
-    private void listviewOneClickListener(){
-            musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    private void listviewOneClickListener() {
+        musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                    if (!isMulti){
-                        Log.e("tiklandi",position+" "+"multi "+isMulti);
-                        // pl.play(MusicList.locationList.get(position));
-                        FPlayListener.calmaListesiMuzik = false;
-                        FPlayListener.currentMusicPosition = position;
+                if (!isMulti) {
+                    // pl.play(MusicList.locationList.get(position));
+                    FPlayListener.calmaListesiMuzik = false;
+                    FPlayListener.currentMusicPosition = position;
 //                        fPlayListener.playMusic(position);
-                        pos = position;
-                        fPlayListener.playMusic(position);
+                    pos = position;
+                    fPlayListener.playMusic(position);
 
-                        fPlayListener.f_ListenerEvent(position);
-                        if(s!=null) s.listeDegistir(MusicList.musicData,FPlayListener.currentMusicPosition);
-                        eventClick(view);
-                    }
+                    fPlayListener.f_ListenerEvent(position);
+                    if (s != null)
+                        s.listeDegistir(MusicList.musicData, FPlayListener.currentMusicPosition);
+                    eventClick(view);
                 }
-            });
+            }
+        });
     }
 
-    /** Listview multi choise event fonksiyonu */
-    public void multipleChoise(){
+    /**
+     * Listview multi choise event fonksiyonu
+     */
+    public void multipleChoise() {
         musicListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             /** Multichoise islemi yapıldıgında secilen itemleri liste ata ve secilen sayısını belirt */
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
 
                 isMulti = true;
-                if (!tempList.contains(position)){
+                if (!tempList.contains(position)) {
                     list_selected_count = list_selected_count + 1;
                     mode.setTitle(list_selected_count + "item selected");
-                    musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.holo_gray_light));
-                    tempListLayout.add( musicListView.getChildAt(position).findViewById(R.id.listview_layout));
+                    MusicList.musicData.get(position).setIsaretlendi(true);
+                    Log.e("isaretlenen2 pos", "" + position);
+                    if (musicListView.getChildAt(position) != null) {
+                        musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.holo_gray_light));
+                        tempListLayout.add(musicListView.getChildAt(position).findViewById(R.id.listview_layout));
+                    }
                     tempList.add(position);
-                }
-                else {
+                    MusicList.adapter.notifyDataSetChanged();
+
+                } else {
                     list_selected_count = list_selected_count - 1;
                     mode.setTitle(list_selected_count + "item selected");
-                    musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
-                    tempListLayout.remove(musicListView.getChildAt(position).findViewById(R.id.listview_layout));
-                    tempList.remove((Object)position);
+                    MusicList.musicData.get(position).setIsaretlendi(false);
+                    if (musicListView.getChildAt(position) != null) {
+                        musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
+                        tempListLayout.remove(musicListView.getChildAt(position).findViewById(R.id.listview_layout));
+                        tempList.remove((Object) position);
+                    }
+                    MusicList.adapter.notifyDataSetChanged();
                 }
             }
 
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = mode.getMenuInflater();
-                inflater.inflate(R.menu.custom_tools,menu);
+                inflater.inflate(R.menu.custom_tools, menu);
                 return true;
             }
 
@@ -350,10 +363,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 MenuInflater inflater = mode.getMenuInflater();
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.itemSil:
                         layoutListClear(tempListLayout);
-                        for (Integer s: tempList){
+                        for (Integer s : tempList) {
                             musicList.removeFromAdapter(s);
                         }
                         list_selected_count = 0;
@@ -370,7 +383,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         mode.finish();
 
 
-
                     default:
                         return false;
                 }
@@ -381,10 +393,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onDestroyActionMode(ActionMode mode) {
 
-                tempList = new ArrayList<>();
+                for (int pos : tempList) {
+                    MusicList.musicData.get(pos).setIsaretlendi(false);
+                }
                 layoutListClear(tempListLayout);
+                tempList = new ArrayList<>();
+
+
                 list_selected_count = 0;
                 isMulti = false;
+
             }
         });
     }
@@ -405,39 +423,52 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    private void layoutListClear(List<View> layoutList){
-        for (View v :layoutList){
-            v.findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
+    private void layoutListClear(List<View> layoutList) {
+//        for (View v : layoutList) {
+//            v.findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
+//        }
+        for (int pos : tempList) {
+            if (musicListView.getChildAt(pos) != null) {
+
+                musicListView.getChildAt(pos).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
+            }
+
         }
+
         tempListLayout.clear();
-        tempListLayout =  new ArrayList<>();
+        tempListLayout = new ArrayList<>();
+        MusicList.adapter.notifyDataSetChanged();
+
 
     }
 
-    /** Add Play list'e tıklandıgında Dialog fragment acılacak ve olusturulan playlistler gosterilecek */
-    private void playlistInfo(ArrayList<Integer> tempLists){
+    /**
+     * Add Play list'e tıklandıgında Dialog fragment acılacak ve olusturulan playlistler gosterilecek
+     */
+    private void playlistInfo(ArrayList<Integer> tempLists) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
         Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
-        if (prev != null){
+        if (prev != null) {
             fragmentTransaction.remove(prev);
         }
         fragmentTransaction.addToBackStack(null);
 
         DialogFragment dialogFragment = new PlayListsFragment();
         ((PlayListsFragment) dialogFragment).setList(tempLists);
-        dialogFragment.show(fragmentTransaction,"dialog");
+        dialogFragment.show(fragmentTransaction, "dialog");
 
 
     }
 
-    /** Mini music playera herhangi bir tiklama isleminde büyültme veya kucultme islemi calisacak*/
-    public  void eventClick(View view){
-        if (mLayout != null){
+    /**
+     * Mini music playera herhangi bir tiklama isleminde büyültme veya kucultme islemi calisacak
+     */
+    public void eventClick(View view) {
+        if (mLayout != null) {
             if ((mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
                 mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-            }
-            else {
+            } else {
                 mLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
             }
         }
@@ -446,16 +477,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onBackPressed() {
 
-        if(fragmentListener.removeFragment(folderFragment,equalizerFragment,oynatmaListesiFragment,musicListSettingsFragment)){
+        if (fragmentListener.removeFragment(folderFragment, equalizerFragment, oynatmaListesiFragment, musicListSettingsFragment)) {
             return;
         }
 
-        if( oynatmaListesiFragment!= null && !oynatmaListesiFragment.isHidden()){
-            if (oynatmaListesiFragment.isList){
+        if (oynatmaListesiFragment != null && !oynatmaListesiFragment.isHidden()) {
+            if (OynatmaListesiFragment.isList) {
                 getSupportFragmentManager().beginTransaction().hide(oynatmaListesiFragment).commit();
                 return;
-            }
-            else {
+            } else {
                 oynatmaListesiFragment.getCalmaListeleri();
                 OynatmaListesiFragment.isList = true;
                 return;
@@ -470,7 +500,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    /** item menu islemleri */
+    /**
+     * item menu islemleri
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -482,11 +514,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId())
-        {
-            case R.id.menu_search: mainMenu.search(); break;
-            case R.id.menu_folder: mainMenu.folder(); break;
-            case R.id.menu_musiclist: mainMenu.musiclist(); break;
+        switch (item.getItemId()) {
+            case R.id.menu_search:
+                mainMenu.search();
+                break;
+            case R.id.menu_folder:
+                mainMenu.folder();
+                break;
+            case R.id.menu_musiclist:
+                mainMenu.musiclist();
+                break;
         }
         return true;
     }
@@ -572,7 +609,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         NotificationService.MyBinder b = (NotificationService.MyBinder) service;
@@ -587,11 +623,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onResume() {
         super.onResume();
-        Intent intent= new Intent(this, NotificationService.class);
+        musicList.getMusic("notification", "ringtone");
+        Intent intent = new Intent(this, NotificationService.class);
         bindService(intent, this, Context.BIND_AUTO_CREATE);
         LocalBroadcastManager.getInstance(this).registerReceiver(
-                mMessageReceiver,intentFilter );
-        musicList.getMusic("notification","ringtone");
+                mMessageReceiver, intentFilter);
+
         fPlayListener.pl.stopRunable();
         fPlayListener.pl.startRunable();
 
@@ -616,26 +653,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getStringExtra("servicePause")!=null){
+            if (intent.getStringExtra("servicePause") != null) {
                 fPlayListener.pl.iconKapat(false);
 
-            }else if(intent.getStringExtra("servicePlay")!=null){
+            } else if (intent.getStringExtra("servicePlay") != null) {
                 fPlayListener.pl.iconKapat(true);
-            }
-
-            else if(intent.getStringExtra("serviceNext")!=null){
+            } else if (intent.getStringExtra("serviceNext") != null) {
                 fPlayListener.icerikDegistirme();
 
-            }else if(intent.getStringExtra("serviceBefore")!=null){
+            } else if (intent.getStringExtra("serviceBefore") != null) {
                 fPlayListener.icerikDegistirme();
             }
         }
     };
-
-
-
-
-
 
 
 }

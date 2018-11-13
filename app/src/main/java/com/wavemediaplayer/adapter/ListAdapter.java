@@ -7,25 +7,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.wavemediaplayer.R;
+import com.wavemediaplayer.fragments.OynatmaListesiFragment;
+import com.wavemediaplayer.playlist.PlayListData;
 
 import java.util.ArrayList;
 
-public class ListAdapter extends ArrayAdapter<String> {
+public class ListAdapter extends ArrayAdapter<PlayListData> {
 
-    private ArrayList<String> baslik;
+    private ArrayList<PlayListData> baslik;
     private Context context;
 
-    public ListAdapter(@NonNull Context context, int resource, ArrayList<String> baslik) {
+    public ListAdapter(@NonNull Context context, int resource, ArrayList<PlayListData> baslik) {
         super(context, resource,baslik);
         this.baslik = baslik;
         this.context = context;
 
-        for (String b : baslik){
-            Log.e("bbb",b);
-        }
+
     }
 
     @Override
@@ -49,14 +50,21 @@ public class ListAdapter extends ArrayAdapter<String> {
             holder = new ListAdapter.ViewHolder();
 
             holder.txt = convertView.findViewById(R.id.basic_txt);
+            holder.layout = convertView.findViewById(R.id.basic_listview_layout);
             convertView.setTag(holder);
         }
         else {
             holder = (ListAdapter.ViewHolder) convertView.getTag();
         }
 
-        holder.txt.setText(baslik.get(position));
-        Log.e("baslik,",baslik.get(position));
+        if (OynatmaListesiFragment.oynat_list.get(position).getIsaretlendi()){
+            holder.layout.setBackgroundColor(context.getResources().getColor(R.color.holo_gray_light));
+        }
+        else {
+            holder.layout.setBackgroundColor(context.getResources().getColor(R.color.transparent));
+        }
+        holder.txt.setText(baslik.get(position).getListBaslik());
+
 
         return convertView;
 
@@ -65,5 +73,6 @@ public class ListAdapter extends ArrayAdapter<String> {
 
     private class ViewHolder{
         TextView txt;
+        LinearLayout layout;
     }
 }

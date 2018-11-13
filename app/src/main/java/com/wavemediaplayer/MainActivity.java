@@ -8,6 +8,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.IBinder;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -32,6 +35,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
@@ -43,6 +48,7 @@ import com.wavemediaplayer.fragments.EqualizerFragment;
 import com.wavemediaplayer.fragments.FragmentListener;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.fragments.PlayListsFragment;
+import com.wavemediaplayer.fragments.SettingsFragment;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mfcontroller.MainManager;
 import com.wavemediaplayer.mservices.Constants;
@@ -58,6 +64,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -77,8 +85,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public static int tabsHeigh;
     public NotificationService s;
+    public LinearLayout mainSearchLayout;
 
-    private MainMenu mainMenu;
+    public MainMenu mainMenu;
 
     private static boolean devam = false;
 
@@ -97,8 +106,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     /** listview de secilen item sayısı multichoise icin */
     int list_selected_count = 0;
 
-    private Button mainEqualizer;
-    private EqualizerFragment equalizerFragment;
+    public EqualizerFragment equalizerFragment;
     public FrameLayout mainFrame;
     /** Calma listelerinin goorunecegi listi  oynatmaListesiFragment inde gosterilecek*/
     private OynatmaListesiFragment oynatmaListesiFragment;
@@ -126,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static boolean playList_Ekleme_Yapildi = false;
 
     private IntentFilter intentFilter;
+    private ImageView mainsearchButton;
 
 
 
@@ -134,15 +143,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mp3BaslangictaOlustur();
         tabsHeigh=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,50,getResources().getDisplayMetrics());
         context = this;
         mainView = getWindow().getDecorView().findViewById(android.R.id.content);
         musicListView = findViewById(R.id.main_musicListView);
         edit_search = findViewById(R.id.edit_search);
+        mainSearchLayout=findViewById(R.id.mainSearchLayout);
+        mainsearchButton=findViewById(R.id.mainsearchButton);
 
+        getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
         Log.e("qqqqqqqq","oncreate çalıştı");
         muzikCalmaBicimleri();
+
 
 
         fragmentListener=new FragmentListener(this);
@@ -178,6 +192,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
 
         intentFilter=new IntentFilter("speedExceeded");
+
+
+
+    }
+
+    private void mp3BaslangictaOlustur(){
+//        PlayMusic.mediaPlayer=new MediaPlayer();
+//        PlayMusic.mediaPlayer.getAudioSessionId();
+
+//        Uri mediaPath = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.boracay);
+//        try {
+//            PlayMusic.mediaPlayer.setDataSource(getApplicationContext(),mediaPath);
+//            PlayMusic.mediaPlayer.prepare();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        PlayMusic.mediaPlayer.start();
+
 
     }
 
@@ -251,20 +283,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void m_createListener(){
         equalizerFragment=new EqualizerFragment();
         oynatmaListesiFragment = new OynatmaListesiFragment();
-        mainEqualizer=findViewById(R.id.mainEqualizer);
         mainFrame=findViewById(R.id.mainFrame);
 
-        mainEqualizer.setOnClickListener(new View.OnClickListener() {
+
+        mainsearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //fat burası equalizeri açmak için
-                if(mediaPlayer!=null){
-                    fragmentListener.addFragment(equalizerFragment);
+                if(edit_search.getVisibility()==View.INVISIBLE){
+                    edit_search.setVisibility(View.VISIBLE);
+                }else{
+                    edit_search.setText("");
+                    edit_search.setVisibility(View.INVISIBLE);
                 }
-
-
             }
         });
+
+
     }
 
     /** Fatihin olusturdugu listener fonksiyonu */
@@ -272,10 +306,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mLayout =  findViewById(R.id.activity_main);
         fPlayListener = new FPlayListener(this,mainView);
         /** burada equalizeri başlangıçta çalıştırıyorum ki sonradan equalizere tıkladığında ses değişmesin ayarlar önceden yapılsın diye*/
-        if(mediaPlayer!=null){
-            fragmentListener.addFragment(equalizerFragment);
-//            fragmentListener.hideFragment(equalizerFragment);
-        }
+//        if(mediaPlayer!=null){
+//            fragmentListener.addFragment(equalizerFragment);
+////            fragmentListener.hideFragment(equalizerFragment);
+//        }
         /** Herhangi bit posizyon yok ise default 0'dır */
         if (MusicList.musicData.size() > 0) {
             FPlayListener.currentMusicPosition = pos;

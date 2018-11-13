@@ -18,6 +18,11 @@ public class MainMenu {
 
     }
 
+    public void equalizer(){
+        mainActivity.fragmentListener.addFragment(mainActivity.equalizerFragment);
+
+    }
+
     public void musiclist(){
         mainActivity.fragmentListener.addFragment(mainActivity.musicListSettingsFragment);
     }

@@ -26,6 +26,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.sdsmdg.harjot.crollerTest.Croller;
+import com.wavemediaplayer.play.PlayMusic;
 import com.wavemediaplayer.visaulizer.VerticalSeekBar;
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.visaulizer.VisualizerView;
@@ -33,7 +34,6 @@ import com.wavemediaplayer.visaulizer.VisualizerView;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static com.wavemediaplayer.play.PlayMusic.mediaPlayer;
 
 
 public class EqualizerFragment extends Fragment{
@@ -64,7 +64,9 @@ public class EqualizerFragment extends Fragment{
 
         seekBars=new ArrayList<>();
 //        create the equalizer with default priority of 0 & attach to our media player
-        mEqualizer = new Equalizer(0, mediaPlayer.getAudioSessionId());
+        if(PlayMusic.mediaPlayer==null) PlayMusic.mediaPlayer=new MediaPlayer();
+
+        mEqualizer = new Equalizer(0, PlayMusic.mediaPlayer.getAudioSessionId());
         mEqualizer.setEnabled(true);
 
 //        set up visualizer and equalizer bars
@@ -75,7 +77,7 @@ public class EqualizerFragment extends Fragment{
         mVisualizer.setEnabled(true);
 
         // listen for when the music stream ends playing
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+        PlayMusic.mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             public void onCompletion(MediaPlayer mediaPlayer) {
 //                disable the visualizer as it's no longer needed
                 mVisualizer.setEnabled(false);
@@ -127,13 +129,13 @@ public class EqualizerFragment extends Fragment{
                 sharedAdd("balance",progress);
                 if(progress<49){
                     Log.e(String.valueOf((float)progress/50f),String.valueOf(1f-(float)progress/50f));
-                    mediaPlayer.setVolume((float)progress/50f,1f);
+                    PlayMusic.mediaPlayer.setVolume((float)progress/50f,1f);
                 }else if(progress>51){
                     Log.e("1",String.valueOf((50f-((float)progress-50f))/50f));
-                    mediaPlayer.setVolume(1f,(50f-((float)progress-50f))/50f);
+                    PlayMusic.mediaPlayer.setVolume(1f,(50f-((float)progress-50f))/50f);
                 }else{
                     equalizerRL.setProgress(50);
-                    mediaPlayer.setVolume(1f,1f);
+                    PlayMusic.mediaPlayer.setVolume(1f,1f);
                 }
 
 
@@ -145,7 +147,7 @@ public class EqualizerFragment extends Fragment{
         equalizerBass.setMax(1000);
         int bs=sharedPreferences.getInt("bass",500);
         equalizerBass.setProgress(bs);
-        final BassBoost bassBoost = new BassBoost(1, mediaPlayer.getAudioSessionId());
+        final BassBoost bassBoost = new BassBoost(1, PlayMusic.mediaPlayer.getAudioSessionId());
         bassBoost.setEnabled(true);
         equalizerBass.setOnProgressChangedListener(new Croller.onProgressChangedListener() {
             @Override
@@ -433,7 +435,7 @@ public class EqualizerFragment extends Fragment{
         mLinearLayout.addView(mVisualizerView);
 
         // Create the Visualizer object and attach it to our media player.
-        mVisualizer = new Visualizer(mediaPlayer.getAudioSessionId());
+        mVisualizer = new Visualizer(PlayMusic.mediaPlayer.getAudioSessionId());
         try {
             mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
         }catch (Exception e){

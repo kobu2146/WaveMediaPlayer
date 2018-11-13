@@ -48,16 +48,15 @@
                 android:id="@+id/linearLayout"
                 android:layout_width="202dp"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:orientation="vertical"
+                android:layout_marginBottom="8dp"
                 android:onClick="eventClick"
+                android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/linearLayout3"
                 app:layout_constraintStart_toEndOf="@+id/songs_cover_one"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0">
 
                 <TextView
                     android:id="@+id/songs_title"
@@ -73,11 +72,11 @@
                 <TextView
                     android:id="@+id/songs_artist_name"
                     android:layout_width="match_parent"
-                    android:onClick="eventClick"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/backgroundColor"
                     android:lines="1"
-                    android:text="Camila Cabello" />
+                    android:onClick="eventClick"
+                    android:text="Camila Cabello"
+                    android:textColor="@color/backgroundColor" />
 
             </LinearLayout>
 
@@ -85,38 +84,50 @@
                 android:id="@+id/linearLayout3"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:gravity="center"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.974"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/sample_main_settings"
+                app:layout_constraintStart_toEndOf="@+id/linearLayout"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageButton
                     android:id="@+id/sample_main_play_button"
                     android:layout_width="50dp"
-                    android:scaleType="centerInside"
-                    android:clickable="true"
-                    android:focusable="true"
                     android:layout_height="50dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:scaleType="centerInside"
                     android:src="@drawable/svgplay" />
 
                 <ImageButton
                     android:id="@+id/sample_main_pause_button"
                     android:layout_width="50dp"
-                    android:scaleType="centerInside"
                     android:layout_height="50dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerInside"
                     android:src="@drawable/svgpause"
                     android:visibility="gone" />
             </LinearLayout>
+
+            <ImageView
+                android:id="@+id/sample_main_settings"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:padding="5dp"
+                android:src="@android:drawable/ic_menu_sort_by_size"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.428" />
 
         </android.support.constraint.ConstraintLayout>
 

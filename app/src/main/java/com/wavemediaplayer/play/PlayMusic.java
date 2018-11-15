@@ -47,11 +47,6 @@ public class PlayMusic {
     private MainActivity mainActivity;
 
 
-
-
-    /***/
-
-
     public PlayMusic(MainActivity mainActivity, SeekBar myseekbar, TextView mytext1, TextView mytext2, ImageView myimageview, Handler handler) {
         this.mainActivity = mainActivity;
         this.context = mainActivity.getApplicationContext();
@@ -69,16 +64,10 @@ public class PlayMusic {
      */
     public void playMusic(String link) {
 
-
-        Log.e("music yolu", link);
         File file = new File(link);
         try {
             if (isMyServiceRunning(NotificationService.class)) {
                 mediaPlayer = NotificationService.mediaPlayer;
-
-                Log.e("qqqqqqqqqq", "sssssstart eser11");
-
-
             }
             if (file.exists()) {
                 if (!playPrev.equals(link)) {
@@ -115,7 +104,6 @@ public class PlayMusic {
                     NotificationService.mediaPlayer = mediaPlayer;
                 }
             } else {
-                Log.e("File not found", "Belirtilen dosya yok");
                 Toast.makeText(context, "File not found", Toast.LENGTH_LONG).show();
                 calmayaDevamEt(true);
             }
@@ -128,11 +116,9 @@ public class PlayMusic {
         if (!karisikCal) { // Sıralı calma aktifse
             Log.e("sirali", "cal");
             if (!FPlayListener.calmaListesiMuzik) {//Ana playerdan calınacaksa
-                Log.e("ana", "music");
                 if (tekrarla == 0 || tekrarla == 2) {
                     if (ileriCal) {
                         FPlayListener.currentMusicPosition++;
-                        Log.e("current", "arttı");
                     } else {
                         if (FPlayListener.currentMusicPosition != 0) {
                             FPlayListener.currentMusicPosition--;
@@ -142,11 +128,14 @@ public class PlayMusic {
                     }
                 }
 
-
                 if (FPlayListener.currentMusicPosition < MusicList.musicData.size()) {
                     prevMusicDAta = MusicList.musicData.get(FPlayListener.currentMusicPosition);
                     MainActivity.fPlayListener.song_artis.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getArtist());
                     MainActivity.fPlayListener.song_title.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getTitles());
+                    MainActivity.fPlayListener.play.setVisibility(View.GONE);
+                    MainActivity.fPlayListener.play_main.setVisibility(View.GONE);
+                    MainActivity.fPlayListener.pause.setVisibility(View.VISIBLE);
+                    MainActivity.fPlayListener.pause_main.setVisibility(View.VISIBLE);
                     playMusic(MusicList.musicData.get(FPlayListener.currentMusicPosition).getLocation());
                     if (mainActivity.s != null)
                         mainActivity.s.listeDegistir(MusicList.musicData, FPlayListener.currentMusicPosition);
@@ -156,6 +145,10 @@ public class PlayMusic {
                         prevMusicDAta = MusicList.musicData.get(FPlayListener.currentMusicPosition);
                         MainActivity.fPlayListener.song_artis.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getArtist());
                         MainActivity.fPlayListener.song_title.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getTitles());
+                        MainActivity.fPlayListener.play.setVisibility(View.GONE);
+                        MainActivity.fPlayListener.play_main.setVisibility(View.GONE);
+                        MainActivity.fPlayListener.pause.setVisibility(View.VISIBLE);
+                        MainActivity.fPlayListener.pause_main.setVisibility(View.VISIBLE);
                         playMusic(MusicList.musicData.get(FPlayListener.currentMusicPosition).getLocation());
                         if (mainActivity.s != null)
                             mainActivity.s.listeDegistir(MusicList.musicData, FPlayListener.currentMusicPosition);
@@ -163,7 +156,6 @@ public class PlayMusic {
 
                 }
             } else { //Playlistden veya baska biryerden ise
-                Log.e("playlist", "music");
                 if (tekrarla == 0 || tekrarla == 2) {
                     if (ileriCal) {
                         FPlayListener.currentMusicPosition++;
@@ -179,6 +171,10 @@ public class PlayMusic {
                     prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition);
                     MainActivity.fPlayListener.song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getArtist());
                     MainActivity.fPlayListener.song_title.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getTitles());
+                    MainActivity.fPlayListener.play.setVisibility(View.GONE);
+                    MainActivity.fPlayListener.play_main.setVisibility(View.GONE);
+                    MainActivity.fPlayListener.pause.setVisibility(View.VISIBLE);
+                    MainActivity.fPlayListener.pause_main.setVisibility(View.VISIBLE);
                     MainActivity.fPlayListener.playFromPlayList(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getLocation());
                     if (mainActivity.s != null)
                         mainActivity.s.listeDegistir(OynatmaListesiFragment.music_oynat_list, FPlayListener.currentMusicPosition);
@@ -188,6 +184,10 @@ public class PlayMusic {
                         prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition);
                         MainActivity.fPlayListener.song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getArtist());
                         MainActivity.fPlayListener.song_title.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getTitles());
+                        MainActivity.fPlayListener.play.setVisibility(View.GONE);
+                        MainActivity.fPlayListener.play_main.setVisibility(View.GONE);
+                        MainActivity.fPlayListener.pause.setVisibility(View.VISIBLE);
+                        MainActivity.fPlayListener.pause_main.setVisibility(View.VISIBLE);
                         MainActivity.fPlayListener.playFromPlayList(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getLocation());
                         if (mainActivity.s != null)
                             mainActivity.s.listeDegistir(OynatmaListesiFragment.music_oynat_list, FPlayListener.currentMusicPosition);
@@ -202,17 +202,33 @@ public class PlayMusic {
             Log.e("karisik", "cal");
             // ana music playerdan karısık calma
             if (!FPlayListener.calmaListesiMuzik) {
+                int rndPositin = new Random().nextInt(MusicList.musicData.size());
                 if (tekrarla == 0 || tekrarla == 2 || tekrarla == 3) {
+                    if (ileriCal) {
+                        FPlayListener.mainListeOncekiPos.add(rndPositin);
+
+                    } else {
+                        if (FPlayListener.mainListeOncekiPos.size() > 2) {
+                            rndPositin = FPlayListener.mainListeOncekiPos.get(FPlayListener.mainListeOncekiPos.size() - 2);
+                            FPlayListener.mainListeOncekiPos.remove(FPlayListener.mainListeOncekiPos.size() - 1);
+                            FPlayListener.mainListeOncekiPos.remove(FPlayListener.mainListeOncekiPos.size() - 2);
+                        }
+
+                    }
                     //İleri butonuna tıklandıgı zaman gecerli sarkıyı tekrarlada ise bir sonraki sarkıya atlattrırıp tekrala = 1 olacak
                     if (tekrarla == 3) {
                         tekrarla = 1;
                     }
-                    int rndPositin = new Random().nextInt(MusicList.musicData.size());
+
                     FPlayListener.currentMusicPosition = rndPositin;
                     if (rndPositin <= MusicList.musicData.size()) {
                         prevMusicDAta = MusicList.musicData.get(rndPositin);
                         MainActivity.fPlayListener.song_artis.setText(MusicList.musicData.get(rndPositin).getArtist());
                         MainActivity.fPlayListener.song_title.setText(MusicList.musicData.get(rndPositin).getTitles());
+                        MainActivity.fPlayListener.play.setVisibility(View.GONE);
+                        MainActivity.fPlayListener.play_main.setVisibility(View.GONE);
+                        MainActivity.fPlayListener.pause.setVisibility(View.VISIBLE);
+                        MainActivity.fPlayListener.pause_main.setVisibility(View.VISIBLE);
                         playMusic(MusicList.musicData.get(rndPositin).getLocation());
                         if (mainActivity.s != null)
                             mainActivity.s.listeDegistir(MusicList.musicData, FPlayListener.currentMusicPosition);
@@ -221,6 +237,10 @@ public class PlayMusic {
                     if (prevMusicDAta != null) {
                         MainActivity.fPlayListener.song_artis.setText(prevMusicDAta.getArtist());
                         MainActivity.fPlayListener.song_title.setText(prevMusicDAta.getTitles());
+                        MainActivity.fPlayListener.play.setVisibility(View.GONE);
+                        MainActivity.fPlayListener.play_main.setVisibility(View.GONE);
+                        MainActivity.fPlayListener.pause.setVisibility(View.VISIBLE);
+                        MainActivity.fPlayListener.pause_main.setVisibility(View.VISIBLE);
                         playMusic(prevMusicDAta.getLocation());
                         if (mainActivity.s != null)
                             mainActivity.s.listeDegistir(MusicList.musicData, FPlayListener.currentMusicPosition);
@@ -230,16 +250,33 @@ public class PlayMusic {
             // Calma listesinden karısık calma
             else {
                 if (tekrarla == 0 || tekrarla == 2 || tekrarla == 3) {
+                    int rndPositin = new Random().nextInt(OynatmaListesiFragment.music_oynat_list.size());
+                    if (ileriCal) {
+                        rndPositin = new Random().nextInt(MusicList.musicData.size());
+                        FPlayListener.calimaListesiOncekiPos.add(rndPositin);
+
+                    } else {
+                        if (FPlayListener.calimaListesiOncekiPos.size() > 2) {
+                            rndPositin = FPlayListener.calimaListesiOncekiPos.get(FPlayListener.calimaListesiOncekiPos.size() - 2);
+                            FPlayListener.calimaListesiOncekiPos.remove(FPlayListener.calimaListesiOncekiPos.size() - 1);
+                            FPlayListener.calimaListesiOncekiPos.remove(FPlayListener.calimaListesiOncekiPos.size() - 2);
+                        }
+
+                    }
+
                     //İleri butonuna tıklandıgı zaman gecerli sarkıyı tekrarlada ise bir sonraki sarkıya atlattrırıp tekrala = 1 olacak
                     if (tekrarla == 3) {
                         tekrarla = 1;
                     }
-                    int rndPositin = new Random().nextInt(OynatmaListesiFragment.music_oynat_list.size());
                     FPlayListener.currentMusicPosition = rndPositin;
                     if (rndPositin <= OynatmaListesiFragment.music_oynat_list.size()) {
                         prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(rndPositin);
                         MainActivity.fPlayListener.song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(rndPositin).getArtist());
                         MainActivity.fPlayListener.song_title.setText(OynatmaListesiFragment.music_oynat_list.get(rndPositin).getTitles());
+                        MainActivity.fPlayListener.play.setVisibility(View.GONE);
+                        MainActivity.fPlayListener.play_main.setVisibility(View.GONE);
+                        MainActivity.fPlayListener.pause.setVisibility(View.VISIBLE);
+                        MainActivity.fPlayListener.pause_main.setVisibility(View.VISIBLE);
                         MainActivity.fPlayListener.playFromPlayList(OynatmaListesiFragment.music_oynat_list.get(rndPositin).getLocation());
                         if (mainActivity.s != null)
                             mainActivity.s.listeDegistir(OynatmaListesiFragment.music_oynat_list, FPlayListener.currentMusicPosition);
@@ -248,6 +285,10 @@ public class PlayMusic {
                     if (prevMusicDAta != null) {
                         MainActivity.fPlayListener.song_artis.setText(prevMusicDAta.getArtist());
                         MainActivity.fPlayListener.song_title.setText(prevMusicDAta.getTitles());
+                        MainActivity.fPlayListener.play.setVisibility(View.GONE);
+                        MainActivity.fPlayListener.play_main.setVisibility(View.GONE);
+                        MainActivity.fPlayListener.pause.setVisibility(View.VISIBLE);
+                        MainActivity.fPlayListener.pause_main.setVisibility(View.VISIBLE);
                         playMusic(prevMusicDAta.getLocation());
                         if (mainActivity.s != null)
                             mainActivity.s.listeDegistir(OynatmaListesiFragment.music_oynat_list, FPlayListener.currentMusicPosition);
@@ -296,12 +337,10 @@ public class PlayMusic {
 
                     @Override
                     public void onStartTrackingTouch(SeekBar seekBar) {
-                        Log.e("Start touch", "xxxxx");
                     }
 
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {
-                        Log.e("Stop touch", "xxxxx");
 
 
                     }
@@ -335,10 +374,7 @@ public class PlayMusic {
             MainActivity.fPlayListener.pause.setVisibility(View.GONE);
             MainActivity.fPlayListener.pause_main.setVisibility(View.GONE);
         }
-
-
     }
-
 
     public void startRunableWithMediaPlayer() {
 
@@ -349,7 +385,6 @@ public class PlayMusic {
         }
 
         MainActivity.fPlayListener.icerikDegistirme();
-
 
         if (mediaPlayer != null) {
             myseekbar.setMax(mediaPlayer.getDuration());
@@ -367,10 +402,7 @@ public class PlayMusic {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-
-
-
+                    if (mediaPlayer != null) {
                         myseekbar.setProgress(mediaPlayer.getCurrentPosition());
                         mytext1.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getCurrentPosition())));
 
@@ -382,14 +414,7 @@ public class PlayMusic {
                             calmayaDevamEt(true);
                         }
 
-
-                    } else {
-
                     }
-
-                    Log.e("qqqqqq", "runableeeeewq");
-
-
                     myHandler.postDelayed(runnable, 1000);
                 }
             };
@@ -400,9 +425,6 @@ public class PlayMusic {
 
     public void startRunable() {
         startRunableWithMediaPlayer();
-        Log.e("qweqwe", "startrunable");
-
-
     }
 
     public void stopRunable() {
@@ -410,7 +432,6 @@ public class PlayMusic {
             myHandler.removeCallbacks(runnable);
             myHandler = null;
             runnable = null;
-            Log.e("qweqwe", "stoprunable");
         }
 
     }

@@ -54,6 +54,7 @@
                 android:background="@drawable/rounded_edittext"
                 android:layout_weight="9"
                 android:hint="search"
+                android:paddingLeft="8dp"
                 android:layout_gravity="center"
                 android:visibility="invisible"/>
             <ImageView

@@ -22,7 +22,6 @@ import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.settings.InitilationMediaPlayer;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -31,18 +30,18 @@ import java.util.Random;
 public class PlayMusic {
     public static boolean karisikCal = true;
     public static int tekrarla = 0;
-    private Context context;
     public static MediaPlayer mediaPlayer;
+    public static MusicData prevMusicDAta;
+    private static Runnable runnable;
+    private static Handler myHandler;
+    private static String playPrev = "";
+    private Context context;
     private SeekBar myseekbar;
     private TextView mytext1;
     private TextView mytext2;
     private ImageView myimageview;
-    private static Runnable runnable;
-    private static Handler myHandler;
     private Handler handler;
     private BassBoost bassBoost;
-    private static String playPrev = "";
-    public static MusicData prevMusicDAta;
     private InitilationMediaPlayer initilationMediaPlayer;
     private MainActivity mainActivity;
 
@@ -94,8 +93,7 @@ public class PlayMusic {
                     if (mediaPlayer != null) {
                         if (!mediaPlayer.isPlaying()) {
                             mediaPlayer.start();
-                        }
-                        else {
+                        } else {
                             mediaPlayer.start();
                         }
                     }
@@ -214,11 +212,12 @@ public class PlayMusic {
                         FPlayListener.mainListeOncekiPos.add(rndPositin);
 
                     } else {
-                        if (FPlayListener.mainListeOncekiPos.size() > 2) {
-                            rndPositin = FPlayListener.mainListeOncekiPos.get(FPlayListener.mainListeOncekiPos.size() - 2);
+                        if (FPlayListener.mainListeOncekiPos.size() > 1) {
                             FPlayListener.mainListeOncekiPos.remove(FPlayListener.mainListeOncekiPos.size() - 1);
-                            FPlayListener.mainListeOncekiPos.remove(FPlayListener.mainListeOncekiPos.size() - 2);
+                            rndPositin = FPlayListener.mainListeOncekiPos.get(FPlayListener.mainListeOncekiPos.size() - 1);
+
                         }
+
 
                     }
                     //İleri butonuna tıklandıgı zaman gecerli sarkıyı tekrarlada ise bir sonraki sarkıya atlattrırıp tekrala = 1 olacak
@@ -262,11 +261,11 @@ public class PlayMusic {
                         FPlayListener.calimaListesiOncekiPos.add(rndPositin);
 
                     } else {
-                        if (FPlayListener.calimaListesiOncekiPos.size() > 2) {
-                            rndPositin = FPlayListener.calimaListesiOncekiPos.get(FPlayListener.calimaListesiOncekiPos.size() - 2);
+                        if (FPlayListener.calimaListesiOncekiPos.size() > 1) {
                             FPlayListener.calimaListesiOncekiPos.remove(FPlayListener.calimaListesiOncekiPos.size() - 1);
-                            FPlayListener.calimaListesiOncekiPos.remove(FPlayListener.calimaListesiOncekiPos.size() - 2);
+                            rndPositin = FPlayListener.calimaListesiOncekiPos.get(FPlayListener.calimaListesiOncekiPos.size() - 1);
                         }
+
                     }
 
                     //İleri butonuna tıklandıgı zaman gecerli sarkıyı tekrarlada ise bir sonraki sarkıya atlattrırıp tekrala = 1 olacak
@@ -317,7 +316,7 @@ public class PlayMusic {
     private void stopPlaying() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
-           // mediaPlayer.release();
+            // mediaPlayer.release();
             //mediaPlayer = null;
             if (handler != null) {
                 handler.removeCallbacks(runnable);
@@ -351,7 +350,7 @@ public class PlayMusic {
                     }
                 });
                 mytext2.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getDuration())));
-               mediaPlayer.start();
+                mediaPlayer.start();
             }
         });
     }
@@ -407,7 +406,7 @@ public class PlayMusic {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                    if (mediaPlayer != null) {
 
 
                         myseekbar.setProgress(mediaPlayer.getCurrentPosition());

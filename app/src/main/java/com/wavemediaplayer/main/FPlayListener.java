@@ -190,7 +190,7 @@ public class FPlayListener {
     }
 
 
-    public void f_ListenerEvent(final int position) {
+    public void f_ListenerEvent() {
 
         sample_main_settings.setOnClickListener(new View.OnClickListener() {
             @Override

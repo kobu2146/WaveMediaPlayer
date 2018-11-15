@@ -266,14 +266,12 @@ public class PlayMusic {
                             FPlayListener.calimaListesiOncekiPos.remove(FPlayListener.calimaListesiOncekiPos.size() - 1);
                             FPlayListener.calimaListesiOncekiPos.remove(FPlayListener.calimaListesiOncekiPos.size() - 2);
                         }
-
                     }
 
                     //İleri butonuna tıklandıgı zaman gecerli sarkıyı tekrarlada ise bir sonraki sarkıya atlattrırıp tekrala = 1 olacak
                     if (tekrarla == 3) {
                         tekrarla = 1;
                     }
-                    int rndPositin = new Random().nextInt(OynatmaListesiFragment.music_oynat_list.size());
                     FPlayListener.currentMusicPosition = rndPositin;
                     if (rndPositin <= OynatmaListesiFragment.music_oynat_list.size()) {
                         prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(rndPositin);
@@ -409,7 +407,6 @@ public class PlayMusic {
                 @Override
                 public void run() {
                     if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-
 
 
                         myseekbar.setProgress(mediaPlayer.getCurrentPosition());

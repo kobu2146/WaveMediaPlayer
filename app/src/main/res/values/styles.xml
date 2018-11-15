@@ -21,4 +21,16 @@
         <item name="android:windowExitAnimation">@anim/out_anim</item>
     </style>
 
+    <style name="WhiteCheck">
+        <item name="buttonTint">#fff</item>
+    </style>
+
+    <style name="WhiteSpinner">
+        <item name="backgroundTint">#fff</item>
+
+    </style>
+
+
+
+
 </resources>

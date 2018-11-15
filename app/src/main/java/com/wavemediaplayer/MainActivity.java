@@ -2,6 +2,7 @@ package com.wavemediaplayer;
 
 
 import android.app.ActivityManager;
+import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -671,16 +672,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent.getStringExtra("servicePause")!=null){
+                PlayMusic.mediaPlayer=NotificationService.mediaPlayer;
                 fPlayListener.pl.iconKapat(false);
 
             }else if(intent.getStringExtra("servicePlay")!=null){
+                PlayMusic.mediaPlayer=NotificationService.mediaPlayer;
                 fPlayListener.pl.iconKapat(true);
             }
 
             else if(intent.getStringExtra("serviceNext")!=null){
+                PlayMusic.mediaPlayer=NotificationService.mediaPlayer;
                 fPlayListener.icerikDegistirme();
 
             }else if(intent.getStringExtra("serviceBefore")!=null){
+                PlayMusic.mediaPlayer=NotificationService.mediaPlayer;
                 fPlayListener.icerikDegistirme();
             }
         }

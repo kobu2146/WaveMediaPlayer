@@ -367,15 +367,16 @@ public class PlayMusic {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                    if (PlayMusic.mediaPlayer != null) {
 
 
 
-                        myseekbar.setProgress(mediaPlayer.getCurrentPosition());
-                        mytext1.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getCurrentPosition())));
+                        myseekbar.setProgress(PlayMusic.mediaPlayer.getCurrentPosition());
+                        mytext1.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", PlayMusic.mediaPlayer.getCurrentPosition())));
 
-                        int current = mediaPlayer.getCurrentPosition();
-                        int total = mediaPlayer.getDuration();
+                        int current = PlayMusic.mediaPlayer.getCurrentPosition();
+                        int total = PlayMusic.mediaPlayer.getDuration();
+                        Log.e(String.valueOf(current),String.valueOf(total));
                         if (current >= total) {
                             calmayaDevamEt(true);
                         } else if (total - current <= 300) {
@@ -387,7 +388,6 @@ public class PlayMusic {
 
                     }
 
-                    Log.e("qqqqqq", "runableeeeewq");
 
 
                     myHandler.postDelayed(runnable, 1000);

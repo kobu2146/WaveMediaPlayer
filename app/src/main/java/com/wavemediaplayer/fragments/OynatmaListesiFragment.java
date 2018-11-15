@@ -115,7 +115,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
         /** tum playlistleri ve iceriklerini cekiyor cekiyor */
         Map<String, ?> allEntries = sharedPreferences.getAll();
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            Log.e("map values", entry.getKey() + ": " + entry.getValue().toString());
+         //   Log.e("map values", entry.getKey() + ": " + entry.getValue().toString());
             oynat_list.add(new PlayListData(entry.getKey()));
         }
 
@@ -192,7 +192,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                     }
                 } else {
                     for (Integer pos : temp_position_list) {
-                        Log.e("posa girdi", "" + pos);
                         oynat_list.get(pos).setIsaretlendi(false);
                     }
 
@@ -295,7 +294,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
         } catch (Exception ex) {
         } finally {
 
-            Log.e("FINALLY", "mesage");
         }
 
     }
@@ -341,7 +339,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                 //   Log.e("map values", entry.getKey() + ": " + entry.getValue().toString());
                 if (entry.getKey().equals(liste_key)) {
                     JSONArray jsonArray = new JSONArray(entry.getValue().toString());
-                    //  Log.e("xxxxx",jsonArray.toString());
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         String title = jsonObject.getString("title");
@@ -382,6 +379,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
 
                     } else {
                         if (music_oynat_list.size() > 0) {
+                            FPlayListener.calimaListesiOncekiPos.clear();
                             FPlayListener.currentMusicPosition = position;
                             PlayMusic.prevMusicDAta = music_oynat_list.get(position);
                             MainActivity.fPlayListener.song_title.setText(music_oynat_list.get(position).getTitles());

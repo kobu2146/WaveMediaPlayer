@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     ArrayList<MusicData> tempData = new ArrayList<>();
     /** Templist'te multi choise ile secilen coklu secimlerin pozisyonları tutuluyor */
 
-     ArrayList<Integer> tempList = new ArrayList<>();
+    ArrayList<Integer> tempList = new ArrayList<>();
 
     /** listview de secilen item sayısı multichoise icin */
     int list_selected_count = 0;
@@ -328,25 +328,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void listviewOneClickListener(){
-            musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                    if (!isMulti){
-                        Log.e("tiklandi",position+" "+"multi "+isMulti);
-                        // pl.play(MusicList.locationList.get(position));
-                        FPlayListener.calmaListesiMuzik = false;
-                        FPlayListener.currentMusicPosition = position;
+                if (!isMulti){
+                    Log.e("tiklandi",position+" "+"multi "+isMulti);
+                    // pl.play(MusicList.locationList.get(position));
+                    FPlayListener.calmaListesiMuzik = false;
+                    FPlayListener.currentMusicPosition = position;
 //                        fPlayListener.playMusic(position);
-                        pos = position;
-                        fPlayListener.playMusic(position);
+                    pos = position;
+                    fPlayListener.playMusic(position);
 
-                        fPlayListener.f_ListenerEvent(position);
-                        if(s!=null) s.listeDegistir(MusicList.musicData,FPlayListener.currentMusicPosition);
-                        eventClick(view);
-                    }
+                    fPlayListener.f_ListenerEvent(position);
+                    if(s!=null) s.listeDegistir(MusicList.musicData,FPlayListener.currentMusicPosition);
+                    eventClick(view);
                 }
-            });
+            }
+        });
     }
 
 
@@ -428,7 +428,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if(!isDrag){
             gestureDetector.onTouchEvent(ev);
         }
-       return super.dispatchTouchEvent(ev);
+        return super.dispatchTouchEvent(ev);
     }
 
     /** Listview multi choise event fonksiyonu */

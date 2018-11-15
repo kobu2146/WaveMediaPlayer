@@ -8,6 +8,8 @@ public class MusicData {
     private String duration;
     private String location;
     private String id;
+    private boolean isaretlendi = false;
+
 
 
     public MusicData(String title, String artist, Integer image, String duration, String location, String id) {
@@ -66,4 +68,14 @@ public class MusicData {
     public void setIds(String id) {
         this.id = id;
     }
+
+    public boolean getIsaretlendi() {
+        return isaretlendi;
+    }
+
+    public void setIsaretlendi(boolean isaretlendi) {
+        this.isaretlendi = isaretlendi;
+    }
+
+
 }

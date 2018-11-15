@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mp3BaslangictaOlustur();
         tabsHeigh=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,50,getResources().getDisplayMetrics());
         context = this;
         mainView = getWindow().getDecorView().findViewById(android.R.id.content);
@@ -196,6 +197,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
+    private void mp3BaslangictaOlustur(){
+//        PlayMusic.mediaPlayer=new MediaPlayer();
+//        PlayMusic.mediaPlayer.getAudioSessionId();
+
+//        Uri mediaPath = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.boracay);
+//        try {
+//            PlayMusic.mediaPlayer.setDataSource(getApplicationContext(),mediaPath);
+//            PlayMusic.mediaPlayer.prepare();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        PlayMusic.mediaPlayer.start();
+
+
+    }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -337,19 +353,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
 
                 isMulti = true;
-                if (!tempList.contains(position)){
+                if (!tempList.contains(position)) {
                     list_selected_count = list_selected_count + 1;
                     mode.setTitle(list_selected_count + "item selected");
-                    musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.holo_gray_light));
-                    tempListLayout.add( musicListView.getChildAt(position).findViewById(R.id.listview_layout));
+                    MusicList.musicData.get(position).setIsaretlendi(true);
+                    Log.e("isaretlenen2 pos", "" + position);
+                    if (musicListView.getChildAt(position) != null) {
+                        musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.holo_gray_light));
+                        tempListLayout.add(musicListView.getChildAt(position).findViewById(R.id.listview_layout));
+                    }
                     tempList.add(position);
-                }
-                else {
+                    MusicList.adapter.notifyDataSetChanged();
+
+                } else {
                     list_selected_count = list_selected_count - 1;
                     mode.setTitle(list_selected_count + "item selected");
-                    musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
-                    tempListLayout.remove(musicListView.getChildAt(position).findViewById(R.id.listview_layout));
-                    tempList.remove((Object)position);
+                    MusicList.musicData.get(position).setIsaretlendi(false);
+                    if (musicListView.getChildAt(position) != null) {
+                        musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
+                        tempListLayout.remove(musicListView.getChildAt(position).findViewById(R.id.listview_layout));
+                        tempList.remove((Object) position);
+                    }
+                    MusicList.adapter.notifyDataSetChanged();
                 }
             }
 
@@ -398,9 +423,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             /** Multichoise islemi iptal edildiginde secilen tum itemler sıfırlanacak  */
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-
-                tempList = new ArrayList<>();
+                for (int pos : tempList) {
+                    MusicList.musicData.get(pos).setIsaretlendi(false);
+                }
                 layoutListClear(tempListLayout);
+                tempList = new ArrayList<>();
                 list_selected_count = 0;
                 isMulti = false;
             }
@@ -423,12 +450,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    private void layoutListClear(List<View> layoutList){
-        for (View v :layoutList){
-            v.findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
+    private void layoutListClear(List<View> layoutList) {
+//        for (View v : layoutList) {
+//            v.findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
+//        }
+        for (int pos : tempList) {
+            if (musicListView.getChildAt(pos) != null) {
+
+                musicListView.getChildAt(pos).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
+            }
+
         }
         tempListLayout.clear();
-        tempListLayout =  new ArrayList<>();
+        tempListLayout = new ArrayList<>();
+        MusicList.adapter.notifyDataSetChanged();
+
 
     }
 
@@ -468,8 +504,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             return;
         }
 
-        if( oynatmaListesiFragment!= null && !oynatmaListesiFragment.isHidden()){
-            if (oynatmaListesiFragment.isList){
+        if (oynatmaListesiFragment != null && !oynatmaListesiFragment.isHidden()) {
+            if (OynatmaListesiFragment.isList) {
                 getSupportFragmentManager().beginTransaction().hide(oynatmaListesiFragment).commit();
                 return;
             }

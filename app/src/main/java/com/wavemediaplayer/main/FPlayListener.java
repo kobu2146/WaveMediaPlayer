@@ -27,6 +27,8 @@ import com.wavemediaplayer.mservices.Constants;
 import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.play.PlayMusic;
 
+import java.util.ArrayList;
+
 /**
  * Fatihin olusturdugu listener
  *
@@ -64,6 +66,7 @@ public class FPlayListener {
 
     public static int currentMusicPosition; //Sıralı calmada tutulacak pozisyon
     public static boolean calmaListesiMuzik = false; //Music calma listesinden mi ana listeden mi?
+    public static ArrayList<Integer> oncekiPos = new ArrayList<>();
 
     private Context context;
     private View view;

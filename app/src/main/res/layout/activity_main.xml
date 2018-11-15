@@ -76,6 +76,16 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="45dp"
+
+            android:listSelector="@drawable/list_selector"
+
+            android:scrollbars="vertical"
+            android:scrollbarThumbVertical="@drawable/scrollbar_vertical_thumb"
+            android:scrollbarTrackVertical="@drawable/scrollbar_vertical_track"
+            android:scrollbarSize="3dip"
+            android:fastScrollEnabled="true"
+
+
             android:background="@android:color/transparent"
             android:divider="@color/bar1"
             android:dividerHeight="1.5dp"

@@ -26,11 +26,13 @@ public class Adapter extends ArrayAdapter<MusicData> {
     private ArrayList<MusicData> musicData;
     private int kaynak;
 
+
     public Adapter(Context context, int resource, ArrayList<MusicData> musicData, int kaynak) {
         super(context, resource, musicData);
         this.context = context;
         this.musicData = musicData;
         this.kaynak = kaynak;
+
     }
 
     @Override
@@ -61,6 +63,7 @@ public class Adapter extends ArrayAdapter<MusicData> {
             holder.artist = convertView.findViewById(R.id.music_artist);
             holder.image_logo = convertView.findViewById(R.id.music_logo);
             holder.image_logo.setOnTouchListener(mOnTouchListener);
+            holder.layout.setOnTouchListener(mOnTouchListener2);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -114,6 +117,14 @@ public class Adapter extends ArrayAdapter<MusicData> {
                 }
 
             }
+            return false;
+        }
+    };
+
+    private View.OnTouchListener mOnTouchListener2 = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+
             return false;
         }
     };

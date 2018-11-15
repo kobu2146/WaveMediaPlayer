@@ -27,9 +27,11 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ActionMode;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -83,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static Context context;
     public static View mainView;
     private boolean isMulti = false;
-
+    private boolean isDrag=false;
     public static int tabsHeigh;
     public NotificationService s;
     public LinearLayout mainSearchLayout;
@@ -136,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private IntentFilter intentFilter;
     private ImageView mainsearchButton;
+    private MainManager mainManager;
 
 
 
@@ -163,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         fragmentListener=new FragmentListener(this);
         musicListSettingsFragment=new MusicListSettingsFragment();
         folderFragment=new FolderFragment();
-        new MainManager(this);
+        mainManager=new MainManager(this);
 
         musicList = new MusicList(musicListView, this);
 
@@ -346,8 +349,113 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             });
     }
 
+
+
+    private final int SWIPE_THRESHOLD = 150;
+    private final int SWIPE_MIN_DISTANCE = 120;
+    private final int SWIPE_MAX_OFF_PATH = 250;
+    private final int SWIPE_THRESHOLD_VELOCITY = 200;
+
+
+    /**swipe olduugnda sağa sola kayması için*/
+    private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            if ((e1.getAction() == MotionEvent.ACTION_DOWN) &&
+                    (e2.getAction() == MotionEvent.ACTION_MOVE) &&
+                    Math.abs(distanceX) > SWIPE_THRESHOLD) {
+
+                if (e2.getPointerCount() > 1) {
+                    if (distanceX > 0)
+                        onTwoFingerSwipeLeft();
+                    else
+                        onTwoFingerSwipeRight();
+                    return true;
+                }
+
+            }
+            return super.onScroll(e1, e2, distanceX, distanceY);
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+                               float velocityY) {
+
+            if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH) {
+                if (Math.abs(e1.getX() - e2.getX()) > SWIPE_MAX_OFF_PATH
+                        || Math.abs(velocityY) < SWIPE_THRESHOLD_VELOCITY)
+                    return false;
+                if (e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE)
+                    onSwipeUp();
+                else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE)
+                    onSwipeDown();
+            } else {
+                if (Math.abs(velocityX) < SWIPE_THRESHOLD_VELOCITY)
+                    return false;
+                if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE)
+                    mainManager.onSwipeLeft();
+                else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE)
+                    mainManager.onSwipeRight();
+            }
+            return super.onFling(e1, e2, velocityX, velocityY);
+        }
+
+    }
+
+
+
+    public void onSwipeUp() {}
+
+    public void onSwipeDown() {}
+
+    public void onTwoFingerSwipeLeft() {}
+
+    public void onTwoFingerSwipeRight() {}
+
+
+    GestureListener gestureListener=new GestureListener();
+    GestureDetector gestureDetector=new GestureDetector(context,gestureListener);
+
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev){
+        if(!isDrag){
+            gestureDetector.onTouchEvent(ev);
+        }
+       return super.dispatchTouchEvent(ev);
+    }
+
     /** Listview multi choise event fonksiyonu */
     public void multipleChoise(){
+
+
+
+
+
+
+//
+//
+//
+//        GestureListener gestureListener=new GestureListener();
+//        final GestureDetector gestureDetector=new GestureDetector(getApplicationContext(),gestureListener);
+//        musicListView.setpoin(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//
+//                if (!isMulti)
+//                return gestureDetector.onTouchEvent(event);
+//                else return false;
+//            }
+//
+//        });
+
+
         musicListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             /** Multichoise islemi yapıldıgında secilen itemleri liste ata ve secilen sayısını belirt */
             @Override
@@ -546,9 +654,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return true;
     }
 
+
+
+
+
+
+
     @Override
     public void onDragViewStart(int beginPosition) {
         mDraggedEntity = MusicList.musicData.get(beginPosition);
+        isDrag=true;
     }
 
     @Override
@@ -559,6 +674,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onDragViewDown(int finalPosition) {
+        isDrag=false;
         MusicList.musicData.set(finalPosition, mDraggedEntity);
         Log.e("bıraktı", "evet");
         duzenlenmisListeKaydet();

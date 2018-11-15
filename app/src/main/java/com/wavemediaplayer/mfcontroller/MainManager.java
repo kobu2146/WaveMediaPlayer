@@ -49,6 +49,7 @@ public class MainManager {
                           new  OynatmaListesiFragment().getCalmaListeleri();
                             MainActivity.playList_Ekleme_Yapildi = false;
                         }
+
                     }
                     InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(activity.edit_search.getApplicationWindowToken(), 0);
@@ -82,7 +83,25 @@ public class MainManager {
 
     }
 
+    public void onSwipeRight() {
+        Log.e("qswipe right",String.valueOf(viewPager.getChildCount()));
 
+        if(viewPager.getCurrentItem()!=0){
+            int current=viewPager.getCurrentItem();
+            current--;
+            viewPager.setCurrentItem(current);
+        }
+
+    }
+
+    public void onSwipeLeft() {
+        if(viewPager.getCurrentItem()!=viewPager.getChildCount()){
+            int current=viewPager.getCurrentItem();
+            current++;
+            viewPager.setCurrentItem(current);
+        }
+
+    }
 
     private void denemeeee(){
 //        Intent serviceIntent = new Intent(activity, NotificationService.class);

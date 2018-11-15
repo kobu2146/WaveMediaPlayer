@@ -190,11 +190,12 @@ public class FPlayListener {
     }
 
 
-    public void f_ListenerEvent(final int position) {
+    public void f_ListenerEvent() {
 
         sample_main_settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e("qqqqq","tiklandiiii");
                 FragmentTransaction fragmentTransaction = mainActivity.getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.addToBackStack(null);
                 DialogFragment dialogFragment = new SettingsFragment();
@@ -217,7 +218,6 @@ public class FPlayListener {
                 sharedPreferences = context.getSharedPreferences(MainActivity.KARISIK_CAL, Context.MODE_PRIVATE);
                 editor = sharedPreferences.edit();
                 editor.putBoolean("karisik", PlayMusic.karisikCal);
-
                 editor.apply();
             }
         });

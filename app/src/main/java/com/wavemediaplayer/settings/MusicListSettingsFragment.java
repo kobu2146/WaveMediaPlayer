@@ -27,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class MusicListSettingsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         activity=getActivity();
-        sharedPreferences=PreferenceManager.getDefaultSharedPreferences(activity);
+        sharedPreferences=MainActivity.context.getSharedPreferences("settings", Context.MODE_PRIVATE);
         linearLayout=new LinearLayout(activity);
         LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
         linearLayout.setLayoutParams(params);
@@ -56,7 +57,7 @@ public class MusicListSettingsFragment extends Fragment {
         linearLayout.setBackgroundColor(getResources().getColor(R.color.bar7));
 
         TextView textView=new TextView(activity);
-        textView.setText("Folder Settings");
+        textView.setText("Select Music Files");
         textView.setTextColor(getResources().getColor(android.R.color.white));
         textView.setTextSize(20f);
         LinearLayout.LayoutParams paramstext=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -177,9 +178,18 @@ public class MusicListSettingsFragment extends Fragment {
             viewHolder.holderCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+
                     editor=sharedPreferences.edit();
                     Set<String> set;
-                    set = sharedPreferences.getStringSet("listsettings",new HashSet<String>());
+                    set = sharedPreferences.getStringSet("listsettings",null);
+                    if(set==null) set=new HashSet<>();
+                    else {
+                        editor.remove("listsettings");
+                        editor.apply();
+                        editor.commit();
+                    }
+
                     if(isChecked){
                         if(!set.contains(arrayList.get(position))) {
                             set.add(arrayList.get(position));
@@ -195,14 +205,15 @@ public class MusicListSettingsFragment extends Fragment {
                         }
                     }
 
-                    editor.clear();
                     editor.putStringSet("listsettings",set);
                     editor.apply();
                     editor.commit();
 
-                    for (String veri:sharedPreferences.getStringSet("listsettings",new HashSet<String>())){
-                        Log.e("son aşama",veri);
+                    for (String f:sharedPreferences.getStringSet("listsettings",new HashSet<String>())){
+                        Log.e("22222222wfolder",f);
                     }
+
+
 
                 }
             });

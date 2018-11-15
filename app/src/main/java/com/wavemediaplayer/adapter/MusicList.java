@@ -41,6 +41,7 @@ public class MusicList {
 
     private boolean isAdd = true;
     private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences1;
     private SharedPreferences.Editor editor;
     private Set<String> folderControl;
     private static boolean atamaYapildimi = false;
@@ -48,8 +49,7 @@ public class MusicList {
     public MusicList(SlideAndDragListView musicListView, Context context) {
         this.musicListView = musicListView;
         this.context = context;
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-
+        sharedPreferences=MainActivity.context.getSharedPreferences("settings", Context.MODE_PRIVATE);
         init();
     }
 
@@ -65,10 +65,10 @@ public class MusicList {
 
     private void duzenlenmisListeyiCek() {
 
-        sharedPreferences = context.getSharedPreferences(MainActivity.DUZENLENMIS_LISTE, Context.MODE_PRIVATE);
+        sharedPreferences1 = context.getSharedPreferences(MainActivity.DUZENLENMIS_LISTE, Context.MODE_PRIVATE);
 
-        if (sharedPreferences.getString("main_liste", null) != null) {
-            Map<String, ?> allEntries = sharedPreferences.getAll();
+        if (sharedPreferences1.getString("main_liste", null) != null) {
+            Map<String, ?> allEntries = sharedPreferences1.getAll();
             for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
                 try {
                     if (entry.getKey().equals("main_liste")) {
@@ -119,6 +119,9 @@ public class MusicList {
         if (sharedPreferences.contains("listsettings")) atamaYapildimi = true;
         folderControl = sharedPreferences.getStringSet("listsettings", new HashSet<String>());
 
+        for (String f:sharedPreferences.getStringSet("listsettings", new HashSet<String>())){
+            Log.e("wfolder",f);
+        }
 
         ContentResolver contentResolver = context.getContentResolver();
         Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
@@ -143,7 +146,8 @@ public class MusicList {
 
                 String loc = "/storage/emulated/0/";
                 String[] split = currentLocation.substring(loc.length(), currentLocation.length()).split("/");
-                Log.e(String.valueOf(!sharedPreferences.contains("listsettings")), String.valueOf(folderControl.contains(split[0])));
+//                Log.e(folderControl.contains(split[0]), split[0] );
+
 
                 if (!atamaYapildimi || folderControl.contains(split[0])) {
                     if (Integer.valueOf(currentSize) >= Size) {

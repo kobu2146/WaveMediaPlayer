@@ -80,10 +80,10 @@ public class MainManager {
     }
 
     public void onSwipeRight() {
-        Log.e("qswipe right",String.valueOf(viewPager.getChildCount()));
+        Log.e("qswipe right", String.valueOf(viewPager.getChildCount()));
 
-        if(viewPager.getCurrentItem()!=0){
-            int current=viewPager.getCurrentItem();
+        if (viewPager.getCurrentItem() != 0) {
+            int current = viewPager.getCurrentItem();
             current--;
             viewPager.setCurrentItem(current);
         }
@@ -91,8 +91,8 @@ public class MainManager {
     }
 
     public void onSwipeLeft() {
-        if(viewPager.getCurrentItem()!=viewPager.getChildCount()){
-            int current=viewPager.getCurrentItem();
+        if (viewPager.getCurrentItem() != viewPager.getChildCount()) {
+            int current = viewPager.getCurrentItem();
             current++;
             viewPager.setCurrentItem(current);
         }
@@ -107,12 +107,10 @@ public class MainManager {
 
 
     private void setupViewPager(ViewPager viewPager) {
-
         ViewPagerAdapter adapter = new ViewPagerAdapter(activity.getSupportFragmentManager());
-        adapter.addFragment(new MainFragment(),"One");
+        adapter.addFragment(new MainFragment(), "One");
         adapter.addFragment(new OynatmaListesiFragment(), "PlayList");
         adapter.addFragment(new DownloadFragment(), "Download");
-
         viewPager.setAdapter(adapter);
     }
 }

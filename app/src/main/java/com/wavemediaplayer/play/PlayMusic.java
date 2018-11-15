@@ -104,6 +104,7 @@ public class PlayMusic {
                     NotificationService.mediaPlayer = mediaPlayer;
                 }
             } else {
+                Log.e("File not found", "Belirtilen dosya yok");
                 Toast.makeText(context, "File not found", Toast.LENGTH_LONG).show();
                 calmayaDevamEt(true);
             }
@@ -116,9 +117,11 @@ public class PlayMusic {
         if (!karisikCal) { // Sıralı calma aktifse
             Log.e("sirali", "cal");
             if (!FPlayListener.calmaListesiMuzik) {//Ana playerdan calınacaksa
+                Log.e("ana", "music");
                 if (tekrarla == 0 || tekrarla == 2) {
                     if (ileriCal) {
                         FPlayListener.currentMusicPosition++;
+                        Log.e("current", "arttı");
                     } else {
                         if (FPlayListener.currentMusicPosition != 0) {
                             FPlayListener.currentMusicPosition--;
@@ -127,6 +130,7 @@ public class PlayMusic {
                         }
                     }
                 }
+
 
                 if (FPlayListener.currentMusicPosition < MusicList.musicData.size()) {
                     prevMusicDAta = MusicList.musicData.get(FPlayListener.currentMusicPosition);
@@ -156,6 +160,7 @@ public class PlayMusic {
 
                 }
             } else { //Playlistden veya baska biryerden ise
+                Log.e("playlist", "music");
                 if (tekrarla == 0 || tekrarla == 2) {
                     if (ileriCal) {
                         FPlayListener.currentMusicPosition++;
@@ -268,6 +273,7 @@ public class PlayMusic {
                     if (tekrarla == 3) {
                         tekrarla = 1;
                     }
+                    int rndPositin = new Random().nextInt(OynatmaListesiFragment.music_oynat_list.size());
                     FPlayListener.currentMusicPosition = rndPositin;
                     if (rndPositin <= OynatmaListesiFragment.music_oynat_list.size()) {
                         prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(rndPositin);
@@ -402,7 +408,10 @@ public class PlayMusic {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    if (mediaPlayer != null) {
+                    if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+
+
+
                         myseekbar.setProgress(mediaPlayer.getCurrentPosition());
                         mytext1.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getCurrentPosition())));
 

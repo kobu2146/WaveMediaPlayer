@@ -2,21 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/visualLinearLayout"
-    android:background="@android:color/white"
+    android:background="@color/bar7"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".5">
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"/>
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        style="@style/WhiteSpinner"
+        android:layout_weight="0.5"
+        android:spinnerMode="dropdown"
 
-    </LinearLayout>
+
+        />
 
     <LinearLayout
         android:id="@+id/linearLayoutVisual"
@@ -29,70 +29,86 @@
     <LinearLayout
         android:id="@+id/linearLayoutEqual"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_weight="3"
-        android:padding="5dp">
+        android:layout_weight="1"
+        android:background="@color/bar7">
     </LinearLayout>
+
+
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="4">
-
+        android:layout_weight="4"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
             <com.sdsmdg.harjot.crollerTest.Croller
                 android:id="@+id/equalizerVolume"
                 app:label="Volume"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 app:back_circle_color="#EDEDED"
                 app:indicator_color="#0B3C49"
                 app:indicator_width="10"
                 app:is_continuous="true"
-                app:label_color="#000000"
+                app:label_color="#fff"
                 app:main_circle_color="#FFFFFF"
                 app:max="1000"
-                app:progress_primary_color="#0B3C49"
+                app:progress_primary_color="#00BCD4"
                 app:progress_secondary_color="#EEEEEE"
+
+                app:progress_primary_stroke_width="15"
+                app:progress_secondary_stroke_width="8"
+
                 app:start_offset="45" />
             <com.sdsmdg.harjot.crollerTest.Croller
                 android:id="@+id/equalizerRL"
                 app:label="Balance"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 app:back_circle_color="#EDEDED"
                 app:indicator_color="#0B3C49"
                 app:indicator_width="10"
                 app:is_continuous="true"
-                app:label_color="#000000"
+                app:label_color="#fff"
                 app:main_circle_color="#FFFFFF"
                 app:max="1000"
-                app:progress_primary_color="#0B3C49"
+                app:progress_primary_color="#00BCD4"
                 app:progress_secondary_color="#EEEEEE"
-                app:start_offset="45" />
+                app:start_offset="45"
+                app:progress_primary_stroke_width="15"
+                app:progress_secondary_stroke_width="8"/>
 
-            <com.sdsmdg.harjot.crollerTest.Croller
-                android:id="@+id/equalizerBass"
-                app:label="Bass"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                app:back_circle_color="#EDEDED"
-                app:indicator_color="#0B3C49"
-                app:indicator_width="10"
-                app:is_continuous="true"
-                app:label_color="#000000"
-                app:main_circle_color="#FFFFFF"
-                app:max="1000"
-                app:progress_primary_color="#0B3C49"
-                app:progress_secondary_color="#EEEEEE"
-                app:start_offset="45" />
         </LinearLayout>
+
+        <com.sdsmdg.harjot.crollerTest.Croller
+            android:id="@+id/equalizerBass"
+            app:label="Bass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:back_circle_color="#EDEDED"
+            app:indicator_color="#0B3C49"
+            app:indicator_width="10"
+            app:is_continuous="true"
+            app:label_color="#fff"
+            app:main_circle_color="#FFFFFF"
+            app:max="1000"
+            app:progress_primary_color="#00BCD4"
+            app:progress_secondary_color="#EEEEEE"
+            app:start_offset="45"
+            app:progress_primary_stroke_width="15"
+            app:progress_secondary_stroke_width="8"/>
 
 
 

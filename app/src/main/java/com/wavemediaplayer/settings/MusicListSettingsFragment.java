@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.ArraySet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,10 +53,25 @@ public class MusicListSettingsFragment extends Fragment {
         LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
         linearLayout.setLayoutParams(params);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
-        linearLayout.setBackgroundColor(Color.WHITE);
+        linearLayout.setBackgroundColor(getResources().getColor(R.color.bar7));
+
+        TextView textView=new TextView(activity);
+        textView.setText("Folder Settings");
+        textView.setTextColor(getResources().getColor(android.R.color.white));
+        textView.setTextSize(20f);
+        LinearLayout.LayoutParams paramstext=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        paramstext.gravity=Gravity.CENTER_HORIZONTAL;
+        textView.setGravity(View.TEXT_ALIGNMENT_CENTER);
+        textView.setLayoutParams(paramstext);
+        paramstext.topMargin=20;
+        linearLayout.addView(textView);
+
         listView=new ListView(getActivity());
         listView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
         linearLayout.addView(listView);
+
+
+
         view=linearLayout;
         getMusic();
 

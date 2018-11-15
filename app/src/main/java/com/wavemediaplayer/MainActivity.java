@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -312,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                klavyeDisable();
                 if (!isMulti) {
                     // pl.play(MusicList.locationList.get(position));
                     FPlayListener.calmaListesiMuzik = false;
@@ -370,6 +371,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = mode.getMenuInflater();
                 inflater.inflate(R.menu.custom_tools, menu);
+                klavyeDisable();
                 return true;
             }
 
@@ -422,6 +424,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 isMulti = false;
             }
         });
+    }
+
+    private void klavyeDisable() {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(edit_search.getApplicationWindowToken(), 0);
+        edit_search.setVisibility(View.INVISIBLE);
     }
 
     private void duzenlenmisListeKaydet() {

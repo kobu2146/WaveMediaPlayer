@@ -5,8 +5,8 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/bar8</item>
         <item name="colorPrimaryDark">@color/black</item>
-        <item name="colorAccent">@color/bar3</item>
-        <item name="android:itemBackground">@color/turuncu</item>
+        <item name="colorAccent">@color/turkuaz</item>
+        <item name="android:itemBackground">@color/turkuaz</item>
 
 
     </style>

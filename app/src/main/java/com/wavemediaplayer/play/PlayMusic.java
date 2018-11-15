@@ -93,9 +93,10 @@ public class PlayMusic {
                 } else {
                     if (mediaPlayer != null) {
                         if (!mediaPlayer.isPlaying()) {
-
                             mediaPlayer.start();
-
+                        }
+                        else {
+                            mediaPlayer.start();
                         }
                     }
                 }
@@ -316,7 +317,7 @@ public class PlayMusic {
     private void stopPlaying() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
-            mediaPlayer.release();
+           // mediaPlayer.release();
             //mediaPlayer = null;
             if (handler != null) {
                 handler.removeCallbacks(runnable);
@@ -350,7 +351,7 @@ public class PlayMusic {
                     }
                 });
                 mytext2.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getDuration())));
-                mediaPlayer.start();
+               mediaPlayer.start();
             }
         });
     }

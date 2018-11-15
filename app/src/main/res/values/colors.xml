@@ -24,6 +24,7 @@
     <color name="bar7">#2B2B2B</color>
     <color name="bar8">#2a3636</color>
     <color name="turuncu">#F55730</color>
+    <color name="turkuaz">#00BCD4</color>
     <color name="songTimerColor" tools:ignore="MissingDefaultResource">#484848</color>
 
 

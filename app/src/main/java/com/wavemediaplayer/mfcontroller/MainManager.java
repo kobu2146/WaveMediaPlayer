@@ -1,9 +1,12 @@
 package com.wavemediaplayer.mfcontroller;
 
+import android.content.Context;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
@@ -48,8 +51,9 @@ public class MainManager {
                         }
 
                     }
-
-
+                    InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(activity.edit_search.getApplicationWindowToken(), 0);
+                    activity.edit_search.setVisibility(View.INVISIBLE);
                 }
 
                // Log.e(String.valueOf(i1),String.valueOf(i));

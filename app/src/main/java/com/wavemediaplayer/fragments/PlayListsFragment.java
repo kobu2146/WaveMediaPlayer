@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -104,6 +105,7 @@ public class PlayListsFragment extends DialogFragment {
                     SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences( "WAVE MUSIC PLAYLIST", Context.MODE_PRIVATE);
                     String s =  sharedPreferences.getString(list_name,null);
                 }
+                klavyeDisable();
                 dismiss();
             }
         });
@@ -128,6 +130,11 @@ public class PlayListsFragment extends DialogFragment {
             Log.e("templist",""+i);
         }
     }
+    private void klavyeDisable(){
+        InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(edit_playlist_name.getApplicationWindowToken(), 0);
+    }
+
 
 
 

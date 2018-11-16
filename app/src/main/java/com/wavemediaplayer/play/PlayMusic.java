@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
 import android.net.Uri;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wavemediaplayer.MainActivity;
+import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
@@ -107,6 +109,14 @@ public class PlayMusic {
                 Toast.makeText(context, "File not found", Toast.LENGTH_LONG).show();
                 calmayaDevamEt(true);
             }
+
+            mainActivity.mainVisualizer.setColor(ContextCompat.getColor(context, android.R.color.white));
+
+// define custom number of bars you want in the visualizer between (10 - 256).
+            mainActivity.mainVisualizer.setDensity(70);
+
+// Set your media player to the visualizer.
+            mainActivity.mainVisualizer.setPlayer(mediaPlayer.getAudioSessionId());
         } catch (Exception ex) {
             Log.e("FILE NOT FOUND", ex.getMessage());
         }
@@ -116,7 +126,7 @@ public class PlayMusic {
         if (!karisikCal) { // Sıralı calma aktifse
             Log.e("sirali", "cal");
             if (!FPlayListener.calmaListesiMuzik) {//Ana playerdan calınacaksa
-                Log.e("ana", "music");
+                if(MusicList.musicData.size()==0) return;
                 if (tekrarla == 0 || tekrarla == 2) {
                     if (ileriCal) {
                         FPlayListener.currentMusicPosition++;
@@ -160,6 +170,8 @@ public class PlayMusic {
                 }
             } else { //Playlistden veya baska biryerden ise
                 Log.e("playlist", "music");
+                if(OynatmaListesiFragment.music_oynat_list.size()==0) return;
+
                 if (tekrarla == 0 || tekrarla == 2) {
                     if (ileriCal) {
                         FPlayListener.currentMusicPosition++;
@@ -206,6 +218,7 @@ public class PlayMusic {
             Log.e("karisik", "cal");
             // ana music playerdan karısık calma
             if (!FPlayListener.calmaListesiMuzik) {
+                if(MusicList.musicData.size()==0) return;
                 int rndPositin = new Random().nextInt(MusicList.musicData.size());
                 if (tekrarla == 0 || tekrarla == 2 || tekrarla == 3) {
                     if (ileriCal) {
@@ -254,6 +267,7 @@ public class PlayMusic {
             }
             // Calma listesinden karısık calma
             else {
+                if(OynatmaListesiFragment.music_oynat_list.size()==0) return;
                 if (tekrarla == 0 || tekrarla == 2 || tekrarla == 3) {
                     int rndPositin = new Random().nextInt(OynatmaListesiFragment.music_oynat_list.size());
                     if (ileriCal) {
@@ -406,8 +420,8 @@ public class PlayMusic {
             runnable = new Runnable() {
                 @Override
                 public void run() {
+                    Log.e("qqqqqqqq","qweqweqwe");
                     if (mediaPlayer != null) {
-
 
                         myseekbar.setProgress(mediaPlayer.getCurrentPosition());
                         mytext1.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getCurrentPosition())));

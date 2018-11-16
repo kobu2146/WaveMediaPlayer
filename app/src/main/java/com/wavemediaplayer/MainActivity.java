@@ -1,6 +1,9 @@
 package com.wavemediaplayer;
 
 
+import android.animation.Animator;
+import android.animation.LayoutTransition;
+import android.animation.ValueAnimator;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.content.BroadcastReceiver;
@@ -9,10 +12,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.opengl.Visibility;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,17 +28,22 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ActionMode;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -42,7 +53,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
+import com.chibde.visualizer.BarVisualizer;
 import com.google.gson.Gson;
 import com.sdsmdg.harjot.crollerTest.Croller;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -92,9 +105,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public LinearLayout mainSearchLayout;
 
     public MainMenu mainMenu;
-
+    public BarVisualizer mainVisualizer;
     private static boolean devam = false;
-
     /** Main musiclistview */
     public static SlideAndDragListView musicListView;
     List<View> tempListLayout = new ArrayList<>();
@@ -197,6 +209,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
 
         intentFilter=new IntentFilter("speedExceeded");
+        mainVisualizer=findViewById(R.id.mainVisualizer);
+
 
 
 
@@ -310,6 +324,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void f_createListener(){
         mLayout =  findViewById(R.id.activity_main);
         fPlayListener = new FPlayListener(this,mainView);
+        fPlayListener.f_ListenerEvent();
+
 
         /** burada equalizeri başlangıçta çalıştırıyorum ki sonradan equalizere tıkladığında ses değişmesin ayarlar önceden yapılsın diye*/
 //        if(mediaPlayer!=null){
@@ -320,7 +336,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (MusicList.musicData.size() > 0) {
             FPlayListener.currentMusicPosition = pos;
             PlayMusic.prevMusicDAta = MusicList.musicData.get(pos);
-            fPlayListener.f_ListenerEvent();
 
         }
 
@@ -727,7 +742,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         MusicList.musicData.remove(position - musicListView.getHeaderViewsCount());
         MusicList.adapter.notifyDataSetChanged();
     }
-
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
         switch (scrollState) {
@@ -738,12 +752,138 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             case AbsListView.OnScrollListener.SCROLL_STATE_FLING:
                 break;
         }
-    }
 
+
+    }
+//The initial height of that view
+
+    private int currentCount=0;
+    private boolean swipeAnimation=true;
+    private float  mainsearchpos=0;
+    private int screenHeight;
+    private int yedek;
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
+//
+//
+//        if(mainsearchpos==0) {
+//            int location2[] = new int[2];
+//            mainSearchLayout.getLocationInWindow(location2);
+//            yedek=location2[1];
+//
+//
+//            Rect r = new Rect();
+//            mainSearchLayout.getWindowVisibleDisplayFrame(r);
+//            int x = r.centerX();
+//            int y = r.centerY();
+//            mainsearchpos=y;
+//
+//
+//
+//            Display display = getWindowManager().getDefaultDisplay();
+//            Point size = new Point();
+//            display.getSize(size);
+//            int width = size.x;
+//            int height = size.y;
+//            screenHeight=height;
+//
+//
+//        }
+//
+//
+//        int location[] = new int[2];
+//        mainSearchLayout.getLocationInWindow(location);
+////        Log.e("11111111111",String.valueOf(location[1])+"   "+String.valueOf(mainSearchLayout.getTop())+"   yedek "+String.valueOf(yedek));
+//
+//        if(firstVisibleItem>currentCount ){
+//            musicListView.animate().cancel();
+//            musicListView.animate().rotation(360);
+//            currentCount=firstVisibleItem;
+//            if(swipeAnimation && location[1]==yedek){
+//
+////                musicListView.animate().cancel();
+////                musicListView.animate().translationYBy(-mainSearchLayout.getTop());
+////                musicListView.animate().withEndAction(new Runnable() {
+////                    @Override
+////                    public void run() {
+////
+////                    }
+////                });
+//
+//
+//
+//
+//
+//
+////                musicListView.animate().scaleY(1.5f);
+//
+//
+//
+//                swipeAnimation=false;
+//
+//            }
+//
+//        }
+//
+//        else if(firstVisibleItem<currentCount ){
+//            musicListView.animate().cancel();
+//            musicListView.animate().rotation(-360);
+//            currentCount=firstVisibleItem;
+//            if(!swipeAnimation && location[1]==yedek-mainSearchLayout.getTop()){
+//
+////                musicListView.animate().cancel();
+////                musicListView.animate().translationYBy(mainSearchLayout.getTop());
+////                musicListView.animate().withEndAction(new Runnable() {
+////                    @Override
+////                    public void run() {
+////
+////
+////                    }
+////                });
+//
+//
+//
+//                swipeAnimation=true;
+//
+//
+//            }
+//        }
+
+
+
+        //The initial height of that view
+
+
+
+
+//        if(btnPosY==0) btnPosY= mainSearchLayout.getScrollY();
+//        if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
+//            Log.e("qqqqqqqq","scrollasdasdasdl");
+//            mainSearchLayout.animate().cancel();
+//            mainSearchLayout.animate().translationYBy(-150);
+//            scrollanimation=true;
+//
+//        } else if (scrollState == SCROLL_STATE_FLING) {
+////            if(scrollanimation){
+////                Log.e("qqqqqqqq","scrollasdasdasd222222222222222l");
+////                mainSearchLayout.animate().cancel();
+////                mainSearchLayout.animate().translationYBy(-150);
+////                scrollanimation=false;
+////            }
+//        }else{
+//            Log.e("qqqqqqqq","scrollasdasdasd33333333333");
+//            if(scrollanimation){
+//                Log.e("qqqqqqqq","scrollasdasdasd222222222222222l");
+//                mainSearchLayout.animate().cancel();
+//                mainSearchLayout.animate().translationY(btnPosY);
+//                scrollanimation=false;
+//            }
+//
+//        }
     }
+
+
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -793,6 +933,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onDestroy();
         //buradaki amaç runable activity sonlandırldığında dahi calısıyor o yüzden açık bırakıyorum servisteki işlemler için
         fPlayListener.pl.startRunable();
+
 
     }
 

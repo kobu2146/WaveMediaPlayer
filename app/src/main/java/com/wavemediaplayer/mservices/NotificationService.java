@@ -205,6 +205,7 @@ public class NotificationService extends Service {
             mediaPlayer=MediaPlayer.create(getApplicationContext(), Uri.parse(list.get(currentPos).getLocation()));
             mediaPlayer.start();
             listeDegistir(list,currentPos);
+
         }
     }
     private void exitPlayer(){

@@ -306,9 +306,9 @@ public class FPlayListener {
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
                 if (!calmaListesiMuzik) {
+                    if(MusicList.musicData.size()==0) return;
+
                     PlayMusic.prevMusicDAta = MusicList.musicData.get(currentMusicPosition);
                     song_title.setText(MusicList.musicData.get(currentMusicPosition).getTitles());
                     song_artis.setText(MusicList.musicData.get(currentMusicPosition).getArtist());
@@ -317,6 +317,8 @@ public class FPlayListener {
                         mainActivity.s.listeDegistir(MusicList.musicData, currentMusicPosition);
 
                 } else {
+                    if(OynatmaListesiFragment.music_oynat_list.size()==0) return;
+
                     PlayMusic.prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition);
                     song_title.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getTitles());
                     song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getArtist());
@@ -358,8 +360,8 @@ public class FPlayListener {
             @Override
             public void onClick(View view) {
 
-
                 if (!calmaListesiMuzik) {
+                    if(MusicList.musicData.size()==0) return;
                     PlayMusic.prevMusicDAta = MusicList.musicData.get(currentMusicPosition);
                     song_title.setText(MusicList.musicData.get(currentMusicPosition).getTitles());
                     song_artis.setText(MusicList.musicData.get(currentMusicPosition).getArtist());
@@ -367,6 +369,7 @@ public class FPlayListener {
                     if (mainActivity.s != null)
                         mainActivity.s.listeDegistir(MusicList.musicData, currentMusicPosition);
                 } else {
+                    if(OynatmaListesiFragment.music_oynat_list.size()==0) return;
                     PlayMusic.prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition);
                     song_title.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getTitles());
                     song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getArtist());

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.sothree.slidinguppanel.SlidingUpPanelLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
@@ -36,6 +37,7 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"  />
 
+
         <LinearLayout
             android:id="@+id/mainSearchLayout"
             android:layout_width="match_parent"
@@ -47,6 +49,8 @@
             android:orientation="horizontal"
             >
 
+
+
             <EditText
                 android:id="@+id/edit_search"
                 android:layout_width="0dp"
@@ -56,7 +60,11 @@
                 android:hint="search"
                 android:paddingLeft="8dp"
                 android:layout_gravity="center"
-                android:visibility="invisible"/>
+                android:visibility="gone"/>
+
+
+
+
             <ImageView
                 android:id="@+id/mainsearchButton"
                 android:layout_width="wrap_content"
@@ -66,36 +74,35 @@
                 android:layout_gravity="center"/>
         </LinearLayout>
 
+        <com.chibde.visualizer.BarVisualizer
+            android:id="@+id/mainVisualizer"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@id/naber"
+            />
+
         <com.yydcdut.sdlv.SlideAndDragListView
-            android:layout_below="@+id/naber"
             android:id="@+id/main_musicListView"
             android:layout_width="match_parent"
-            android:layout_height="415dp"
+            android:layout_height="match_parent"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
+            android:layout_marginTop="0dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
-            android:layout_marginTop="45dp"
-
-            android:listSelector="@drawable/list_selector"
-
-            android:scrollbars="vertical"
-            android:scrollbarThumbVertical="@drawable/scrollbar_vertical_thumb"
-            android:scrollbarTrackVertical="@drawable/scrollbar_vertical_track"
-            android:scrollbarSize="3dip"
-            android:fastScrollEnabled="true"
-
-
             android:background="@android:color/transparent"
             android:divider="@color/bar1"
             android:dividerHeight="1.5dp"
+            android:fastScrollEnabled="true"
+            android:listSelector="@drawable/list_selector"
+            android:scrollbarSize="3dip"
+            android:scrollbarThumbVertical="@drawable/scrollbar_vertical_thumb"
+            android:scrollbarTrackVertical="@drawable/scrollbar_vertical_track"
+            android:scrollbars="vertical"
             android:textColor="#FFF"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.181" />
+            android:layout_below="@id/mainSearchLayout"
+            />
 
 
         <LinearLayout
@@ -119,8 +126,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-
         <include layout="@layout/sample" />
     </RelativeLayout>
 

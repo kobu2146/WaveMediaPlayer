@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
 import android.net.Uri;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wavemediaplayer.MainActivity;
+import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
@@ -107,6 +109,14 @@ public class PlayMusic {
                 Toast.makeText(context, "File not found", Toast.LENGTH_LONG).show();
                 calmayaDevamEt(true);
             }
+
+            mainActivity.mainVisualizer.setColor(ContextCompat.getColor(context, android.R.color.white));
+
+// define custom number of bars you want in the visualizer between (10 - 256).
+            mainActivity.mainVisualizer.setDensity(70);
+
+// Set your media player to the visualizer.
+            mainActivity.mainVisualizer.setPlayer(mediaPlayer.getAudioSessionId());
         } catch (Exception ex) {
             Log.e("FILE NOT FOUND", ex.getMessage());
         }
@@ -346,6 +356,7 @@ public class PlayMusic {
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                         if (mediaPlayer != null && fromUser) {
+
                             mediaPlayer.seekTo(progress);
                         }
                     }
@@ -418,7 +429,6 @@ public class PlayMusic {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-
                     if (mediaPlayer != null) {
                         if (mytext2.getTag() == null || !mytext2.getTag().toString().equals("var")) {
                             mytext2.setTag("var");
@@ -435,15 +445,13 @@ public class PlayMusic {
                         } else if (total - current <= 300) {
                             calmayaDevamEt(true);
                         }
-                        seekBarChange();
-                    }
 
+                    }
                     myHandler.postDelayed(runnable, 1000);
                 }
             };
             runnable.run();
         }
-
 
     }
 

@@ -140,17 +140,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     SlidingUpPanelLayout mLayout;
     public FragmentListener fragmentListener;
     public MusicListSettingsFragment musicListSettingsFragment;
-    ArrayList<ArrayList<MusicData>> geciciAramaSonuclari = new ArrayList<>();
     /**
      * Templist'te multi choise ile secilen coklu secimlerin pozisyonları tutuluyor
      */
 
-    ArrayList<Integer> tempList = new ArrayList<>();
     /**
      * listview de secilen item sayısı multichoise icin
      */
-    int list_selected_count = 0;
-    SlidingUpPanelLayout mLayout;
     GestureDetector gestureDetector;
     /**
      * swipe olduugnda sağa sola kayması için
@@ -161,8 +157,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     /**
      * Calma listelerinin goorunecegi listi  oynatmaListesiFragment inde gosterilecek
      */
-    private OynatmaListesiFragment oynatmaListesiFragment;
-    private ArrayList<MusicData> denememusicdata;
     private SharedPreferences sharedPreferences;
     private SharedPreferences sharedPreferences2;
 
@@ -228,7 +222,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
 
         intentFilter=new IntentFilter("speedExceeded");
-        mainVisualizer=findViewById(R.id.mainVisualizer);
 
 
 

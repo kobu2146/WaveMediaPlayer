@@ -3,6 +3,7 @@ package com.wavemediaplayer.main;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
@@ -91,7 +92,6 @@ public class FPlayListener {
         song_title = view.findViewById(R.id.songs_title);
         song_artis = view.findViewById(R.id.songs_artist_name);
         sample_main_settings = view.findViewById(R.id.sample_main_settings);
-
 
         mytext1 = view.findViewById(R.id.sample_main_StartTime);
         mytext2 = view.findViewById(R.id.sample_main_endTime);
@@ -335,7 +335,6 @@ public class FPlayListener {
                 if (play_main.getVisibility() == View.VISIBLE) {
                     play_main.setVisibility(View.GONE);
                     pause_main.setVisibility(View.VISIBLE);
-
                 }
 
             }

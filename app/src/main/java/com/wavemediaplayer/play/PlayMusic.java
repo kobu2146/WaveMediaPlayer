@@ -2,6 +2,7 @@ package com.wavemediaplayer.play;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
 import android.net.Uri;
@@ -48,6 +49,7 @@ public class PlayMusic {
     private MainActivity mainActivity;
 
 
+
     public PlayMusic(MainActivity mainActivity, SeekBar myseekbar, TextView mytext1, TextView mytext2, ImageView myimageview, Handler handler) {
         this.mainActivity = mainActivity;
         this.context = mainActivity.getApplicationContext();
@@ -74,7 +76,7 @@ public class PlayMusic {
                 if (!playPrev.equals(link)) {
                     playPrev = link;
                     stopPlaying();
-                    mediaPlayer = new MediaPlayer();
+                    if(mediaPlayer==null) mediaPlayer = new MediaPlayer();;
                     /**initilation mediaplyer sharedtteki ayarları alıp mediaplayere entegre ediyorumki equalizer açıldığında yeni ayarlar orda aktifleşiyordu bullshit*/
                     if (initilationMediaPlayer == null)
                         initilationMediaPlayer = new InitilationMediaPlayer(context).init(mediaPlayer);
@@ -110,13 +112,10 @@ public class PlayMusic {
                 calmayaDevamEt(true);
             }
 
-            mainActivity.mainVisualizer.setColor(ContextCompat.getColor(context, android.R.color.white));
 
-// define custom number of bars you want in the visualizer between (10 - 256).
-            mainActivity.mainVisualizer.setDensity(70);
 
-// Set your media player to the visualizer.
-            mainActivity.mainVisualizer.setPlayer(mediaPlayer.getAudioSessionId());
+
+
         } catch (Exception ex) {
             Log.e("FILE NOT FOUND", ex.getMessage());
         }
@@ -344,25 +343,7 @@ public class PlayMusic {
             @Override
             public void onPrepared(final MediaPlayer mp) {
                 myseekbar.setMax(mediaPlayer.getDuration());
-                myseekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        if (mediaPlayer != null && fromUser) {
-
-                            mediaPlayer.seekTo(progress);
-                        }
-                    }
-
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-
-
-                    }
-                });
+                myseekbar.setOnSeekBarChangeListener(seekBarChangeListener);
                 mytext2.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getDuration())));
                 mediaPlayer.start();
             }
@@ -396,6 +377,13 @@ public class PlayMusic {
 
     public void startRunableWithMediaPlayer() {
 
+//        if(denemeanahtar && ){
+//            mainActivity.mainVisualizer.setColor(Color.parseColor("#00BCD4"));
+//            mainActivity.mainVisualizer.setDensity(60);
+//            mainActivity.mainVisualizer.setPlayer(mediaPlayer.getAudioSessionId());
+//            denemeanahtar=false;
+//        }
+
 
         if (isMyServiceRunning(NotificationService.class)) {
             mediaPlayer = NotificationService.mediaPlayer;
@@ -414,15 +402,17 @@ public class PlayMusic {
         } else {
             iconKapat(false);
         }
+
+
+
+
         if (runnable == null) {
 
             myHandler = new Handler();
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    Log.e("qqqqqqqq","qweqweqwe");
                     if (mediaPlayer != null) {
-
                         myseekbar.setProgress(mediaPlayer.getCurrentPosition());
                         mytext1.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getCurrentPosition())));
 
@@ -445,6 +435,10 @@ public class PlayMusic {
 
     public void startRunable() {
         startRunableWithMediaPlayer();
+        myseekbar.setOnSeekBarChangeListener(seekBarChangeListener);
+
+
+
     }
 
     public void stopRunable() {
@@ -456,5 +450,24 @@ public class PlayMusic {
 
     }
 
+    SeekBar.OnSeekBarChangeListener seekBarChangeListener=new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if (mediaPlayer != null && fromUser) {
 
+                mediaPlayer.seekTo(progress);
+            }
+            Log.e("seeeekbar",String.valueOf(progress)+"     "+String.valueOf(fromUser));
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
 }

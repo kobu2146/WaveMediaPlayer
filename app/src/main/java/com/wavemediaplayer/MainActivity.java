@@ -55,7 +55,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-import com.chibde.visualizer.BarVisualizer;
 import com.google.gson.Gson;
 import com.sdsmdg.harjot.crollerTest.Croller;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -102,10 +101,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private boolean isDrag=false;
     public static int tabsHeigh;
     public NotificationService s;
-    public LinearLayout mainSearchLayout;
+    public RelativeLayout mainSearchLayout;
 
     public MainMenu mainMenu;
-    public BarVisualizer mainVisualizer;
     private static boolean devam = false;
     /** Main musiclistview */
     public static SlideAndDragListView musicListView;
@@ -209,7 +207,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
 
         intentFilter=new IntentFilter("speedExceeded");
-        mainVisualizer=findViewById(R.id.mainVisualizer);
 
 
 
@@ -310,9 +307,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(View v) {
                 if(edit_search.getVisibility()==View.INVISIBLE){
                     edit_search.setVisibility(View.VISIBLE);
+
                 }else{
                     edit_search.setText("");
                     edit_search.setVisibility(View.INVISIBLE);
+
                 }
             }
         });

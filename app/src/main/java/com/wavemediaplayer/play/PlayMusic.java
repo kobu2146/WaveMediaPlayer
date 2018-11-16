@@ -110,7 +110,7 @@ public class PlayMusic {
                 calmayaDevamEt(true);
             }
 
-            mainActivity.mainVisualizer.setColor(ContextCompat.getColor(context, android.R.color.white));
+            mainActivity.mainVisualizer.setColor(ContextCompat.getColor(context, R.color.turkuaz));
 
 // define custom number of bars you want in the visualizer between (10 - 256).
             mainActivity.mainVisualizer.setDensity(70);

@@ -5,8 +5,10 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
-import android.content.pm.PackageManager;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
@@ -25,24 +27,28 @@ import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
+import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.play.PlayMusic;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class NotificationService extends Service {
     Notification status;
     private final String LOG_TAG = "NotificationService";
     public static MediaPlayer mediaPlayer;
-    private ArrayList<MusicData> list;
-    public static int currentPos=0;
+    public static ArrayList<MusicData> list;
+    public static int currentPos = 0;
+    public static boolean calmaListesiMuzik;
+    public static ArrayList<Integer> calimaListesiOncekiPos = new ArrayList<>();
+    public static ArrayList<Integer> mainListeOncekiPos = new ArrayList<>();
+    private final IBinder mBinder = new MyBinder();
     private RemoteViews views;
     private RemoteViews bigViews;
     private PendingIntent pendingIntent;
-    private final IBinder mBinder = new MyBinder();
     private MusicData mData;
-    private boolean calmaListesiMuzik;
-
+    private int tekrarPos;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -74,13 +80,15 @@ public class NotificationService extends Service {
 
     }
 
-    public void listeDegistir(ArrayList<MusicData> musicData,int currentPos){
-        list=musicData;
-        this.currentPos=currentPos;
-        this.calmaListesiMuzik=FPlayListener.calmaListesiMuzik;
+    public void listeDegistir(ArrayList<MusicData> musicData, int currentPos) {
+        list = musicData;
+        activityPlay();
+        tekrarPos = currentPos;
+        this.currentPos = currentPos;
+        this.calmaListesiMuzik = FPlayListener.calmaListesiMuzik;
         FPlayListener.currentMusicPosition = currentPos;
-        if(views!=null && bigViews!=null){
-            mData=musicData.get(currentPos);
+        if (views != null && bigViews != null) {
+            mData = musicData.get(currentPos);
             views.setTextViewText(R.id.status_bar_track_name, musicData.get(currentPos).getTitles());
             bigViews.setTextViewText(R.id.status_bar_track_name, musicData.get(currentPos).getTitles());
             views.setTextViewText(R.id.status_bar_artist_name, musicData.get(currentPos).getArtist());
@@ -142,37 +150,16 @@ public class NotificationService extends Service {
                     exitPlayer();
                     break;
             }
-
-//            if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
-//                showNotification();
-//                // Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
-//                mediaPlayer=PlayMusic.mediaPlayer;
-//
-//            } else if (intent.getAction().equals(Constants.ACTION.PREV_ACTION)) {
-//                previousSong();
-//                serviceBefore();
-//            } else if (intent.getAction().equals(Constants.ACTION.PLAY_ACTION)) {
-//                pauseSong();
-//            } else if (intent.getAction().equals(Constants.ACTION.NEXT_ACTION)) {
-//                nextSong();
-//                serviceNext();
-//            } else if (intent.getAction().equals(
-//                    Constants.ACTION.STOPFOREGROUND_ACTION)) {
-//                exitPlayer();
-//            }
         }
 
         Log.e("qqqq","service started");
         return START_STICKY;
     }
 
-    private void nextSong(){
-        if(list.size()-1>currentPos){
-            currentPos++;
-        }else{
-            currentPos=0;
-        }
-        if(mediaPlayer!=null){
+    private void nextSong() {
+        activityPlay();
+        calmayaDevamEt(true);
+        if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer=MediaPlayer.create(getApplicationContext(), Uri.parse(list.get(currentPos).getLocation()));
             mediaPlayer.start();
@@ -194,18 +181,15 @@ public class NotificationService extends Service {
         }
 
     }
-    private void previousSong(){
-        if(currentPos>0){
-            currentPos--;
-        }else{
-            currentPos=list.size()-1;
-        }
-        if(mediaPlayer!=null){
+
+    private void previousSong() {
+        activityPlay();
+        calmayaDevamEt(false);
+        if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer=MediaPlayer.create(getApplicationContext(), Uri.parse(list.get(currentPos).getLocation()));
             mediaPlayer.start();
             listeDegistir(list,currentPos);
-
         }
     }
     private void exitPlayer(){
@@ -324,9 +308,19 @@ public class NotificationService extends Service {
         status.icon = R.drawable.ic_launcher;
         status.contentIntent = pendingIntent;
         startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
+    }
 
+    public void setSettings() {
+        SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.KARISIK_CAL, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences2 = getSharedPreferences(MainActivity.SARKIYI_TEKRARLA, Context.MODE_PRIVATE);
+        PlayMusic.karisikCal = sharedPreferences.getBoolean("karisik", true);
+        PlayMusic.tekrarla = sharedPreferences2.getInt("tekrarla", 0);
+        if (FPlayListener.calmaListesiMuzik) {
+            listeDegistir(OynatmaListesiFragment.music_oynat_list, FPlayListener.currentMusicPosition);
 
-
+        } else {
+            listeDegistir(MusicList.musicData, FPlayListener.currentMusicPosition);
+        }
 
     }
 
@@ -335,6 +329,142 @@ public class NotificationService extends Service {
         super.onDestroy();
     }
 
+    /**
+     * BURAYA KARIIŞMA MK ------------------------------------------------
+     */
+    public void calmayaDevamEt(boolean ileriCal) {
+        if (!PlayMusic.karisikCal) { // Sıralı calma aktifse
+            Log.e("sirali", "cal");
+            if (!NotificationService.calmaListesiMuzik) {//Ana playerdan calınacaksa
+                Log.e("ana", "music");
+                if (list.size() == 0) {
+                    return;
+                }
+                if (PlayMusic.tekrarla == 0 || PlayMusic.tekrarla == 2 || PlayMusic.tekrarla == 3) {
+                    if (ileriCal) {
+                        NotificationService.currentPos++;
+                        if (NotificationService.currentPos >= NotificationService.list.size()) {
+                            NotificationService.currentPos = 0;
+                        }
+                    } else {
+                        if (NotificationService.currentPos != 0) {
+                            NotificationService.currentPos--;
+                        } else {
+                            NotificationService.currentPos = list.size()-1;
+                        }
+                    }
 
+                    tekrarPos = currentPos;
+                    //İleri butonuna tıklandıgı zaman gecerli sarkıyı tekrarlada ise bir sonraki sarkıya atlattrırıp tekrala = 1 olacak
+                    if (PlayMusic.tekrarla == 3) {
+                        PlayMusic.tekrarla = 1;
+                        listeDegistir(list, currentPos);
+                    } else {
+                        listeDegistir(list, currentPos);
+                    }
+                }
+                // tekrar = 1 ise
+                else {
+                    listeDegistir(list, tekrarPos);
+                }
+            }
+
+            // calma listesi sirali calma
+            else {
+                if (list.size() == 0) {
+                    return;
+                }
+                if (PlayMusic.tekrarla == 0 || PlayMusic.tekrarla == 2 || PlayMusic.tekrarla == 3) {
+                    if (ileriCal) {
+                        NotificationService.currentPos++;
+                        if (NotificationService.currentPos >= NotificationService.list.size()) {
+                            NotificationService.currentPos = 0;
+                        }
+                    } else {
+                        if (NotificationService.currentPos != 0) {
+                            NotificationService.currentPos--;
+                        } else {
+                            NotificationService.currentPos = list.size()-1;
+                        }
+                    }
+
+                    tekrarPos = currentPos;
+                    //İleri butonuna tıklandıgı zaman gecerli sarkıyı tekrarlada ise bir sonraki sarkıya atlattrırıp tekrala = 1 olacak
+                    if (PlayMusic.tekrarla == 3) {
+                        PlayMusic.tekrarla = 1;
+                        listeDegistir(list, currentPos);
+                    } else {
+                        listeDegistir(list, currentPos);
+                    }
+                }
+                // tekrar = 1 ise
+                else {
+                    listeDegistir(list, tekrarPos);
+                }
+
+            }
+        }
+        // Karısık sarkı calma
+        else {
+            Log.e("karisik", "cal");
+            // ana music playerdan karısık calma
+            if (!NotificationService.calmaListesiMuzik) {
+                if (NotificationService.list.size() == 0) {
+                    return;
+                }
+                int rndPositin = new Random().nextInt(NotificationService.list.size());
+                if (PlayMusic.tekrarla == 0 || PlayMusic.tekrarla == 2 || PlayMusic.tekrarla == 3) {
+                    if (ileriCal) {
+                        NotificationService.mainListeOncekiPos.add(rndPositin);
+                    } else {
+                        if (NotificationService.mainListeOncekiPos.size() > 1) {
+                            NotificationService.mainListeOncekiPos.remove(NotificationService.mainListeOncekiPos.size() - 1);
+                            rndPositin = NotificationService.mainListeOncekiPos.get(NotificationService.mainListeOncekiPos.size() - 1);
+                        }
+                    }
+                    currentPos = rndPositin;
+                    tekrarPos = currentPos;
+                    //İleri butonuna tıklandıgı zaman gecerli sarkıyı tekrarlada ise bir sonraki sarkıya atlattrırıp tekrala = 1 olacak
+                    if (PlayMusic.tekrarla == 3) {
+                        PlayMusic.tekrarla = 1;
+                        listeDegistir(list, currentPos);
+                    } else {
+                        listeDegistir(list, currentPos);
+                    }
+                } else {
+                    listeDegistir(list, tekrarPos);
+                }
+            }
+            // calma listesi ise
+            else {
+                if (NotificationService.list.size() == 0) {
+                    return;
+                }
+                int rndPositin = new Random().nextInt(NotificationService.list.size());
+                if (PlayMusic.tekrarla == 0 || PlayMusic.tekrarla == 2 || PlayMusic.tekrarla == 3) {
+                    if (ileriCal) {
+                        NotificationService.calimaListesiOncekiPos.add(rndPositin);
+                    } else {
+                        if (NotificationService.calimaListesiOncekiPos.size() > 1) {
+                            NotificationService.calimaListesiOncekiPos.remove(NotificationService.calimaListesiOncekiPos.size() - 1);
+                            rndPositin = NotificationService.calimaListesiOncekiPos.get(NotificationService.calimaListesiOncekiPos.size() - 1);
+                        }
+                    }
+                    currentPos = rndPositin;
+                    tekrarPos = currentPos;
+                    //İleri butonuna tıklandıgı zaman gecerli sarkıyı tekrarlada ise bir sonraki sarkıya atlattrırıp tekrala = 1 olacak
+                    if (PlayMusic.tekrarla == 3) {
+                        PlayMusic.tekrarla = 1;
+                        listeDegistir(list, currentPos);
+                    } else {
+                        listeDegistir(list, currentPos);
+                    }
+                } else {
+                    listeDegistir(list, tekrarPos);
+                }
+            }
+
+        }
+    }
 
 }

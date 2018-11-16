@@ -53,6 +53,7 @@ public class PlayListsFragment extends DialogFragment {
     {
         final Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.setTitle("Add");
         return dialog;
     }
 
@@ -66,7 +67,9 @@ public class PlayListsFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_play_lists,container);
+
         return view;
     }
 

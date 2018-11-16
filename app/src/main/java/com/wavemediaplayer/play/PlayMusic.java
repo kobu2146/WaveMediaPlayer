@@ -19,6 +19,7 @@ import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
+import com.wavemediaplayer.adapter.Utils;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mservices.NotificationService;
@@ -49,7 +50,6 @@ public class PlayMusic {
     private MainActivity mainActivity;
 
 
-
     public PlayMusic(MainActivity mainActivity, SeekBar myseekbar, TextView mytext1, TextView mytext2, ImageView myimageview, Handler handler) {
         this.mainActivity = mainActivity;
         this.context = mainActivity.getApplicationContext();
@@ -76,7 +76,10 @@ public class PlayMusic {
                 if (!playPrev.equals(link)) {
                     playPrev = link;
                     stopPlaying();
-                    if(mediaPlayer==null) mediaPlayer = new MediaPlayer();;
+                    if (mediaPlayer == null) {
+                        mediaPlayer = new MediaPlayer();
+                    }
+
                     /**initilation mediaplyer sharedtteki ayarları alıp mediaplayere entegre ediyorumki equalizer açıldığında yeni ayarlar orda aktifleşiyordu bullshit*/
                     if (initilationMediaPlayer == null)
                         initilationMediaPlayer = new InitilationMediaPlayer(context).init(mediaPlayer);
@@ -221,13 +224,12 @@ public class PlayMusic {
                 int rndPositin = new Random().nextInt(MusicList.musicData.size());
                 if (tekrarla == 0 || tekrarla == 2 || tekrarla == 3) {
                     if (ileriCal) {
-                        FPlayListener.mainListeOncekiPos.add(rndPositin);
+                        NotificationService.mainListeOncekiPos.add(rndPositin);
 
                     } else {
-                        if (FPlayListener.mainListeOncekiPos.size() > 1) {
-                            FPlayListener.mainListeOncekiPos.remove(FPlayListener.mainListeOncekiPos.size() - 1);
-                            rndPositin = FPlayListener.mainListeOncekiPos.get(FPlayListener.mainListeOncekiPos.size() - 1);
-
+                        if (NotificationService.mainListeOncekiPos.size() > 1) {
+                            NotificationService.mainListeOncekiPos.remove(NotificationService.mainListeOncekiPos.size() - 1);
+                            rndPositin = NotificationService.mainListeOncekiPos.get(NotificationService.mainListeOncekiPos.size() - 1);
                         }
 
 
@@ -250,6 +252,9 @@ public class PlayMusic {
                         if (mainActivity.s != null)
                             mainActivity.s.listeDegistir(MusicList.musicData, FPlayListener.currentMusicPosition);
                     }
+
+
+
                 } else if (tekrarla == 1) {
                     if (prevMusicDAta != null) {
                         MainActivity.fPlayListener.song_artis.setText(prevMusicDAta.getArtist());
@@ -271,12 +276,12 @@ public class PlayMusic {
                     int rndPositin = new Random().nextInt(OynatmaListesiFragment.music_oynat_list.size());
                     if (ileriCal) {
                         rndPositin = new Random().nextInt(MusicList.musicData.size());
-                        FPlayListener.calimaListesiOncekiPos.add(rndPositin);
+                        NotificationService.calimaListesiOncekiPos.add(rndPositin);
 
                     } else {
-                        if (FPlayListener.calimaListesiOncekiPos.size() > 1) {
-                            FPlayListener.calimaListesiOncekiPos.remove(FPlayListener.calimaListesiOncekiPos.size() - 1);
-                            rndPositin = FPlayListener.calimaListesiOncekiPos.get(FPlayListener.calimaListesiOncekiPos.size() - 1);
+                        if (NotificationService.calimaListesiOncekiPos.size() > 1) {
+                            NotificationService.calimaListesiOncekiPos.remove(NotificationService.calimaListesiOncekiPos.size() - 1);
+                            rndPositin = NotificationService.calimaListesiOncekiPos.get(NotificationService.calimaListesiOncekiPos.size() - 1);
                         }
 
                     }
@@ -345,6 +350,7 @@ public class PlayMusic {
                 myseekbar.setMax(mediaPlayer.getDuration());
                 myseekbar.setOnSeekBarChangeListener(seekBarChangeListener);
                 mytext2.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getDuration())));
+                mytext2.setTag("var");
                 mediaPlayer.start();
             }
         });
@@ -377,13 +383,6 @@ public class PlayMusic {
 
     public void startRunableWithMediaPlayer() {
 
-//        if(denemeanahtar && ){
-//            mainActivity.mainVisualizer.setColor(Color.parseColor("#00BCD4"));
-//            mainActivity.mainVisualizer.setDensity(60);
-//            mainActivity.mainVisualizer.setPlayer(mediaPlayer.getAudioSessionId());
-//            denemeanahtar=false;
-//        }
-
 
         if (isMyServiceRunning(NotificationService.class)) {
             mediaPlayer = NotificationService.mediaPlayer;
@@ -402,17 +401,19 @@ public class PlayMusic {
         } else {
             iconKapat(false);
         }
-
-
-
-
         if (runnable == null) {
 
             myHandler = new Handler();
             runnable = new Runnable() {
                 @Override
                 public void run() {
+                    Log.e("qqqqqqqq","qweqweqwe");
                     if (mediaPlayer != null) {
+                        if (mytext2.getTag() == null || !mytext2.getTag().toString().equals("var")) {
+                            mytext2.setTag("var");
+                            mytext2.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getDuration())));
+
+                        }
                         myseekbar.setProgress(mediaPlayer.getCurrentPosition());
                         mytext1.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getCurrentPosition())));
 

@@ -8,15 +8,12 @@ import android.app.ActivityManager;
 import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.media.MediaPlayer;
-import android.net.Uri;
-import android.opengl.Visibility;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -60,12 +57,14 @@ import com.sdsmdg.harjot.crollerTest.Croller;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
+import com.wavemediaplayer.adapter.Utils;
 import com.wavemediaplayer.fragments.EqualizerFragment;
 import com.wavemediaplayer.fragments.FragmentListener;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.fragments.PlayListsFragment;
 import com.wavemediaplayer.fragments.SettingsFragment;
 import com.wavemediaplayer.main.FPlayListener;
+import com.wavemediaplayer.main.GestureListener;
 import com.wavemediaplayer.mfcontroller.MainManager;
 import com.wavemediaplayer.mservices.Constants;
 import com.wavemediaplayer.mservices.NotificationService;
@@ -141,7 +140,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     SlidingUpPanelLayout mLayout;
     public FragmentListener fragmentListener;
     public MusicListSettingsFragment musicListSettingsFragment;
+    ArrayList<ArrayList<MusicData>> geciciAramaSonuclari = new ArrayList<>();
+    /**
+     * Templist'te multi choise ile secilen coklu secimlerin pozisyonları tutuluyor
+     */
 
+    ArrayList<Integer> tempList = new ArrayList<>();
+    /**
+     * listview de secilen item sayısı multichoise icin
+     */
+    int list_selected_count = 0;
+    SlidingUpPanelLayout mLayout;
+    GestureDetector gestureDetector;
+    /**
+     * swipe olduugnda sağa sola kayması için
+     */
+
+    GestureListener gestureListener;
+
+    /**
+     * Calma listelerinin goorunecegi listi  oynatmaListesiFragment inde gosterilecek
+     */
+    private OynatmaListesiFragment oynatmaListesiFragment;
+    private ArrayList<MusicData> denememusicdata;
     private SharedPreferences sharedPreferences;
     private SharedPreferences sharedPreferences2;
 
@@ -158,14 +179,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mp3BaslangictaOlustur();
         tabsHeigh=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,50,getResources().getDisplayMetrics());
         context = this;
         mainView = getWindow().getDecorView().findViewById(android.R.id.content);
         musicListView = findViewById(R.id.main_musicListView);
         edit_search = findViewById(R.id.edit_search);
-        mainSearchLayout=findViewById(R.id.mainSearchLayout);
-        mainsearchButton=findViewById(R.id.mainsearchButton);
+        mainSearchLayout = findViewById(R.id.mainSearchLayout);
+        mainsearchButton = findViewById(R.id.mainsearchButton);
 
         getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
@@ -173,11 +193,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         muzikCalmaBicimleri();
 
 
-
-        fragmentListener=new FragmentListener(this);
-        musicListSettingsFragment=new MusicListSettingsFragment();
-        folderFragment=new FolderFragment();
-        mainManager=new MainManager(this);
+        fragmentListener = new FragmentListener(this);
+        musicListSettingsFragment = new MusicListSettingsFragment();
+        folderFragment = new FolderFragment();
+        mainManager = new MainManager(this);
+        gestureListener = new GestureListener(mainManager);
+        gestureDetector = new GestureDetector(context, gestureListener);
 
         musicList = new MusicList(musicListView, this);
 
@@ -207,27 +228,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
 
         intentFilter=new IntentFilter("speedExceeded");
-
+        mainVisualizer=findViewById(R.id.mainVisualizer);
 
 
 
     }
 
-    private void mp3BaslangictaOlustur(){
-//        PlayMusic.mediaPlayer=new MediaPlayer();
-//        PlayMusic.mediaPlayer.getAudioSessionId();
-
-//        Uri mediaPath = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.boracay);
-//        try {
-//            PlayMusic.mediaPlayer.setDataSource(getApplicationContext(),mediaPath);
-//            PlayMusic.mediaPlayer.prepare();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        PlayMusic.mediaPlayer.start();
-
-
-    }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -249,6 +255,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
+    /**
+     * Uygulama arka plana dusup tekrar acıldıgında musicleri yeniden secme
+     */
 
     private void editTextDegisiklikKontrol(){
         edit_search.addTextChangedListener(new TextWatcher() {
@@ -305,13 +314,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mainsearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(edit_search.getVisibility()==View.INVISIBLE){
+                Animation animationSet = AnimationUtils.loadAnimation(context, R.anim.slideoutedittext);
+                Animation animationSet2 = AnimationUtils.loadAnimation(context, R.anim.slide_in_from_left);
+                if (edit_search.getVisibility() == View.INVISIBLE) {
+                    edit_search.setAnimation(animationSet2);
+                    animationSet2.setDuration(500);
                     edit_search.setVisibility(View.VISIBLE);
-
                 }else{
                     edit_search.setText("");
+                    edit_search.setAnimation(animationSet);
+                    animationSet.setDuration(500);
                     edit_search.setVisibility(View.INVISIBLE);
-
                 }
             }
         });
@@ -354,8 +367,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     // pl.play(MusicList.locationList.get(position));
                     FPlayListener.calmaListesiMuzik = false;
                     FPlayListener.currentMusicPosition = position;
-                    FPlayListener.mainListeOncekiPos.clear();
-                    FPlayListener.mainListeOncekiPos.add(position);
+                    NotificationService.mainListeOncekiPos.clear();
+                    NotificationService.mainListeOncekiPos.add(position);
 //                        fPlayListener.playMusic(position);
                     pos = position;
                     fPlayListener.playMusic(position);
@@ -368,80 +381,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
-
-
-    private final int SWIPE_THRESHOLD = 150;
-    private final int SWIPE_MIN_DISTANCE = 120;
-    private final int SWIPE_MAX_OFF_PATH = 250;
-    private final int SWIPE_THRESHOLD_VELOCITY = 200;
-
-
-    /**swipe olduugnda sağa sola kayması için*/
-    private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return true;
-        }
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if ((e1.getAction() == MotionEvent.ACTION_DOWN) &&
-                    (e2.getAction() == MotionEvent.ACTION_MOVE) &&
-                    Math.abs(distanceX) > SWIPE_THRESHOLD) {
-
-                if (e2.getPointerCount() > 1) {
-                    if (distanceX > 0)
-                        onTwoFingerSwipeLeft();
-                    else
-                        onTwoFingerSwipeRight();
-                    return true;
-                }
-
-            }
-            return super.onScroll(e1, e2, distanceX, distanceY);
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-                               float velocityY) {
-
-            if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH) {
-                if (Math.abs(e1.getX() - e2.getX()) > SWIPE_MAX_OFF_PATH
-                        || Math.abs(velocityY) < SWIPE_THRESHOLD_VELOCITY)
-                    return false;
-                if (e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE)
-                    onSwipeUp();
-                else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE)
-                    onSwipeDown();
-            } else {
-                if (Math.abs(velocityX) < SWIPE_THRESHOLD_VELOCITY)
-                    return false;
-                if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE)
-                    mainManager.onSwipeLeft();
-                else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE)
-                    mainManager.onSwipeRight();
-            }
-            return super.onFling(e1, e2, velocityX, velocityY);
-        }
-
-    }
-
-
-
-    public void onSwipeUp() {}
-
-    public void onSwipeDown() {}
-
-    public void onTwoFingerSwipeLeft() {}
-
-    public void onTwoFingerSwipeRight() {}
-
-
-    GestureListener gestureListener=new GestureListener();
-    GestureDetector gestureDetector=new GestureDetector(context,gestureListener);
-
-
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev){
         if(!isDrag){
@@ -452,28 +391,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     /** Listview multi choise event fonksiyonu */
     public void multipleChoise(){
-
-
-
-
-
-
-//
-//
-//
-//        GestureListener gestureListener=new GestureListener();
-//        final GestureDetector gestureDetector=new GestureDetector(getApplicationContext(),gestureListener);
-//        musicListView.setpoin(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//
-//                if (!isMulti)
-//                return gestureDetector.onTouchEvent(event);
-//                else return false;
-//            }
-//
-//        });
-
 
         musicListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             /** Multichoise islemi yapıldıgında secilen itemleri liste ata ve secilen sayısını belirt */
@@ -584,7 +501,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         editor.apply();
     }
 
-
     private void layoutListClear(List<View> layoutList) {
 //        for (View v : layoutList) {
 //            v.findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
@@ -680,12 +596,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return true;
     }
 
-
-
-
-
-
-
     @Override
     public void onDragViewStart(int beginPosition) {
         mDraggedEntity = MusicList.musicData.get(beginPosition);
@@ -764,122 +674,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
-//
-//
-//        if(mainsearchpos==0) {
-//            int location2[] = new int[2];
-//            mainSearchLayout.getLocationInWindow(location2);
-//            yedek=location2[1];
-//
-//
-//            Rect r = new Rect();
-//            mainSearchLayout.getWindowVisibleDisplayFrame(r);
-//            int x = r.centerX();
-//            int y = r.centerY();
-//            mainsearchpos=y;
-//
-//
-//
-//            Display display = getWindowManager().getDefaultDisplay();
-//            Point size = new Point();
-//            display.getSize(size);
-//            int width = size.x;
-//            int height = size.y;
-//            screenHeight=height;
-//
-//
-//        }
-//
-//
-//        int location[] = new int[2];
-//        mainSearchLayout.getLocationInWindow(location);
-////        Log.e("11111111111",String.valueOf(location[1])+"   "+String.valueOf(mainSearchLayout.getTop())+"   yedek "+String.valueOf(yedek));
-//
-//        if(firstVisibleItem>currentCount ){
-//            musicListView.animate().cancel();
-//            musicListView.animate().rotation(360);
-//            currentCount=firstVisibleItem;
-//            if(swipeAnimation && location[1]==yedek){
-//
-////                musicListView.animate().cancel();
-////                musicListView.animate().translationYBy(-mainSearchLayout.getTop());
-////                musicListView.animate().withEndAction(new Runnable() {
-////                    @Override
-////                    public void run() {
-////
-////                    }
-////                });
-//
-//
-//
-//
-//
-//
-////                musicListView.animate().scaleY(1.5f);
-//
-//
-//
-//                swipeAnimation=false;
-//
-//            }
-//
-//        }
-//
-//        else if(firstVisibleItem<currentCount ){
-//            musicListView.animate().cancel();
-//            musicListView.animate().rotation(-360);
-//            currentCount=firstVisibleItem;
-//            if(!swipeAnimation && location[1]==yedek-mainSearchLayout.getTop()){
-//
-////                musicListView.animate().cancel();
-////                musicListView.animate().translationYBy(mainSearchLayout.getTop());
-////                musicListView.animate().withEndAction(new Runnable() {
-////                    @Override
-////                    public void run() {
-////
-////
-////                    }
-////                });
-//
-//
-//
-//                swipeAnimation=true;
-//
-//
-//            }
-//        }
-
-
-
-        //The initial height of that view
-
-
-
-
-//        if(btnPosY==0) btnPosY= mainSearchLayout.getScrollY();
-//        if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
-//            Log.e("qqqqqqqq","scrollasdasdasdl");
-//            mainSearchLayout.animate().cancel();
-//            mainSearchLayout.animate().translationYBy(-150);
-//            scrollanimation=true;
-//
-//        } else if (scrollState == SCROLL_STATE_FLING) {
-////            if(scrollanimation){
-////                Log.e("qqqqqqqq","scrollasdasdasd222222222222222l");
-////                mainSearchLayout.animate().cancel();
-////                mainSearchLayout.animate().translationYBy(-150);
-////                scrollanimation=false;
-////            }
-//        }else{
-//            Log.e("qqqqqqqq","scrollasdasdasd33333333333");
-//            if(scrollanimation){
-//                Log.e("qqqqqqqq","scrollasdasdasd222222222222222l");
-//                mainSearchLayout.animate().cancel();
-//                mainSearchLayout.animate().translationY(btnPosY);
-//                scrollanimation=false;
-//            }
-//
-//        }
     }
 
 
@@ -932,7 +726,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onDestroy();
         //buradaki amaç runable activity sonlandırldığında dahi calısıyor o yüzden açık bırakıyorum servisteki işlemler için
         fPlayListener.pl.startRunable();
-
+        s.setSettings();
 
     }
 

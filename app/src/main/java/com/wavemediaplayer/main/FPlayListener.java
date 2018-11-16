@@ -18,9 +18,11 @@ import android.widget.Toast;
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.MusicList;
+import com.wavemediaplayer.adapter.Utils;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.fragments.SettingsFragment;
 import com.wavemediaplayer.play.PlayMusic;
+import com.wavemediaplayer.playlist.PlayList;
 
 import java.util.ArrayList;
 
@@ -59,8 +61,7 @@ public class FPlayListener {
 
     public static int currentMusicPosition; //Sıralı calmada tutulacak pozisyon
     public static boolean calmaListesiMuzik = false; //Music calma listesinden mi ana listeden mi?
-    public static ArrayList<Integer> calimaListesiOncekiPos = new ArrayList<>();
-    public static ArrayList<Integer>  mainListeOncekiPos = new ArrayList<>();
+
 
     private Context context;
     private View view;
@@ -97,6 +98,24 @@ public class FPlayListener {
         mytext2 = view.findViewById(R.id.sample_main_endTime);
         myseekbar = view.findViewById(R.id.sample_main_seekBar3);
         handler = new Handler();
+
+        if (PlayMusic.tekrarla == 0){
+            tekrarla.setBackground(Utils.getDrawable(context,R.drawable.baseline_repeat_white));
+        }
+        else if (PlayMusic.tekrarla == 1){
+            tekrarla.setBackground(Utils.getDrawable(context,R.drawable.svg_repeat_one));
+        }
+        else if (PlayMusic.tekrarla == 2){
+            tekrarla.setBackground(Utils.getDrawable(context,R.drawable.svg_liste_finish));
+        }
+
+        if (PlayMusic.karisikCal){
+            karisik_cal.setBackground(Utils.getDrawable(context, R.drawable.baseline_shuffle_white));
+        }
+        else {
+            karisik_cal.setBackground(Utils.getDrawable(context, R.drawable.svg_sirali));
+        }
+
 
         pl = new PlayMusic(mainActivity, myseekbar, mytext1, mytext2, play, handler);
     }
@@ -208,9 +227,11 @@ public class FPlayListener {
             public void onClick(View v) {
                 if (PlayMusic.karisikCal) {
                     PlayMusic.karisikCal = false;
+                    karisik_cal.setBackground(Utils.getDrawable(context, R.drawable.svg_sirali));
                     Toast.makeText(context, "Sıralı calacak", Toast.LENGTH_SHORT).show();
                 } else {
                     PlayMusic.karisikCal = true;
+                    karisik_cal.setBackground(Utils.getDrawable(context, R.drawable.baseline_shuffle_white));
                     Toast.makeText(context, "Karışık calacak", Toast.LENGTH_SHORT).show();
                 }
                 SharedPreferences sharedPreferences;
@@ -228,11 +249,14 @@ public class FPlayListener {
                 if (PlayMusic.tekrarla == 0) {
                     PlayMusic.tekrarla = 1;
                     Toast.makeText(context, "Gecerli sarkıyı tekrarlayacak", Toast.LENGTH_SHORT).show();
+                    tekrarla.setBackground(Utils.getDrawable(context,R.drawable.svg_repeat_one));
                 } else if (PlayMusic.tekrarla == 1) {
                     PlayMusic.tekrarla = 2;
+                    tekrarla.setBackground(Utils.getDrawable(context,R.drawable.svg_liste_finish));
                     Toast.makeText(context, "Liste bittikten sonra duracak", Toast.LENGTH_SHORT).show();
                 } else {
                     PlayMusic.tekrarla = 0;
+                    tekrarla.setBackground(Utils.getDrawable(context,R.drawable.baseline_repeat_white));
                     Toast.makeText(context, "Tum sarkıyı tekrarlayacak", Toast.LENGTH_SHORT).show();
                 }
 
@@ -307,8 +331,9 @@ public class FPlayListener {
             @Override
             public void onClick(View view) {
                 if (!calmaListesiMuzik) {
-                    if(MusicList.musicData.size()==0) return;
-
+                    if (MusicList.musicData.size() == 0){
+                        return;
+                    }
                     PlayMusic.prevMusicDAta = MusicList.musicData.get(currentMusicPosition);
                     song_title.setText(MusicList.musicData.get(currentMusicPosition).getTitles());
                     song_artis.setText(MusicList.musicData.get(currentMusicPosition).getArtist());
@@ -317,8 +342,9 @@ public class FPlayListener {
                         mainActivity.s.listeDegistir(MusicList.musicData, currentMusicPosition);
 
                 } else {
-                    if(OynatmaListesiFragment.music_oynat_list.size()==0) return;
-
+                    if (OynatmaListesiFragment.music_oynat_list.size() == 0){
+                        return;
+                    }
                     PlayMusic.prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition);
                     song_title.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getTitles());
                     song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getArtist());
@@ -359,8 +385,11 @@ public class FPlayListener {
             @Override
             public void onClick(View view) {
 
+
                 if (!calmaListesiMuzik) {
-                    if(MusicList.musicData.size()==0) return;
+                        if (MusicList.musicData.size() == 0){
+                            return;
+                        }
                     PlayMusic.prevMusicDAta = MusicList.musicData.get(currentMusicPosition);
                     song_title.setText(MusicList.musicData.get(currentMusicPosition).getTitles());
                     song_artis.setText(MusicList.musicData.get(currentMusicPosition).getArtist());
@@ -368,7 +397,9 @@ public class FPlayListener {
                     if (mainActivity.s != null)
                         mainActivity.s.listeDegistir(MusicList.musicData, currentMusicPosition);
                 } else {
-                    if(OynatmaListesiFragment.music_oynat_list.size()==0) return;
+                    if (OynatmaListesiFragment.music_oynat_list.size() == 0){
+                        return;
+                    }
                     PlayMusic.prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition);
                     song_title.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getTitles());
                     song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getArtist());

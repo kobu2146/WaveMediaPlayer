@@ -30,7 +30,7 @@
 
         android:background="@android:color/transparent"
         android:divider="@color/bar1"
-        android:dividerHeight="3dp"
+        android:dividerHeight="1.5dp"
         android:textColor="#FFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

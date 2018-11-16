@@ -117,6 +117,9 @@ public class PlayMusic {
             Log.e("sirali", "cal");
             if (!FPlayListener.calmaListesiMuzik) {//Ana playerdan calınacaksa
                 Log.e("ana", "music");
+                if (MusicList.musicData.size() == 0) {
+                    return;
+                }
                 if (tekrarla == 0 || tekrarla == 2) {
                     if (ileriCal) {
                         FPlayListener.currentMusicPosition++;
@@ -159,6 +162,9 @@ public class PlayMusic {
 
                 }
             } else { //Playlistden veya baska biryerden ise
+                if (OynatmaListesiFragment.music_oynat_list.size() == 0) {
+                    return;
+                }
                 Log.e("playlist", "music");
                 if (tekrarla == 0 || tekrarla == 2) {
                     if (ileriCal) {
@@ -206,15 +212,18 @@ public class PlayMusic {
             Log.e("karisik", "cal");
             // ana music playerdan karısık calma
             if (!FPlayListener.calmaListesiMuzik) {
+                if (MusicList.musicData.size() == 0) {
+                    return;
+                }
                 int rndPositin = new Random().nextInt(MusicList.musicData.size());
                 if (tekrarla == 0 || tekrarla == 2 || tekrarla == 3) {
                     if (ileriCal) {
-                        FPlayListener.mainListeOncekiPos.add(rndPositin);
+                        NotificationService.mainListeOncekiPos.add(rndPositin);
 
                     } else {
-                        if (FPlayListener.mainListeOncekiPos.size() > 1) {
-                            FPlayListener.mainListeOncekiPos.remove(FPlayListener.mainListeOncekiPos.size() - 1);
-                            rndPositin = FPlayListener.mainListeOncekiPos.get(FPlayListener.mainListeOncekiPos.size() - 1);
+                        if (NotificationService.mainListeOncekiPos.size() > 1) {
+                            NotificationService.mainListeOncekiPos.remove(NotificationService.mainListeOncekiPos.size() - 1);
+                            rndPositin = NotificationService.mainListeOncekiPos.get(NotificationService.mainListeOncekiPos.size() - 1);
 
                         }
 
@@ -254,16 +263,19 @@ public class PlayMusic {
             }
             // Calma listesinden karısık calma
             else {
+                if (OynatmaListesiFragment.music_oynat_list.size() == 0) {
+                    return;
+                }
                 if (tekrarla == 0 || tekrarla == 2 || tekrarla == 3) {
                     int rndPositin = new Random().nextInt(OynatmaListesiFragment.music_oynat_list.size());
                     if (ileriCal) {
                         rndPositin = new Random().nextInt(MusicList.musicData.size());
-                        FPlayListener.calimaListesiOncekiPos.add(rndPositin);
+                        NotificationService.calimaListesiOncekiPos.add(rndPositin);
 
                     } else {
-                        if (FPlayListener.calimaListesiOncekiPos.size() > 1) {
-                            FPlayListener.calimaListesiOncekiPos.remove(FPlayListener.calimaListesiOncekiPos.size() - 1);
-                            rndPositin = FPlayListener.calimaListesiOncekiPos.get(FPlayListener.calimaListesiOncekiPos.size() - 1);
+                        if (NotificationService.calimaListesiOncekiPos.size() > 1) {
+                            NotificationService.calimaListesiOncekiPos.remove(NotificationService.calimaListesiOncekiPos.size() - 1);
+                            rndPositin = NotificationService.calimaListesiOncekiPos.get(NotificationService.calimaListesiOncekiPos.size() - 1);
                         }
 
                     }
@@ -334,7 +346,6 @@ public class PlayMusic {
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                         if (mediaPlayer != null && fromUser) {
-
                             mediaPlayer.seekTo(progress);
                         }
                     }
@@ -350,6 +361,7 @@ public class PlayMusic {
                     }
                 });
                 mytext2.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getDuration())));
+                mytext2.setTag("var");
                 mediaPlayer.start();
             }
         });
@@ -406,9 +418,13 @@ public class PlayMusic {
             runnable = new Runnable() {
                 @Override
                 public void run() {
+
                     if (mediaPlayer != null) {
+                        if (mytext2.getTag() == null || !mytext2.getTag().toString().equals("var")) {
+                            mytext2.setTag("var");
+                            mytext2.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getDuration())));
 
-
+                        }
                         myseekbar.setProgress(mediaPlayer.getCurrentPosition());
                         mytext1.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getCurrentPosition())));
 
@@ -419,13 +435,15 @@ public class PlayMusic {
                         } else if (total - current <= 300) {
                             calmayaDevamEt(true);
                         }
-
+                        seekBarChange();
                     }
+
                     myHandler.postDelayed(runnable, 1000);
                 }
             };
             runnable.run();
         }
+
 
     }
 

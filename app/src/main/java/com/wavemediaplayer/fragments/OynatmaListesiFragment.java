@@ -28,6 +28,7 @@ import com.wavemediaplayer.adapter.ListAdapter;
 import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.main.FPlayListener;
+import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.play.PlayMusic;
 import com.wavemediaplayer.playlist.CreatePlayList;
 import com.wavemediaplayer.playlist.PlayList;
@@ -379,7 +380,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
 
                     } else {
                         if (music_oynat_list.size() > 0) {
-                            FPlayListener.calimaListesiOncekiPos.clear();
+                            NotificationService.calimaListesiOncekiPos.clear();
                             FPlayListener.currentMusicPosition = position;
                             PlayMusic.prevMusicDAta = music_oynat_list.get(position);
                             MainActivity.fPlayListener.song_title.setText(music_oynat_list.get(position).getTitles());

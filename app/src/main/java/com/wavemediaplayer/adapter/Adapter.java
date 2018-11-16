@@ -1,8 +1,6 @@
 package com.wavemediaplayer.adapter;
 
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,9 +20,28 @@ import java.util.ArrayList;
 
 public class Adapter extends ArrayAdapter<MusicData> {
 
+    private static final int TYPE_VIEW_HEADER = 1;
     private Context context;
     private ArrayList<MusicData> musicData;
     private int kaynak;
+    private View.OnTouchListener mOnTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            Object o = v.getTag();
+
+            if (o != null && o instanceof Integer) {
+                Log.e("Secilen item", o.toString());
+                if (kaynak == 0) {
+                    MainActivity.musicListView.startDrag(((Integer) o).intValue());
+                } else if (kaynak == 1) {
+                    OynatmaListesiFragment.oynatma_listesi.startDrag(((Integer) o).intValue());
+                }
+
+            }
+            return false;
+        }
+    };
+
 
 
     public Adapter(Context context, int resource, ArrayList<MusicData> musicData, int kaynak) {
@@ -39,9 +56,9 @@ public class Adapter extends ArrayAdapter<MusicData> {
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         // TODO Auto-generated method stub
 
+
         return getCustomView(position, convertView, parent);
     }
-
 
     @Override
     public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
@@ -63,7 +80,6 @@ public class Adapter extends ArrayAdapter<MusicData> {
             holder.artist = convertView.findViewById(R.id.music_artist);
             holder.image_logo = convertView.findViewById(R.id.music_logo);
             holder.image_logo.setOnTouchListener(mOnTouchListener);
-            holder.layout.setOnTouchListener(mOnTouchListener2);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -75,6 +91,8 @@ public class Adapter extends ArrayAdapter<MusicData> {
             } else {
                 holder.layout.setBackgroundColor(context.getResources().getColor(R.color.transparent));
             }
+
+
         } else if (kaynak == 1) {
             if (OynatmaListesiFragment.music_oynat_list.get(position).getIsaretlendi()) {
                 holder.layout.setBackgroundColor(context.getResources().getColor(R.color.holo_gray_light));
@@ -92,7 +110,6 @@ public class Adapter extends ArrayAdapter<MusicData> {
         return convertView;
     }
 
-
     private class ViewHolder {
         ImageView image;
         ImageView image_logo;
@@ -100,32 +117,4 @@ public class Adapter extends ArrayAdapter<MusicData> {
         TextView artist;
         LinearLayout layout;
     }
-
-
-
-    private View.OnTouchListener mOnTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            Object o = v.getTag();
-
-            if (o != null && o instanceof Integer) {
-                Log.e("Secilen item", o.toString());
-                if (kaynak == 0) {
-                    MainActivity.musicListView.startDrag(((Integer) o).intValue());
-                } else if (kaynak == 1) {
-                    OynatmaListesiFragment.oynatma_listesi.startDrag(((Integer) o).intValue());
-                }
-
-            }
-            return false;
-        }
-    };
-
-    private View.OnTouchListener mOnTouchListener2 = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-
-            return false;
-        }
-    };
 }

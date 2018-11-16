@@ -4,16 +4,11 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.media.MediaMetadataRetriever;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.widget.ListView;
 
-import com.google.gson.Gson;
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 import com.yydcdut.sdlv.Menu;
@@ -24,7 +19,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -35,21 +29,19 @@ public class MusicList {
 
     public static ArrayList<MusicData> musicData;
     public static Adapter adapter;
-
+    private static boolean atamaYapildimi = false;
     private SlideAndDragListView musicListView;
     private Context context;
-
     private boolean isAdd = true;
     private SharedPreferences sharedPreferences;
     private SharedPreferences sharedPreferences1;
     private SharedPreferences.Editor editor;
     private Set<String> folderControl;
-    private static boolean atamaYapildimi = false;
 
     public MusicList(SlideAndDragListView musicListView, Context context) {
         this.musicListView = musicListView;
         this.context = context;
-        sharedPreferences=MainActivity.context.getSharedPreferences("settings", Context.MODE_PRIVATE);
+        sharedPreferences = MainActivity.context.getSharedPreferences("settings", Context.MODE_PRIVATE);
         init();
     }
 
@@ -119,8 +111,8 @@ public class MusicList {
         if (sharedPreferences.contains("listsettings")) atamaYapildimi = true;
         folderControl = sharedPreferences.getStringSet("listsettings", new HashSet<String>());
 
-        for (String f:sharedPreferences.getStringSet("listsettings", new HashSet<String>())){
-            Log.e("wfolder",f);
+        for (String f : sharedPreferences.getStringSet("listsettings", new HashSet<String>())) {
+            Log.e("wfolder", f);
         }
 
         ContentResolver contentResolver = context.getContentResolver();
@@ -208,7 +200,7 @@ public class MusicList {
         adapter = new Adapter(context, R.layout.custom_list_item, musicData, 0);
         musicListView.setMenu(new Menu(false));
         musicListView.setAdapter(adapter);
-      //  UIUtils.setListViewHeightBasedOnItems(musicListView);
+        //  UIUtils.setListViewHeightBasedOnItems(musicListView);
 
     }
 
@@ -273,14 +265,14 @@ public class MusicList {
     }
 
     public void removeFromAdapter(int s) {
-        Uri uri=Uri.parse(MusicList.musicData.get(s).getLocation());
+        Uri uri = Uri.parse(MusicList.musicData.get(s).getLocation());
         File file = new File(uri.getPath());
         Log.e("FILE", uri.getPath());
 
         if (file.exists()) {
             Log.e("File", "var");
             if (file.delete()) {
-                if(file.exists()){
+                if (file.exists()) {
                     context.deleteFile(file.getName());
                 }
                 scanaddedFile(MusicList.musicData.get(s).getLocation()); // bu mediadanda siliyor
@@ -296,9 +288,10 @@ public class MusicList {
         }
 
     }
+
     private void scanaddedFile(String path) {
         try {
-            MediaScannerConnection.scanFile(context, new String[] { path },
+            MediaScannerConnection.scanFile(context, new String[]{path},
                     null, new MediaScannerConnection.OnScanCompletedListener() {
                         public void onScanCompleted(String path, Uri uri) {
                             Log.i("ExternalStorage", "Scanned " + path + ":");

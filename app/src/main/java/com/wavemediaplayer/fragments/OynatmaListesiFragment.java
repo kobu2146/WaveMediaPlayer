@@ -382,6 +382,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                         if (music_oynat_list.size() > 0) {
                             NotificationService.calimaListesiOncekiPos.clear();
                             FPlayListener.currentMusicPosition = position;
+                            NotificationService.calimaListesiOncekiPos.add(position);
                             PlayMusic.prevMusicDAta = music_oynat_list.get(position);
                             MainActivity.fPlayListener.song_title.setText(music_oynat_list.get(position).getTitles());
                             MainActivity.fPlayListener.song_artis.setText(music_oynat_list.get(position).getArtist());

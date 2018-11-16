@@ -47,6 +47,7 @@ import com.google.gson.Gson;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
+import com.wavemediaplayer.adapter.Utils;
 import com.wavemediaplayer.fragments.EqualizerFragment;
 import com.wavemediaplayer.fragments.FragmentListener;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;

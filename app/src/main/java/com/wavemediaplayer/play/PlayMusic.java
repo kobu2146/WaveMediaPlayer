@@ -18,6 +18,7 @@ import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
+import com.wavemediaplayer.adapter.Utils;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mservices.NotificationService;
@@ -74,7 +75,10 @@ public class PlayMusic {
                 if (!playPrev.equals(link)) {
                     playPrev = link;
                     stopPlaying();
-                    mediaPlayer = new MediaPlayer();
+                    if (mediaPlayer == null) {
+                        mediaPlayer = new MediaPlayer();
+                    }
+
                     /**initilation mediaplyer sharedtteki ayarları alıp mediaplayere entegre ediyorumki equalizer açıldığında yeni ayarlar orda aktifleşiyordu bullshit*/
                     if (initilationMediaPlayer == null)
                         initilationMediaPlayer = new InitilationMediaPlayer(context).init(mediaPlayer);
@@ -143,7 +147,6 @@ public class PlayMusic {
                     }
                 }
 
-
                 if (FPlayListener.currentMusicPosition < MusicList.musicData.size()) {
                     prevMusicDAta = MusicList.musicData.get(FPlayListener.currentMusicPosition);
                     MainActivity.fPlayListener.song_artis.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getArtist());
@@ -171,10 +174,12 @@ public class PlayMusic {
                     }
 
                 }
+
             } else { //Playlistden veya baska biryerden ise
                 if (OynatmaListesiFragment.music_oynat_list.size() == 0) {
                     return;
                 }
+
                 Log.e("playlist", "music");
                 if (tekrarla == 0 || tekrarla == 2) {
                     if (ileriCal) {
@@ -187,6 +192,8 @@ public class PlayMusic {
                         }
                     }
                 }
+
+
                 if (OynatmaListesiFragment.music_oynat_list.size() > FPlayListener.currentMusicPosition) {
                     prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition);
                     MainActivity.fPlayListener.song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(FPlayListener.currentMusicPosition).getArtist());
@@ -212,9 +219,7 @@ public class PlayMusic {
                         if (mainActivity.s != null)
                             mainActivity.s.listeDegistir(OynatmaListesiFragment.music_oynat_list, FPlayListener.currentMusicPosition);
                     }
-
                 }
-
             }
         }
         // Karısık sarkı calma
@@ -234,7 +239,6 @@ public class PlayMusic {
                         if (NotificationService.mainListeOncekiPos.size() > 1) {
                             NotificationService.mainListeOncekiPos.remove(NotificationService.mainListeOncekiPos.size() - 1);
                             rndPositin = NotificationService.mainListeOncekiPos.get(NotificationService.mainListeOncekiPos.size() - 1);
-
                         }
 
 
@@ -243,7 +247,6 @@ public class PlayMusic {
                     if (tekrarla == 3) {
                         tekrarla = 1;
                     }
-
                     FPlayListener.currentMusicPosition = rndPositin;
                     if (rndPositin <= MusicList.musicData.size()) {
                         prevMusicDAta = MusicList.musicData.get(rndPositin);
@@ -257,6 +260,16 @@ public class PlayMusic {
                         if (mainActivity.s != null)
                             mainActivity.s.listeDegistir(MusicList.musicData, FPlayListener.currentMusicPosition);
                     }
+                    if (MusicList.musicData != null) {
+                        if (MusicList.musicData.get(FPlayListener.currentMusicPosition) != null) {
+                            Log.e("null","deil2"+R.drawable.music);
+                            MusicList.musicData.get((FPlayListener.currentMusicPosition)).setImages(R.drawable.music);
+                            Log.e("null","deil2"+MusicList.musicData.get((FPlayListener.currentMusicPosition)).getImages());
+                        }
+                    }
+                    MusicList.adapter.notifyDataSetChanged();
+
+
                 } else if (tekrarla == 1) {
                     if (prevMusicDAta != null) {
                         MainActivity.fPlayListener.song_artis.setText(prevMusicDAta.getArtist());
@@ -294,6 +307,7 @@ public class PlayMusic {
                     if (tekrarla == 3) {
                         tekrarla = 1;
                     }
+
                     FPlayListener.currentMusicPosition = rndPositin;
                     if (rndPositin <= OynatmaListesiFragment.music_oynat_list.size()) {
                         prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(rndPositin);
@@ -307,6 +321,7 @@ public class PlayMusic {
                         if (mainActivity.s != null)
                             mainActivity.s.listeDegistir(OynatmaListesiFragment.music_oynat_list, FPlayListener.currentMusicPosition);
                     }
+
                 } else if (tekrarla == 1) {
                     if (prevMusicDAta != null) {
                         MainActivity.fPlayListener.song_artis.setText(prevMusicDAta.getArtist());

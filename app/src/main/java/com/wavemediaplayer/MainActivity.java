@@ -404,8 +404,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     if (musicListView.getChildAt(position) != null) {
                         musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
                         tempListLayout.remove(musicListView.getChildAt(position).findViewById(R.id.listview_layout));
-                        tempList.remove((Object) position);
+
                     }
+                    tempList.remove((Object) position);
                     MusicList.adapter.notifyDataSetChanged();
                 }
             }

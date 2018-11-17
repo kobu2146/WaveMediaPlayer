@@ -276,8 +276,9 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                     if (oynatma_listesi.getChildAt(position) != null) {
                         oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
                         tempListLayout.remove(oynatma_listesi.getChildAt(position).findViewById(R.id.listview_layout));
-                        temp_position_list.remove((Object) position);
+
                     }
+                    temp_position_list.remove((Object) position);
                     adapterPlayList.notifyDataSetChanged();
 
                 }

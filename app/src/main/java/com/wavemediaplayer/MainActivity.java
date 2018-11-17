@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static boolean playList_Ekleme_Yapildi = false;
 
     static int pos = 0;
-    private static boolean devam = false;
     public NotificationService s;
     public RelativeLayout mainSearchLayout;
     public MainMenu mainMenu;
@@ -91,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public MusicListSettingsFragment musicListSettingsFragment;
     List<View> tempListLayout = new ArrayList<>();
     ArrayList<ArrayList<MusicData>> geciciAramaSonuclari = new ArrayList<>();
-    ArrayList<MusicData> tempData = new ArrayList<>();
 
 
     ArrayList<Integer> tempList = new ArrayList<>();
@@ -112,10 +110,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ArrayList<MusicData> denememusicdata;
 
     private SharedPreferences sharedPreferences;
-    private SharedPreferences sharedPreferences2;
+    SharedPreferences sharedPreferences2;
     private IntentFilter intentFilter;
     private ImageView mainsearchButton;
-    private MainManager mainManager;
+    MainManager mainManager;
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -244,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void searchItem(String text) {
         MusicList.musicData.clear();
         for (int i = 0; i < denememusicdata.size(); i++) {
-            if (denememusicdata.get(i).getTitles().toLowerCase().contains(text.toString().toLowerCase())) {
+            if (denememusicdata.get(i).getTitles().toLowerCase().contains(text.toLowerCase())) {
                 MusicList.musicData.add(denememusicdata.get(i));
                 MusicList.adapter.notifyDataSetChanged();
 
@@ -253,9 +251,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         MusicList.adapter.notifyDataSetChanged();
     }
 
-    /**
-     * Musanın olusturdugu listener fonksyonu
-     */
     private void m_createListener() {
         equalizerFragment = new EqualizerFragment();
         oynatmaListesiFragment = new OynatmaListesiFragment();
@@ -282,30 +277,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     }
-
-    /**
-     * Fatihin olusturdugu listener fonksiyonu
-     */
     private void f_createListener() {
         mLayout = findViewById(R.id.activity_main);
         fPlayListener = new FPlayListener(this, mainView);
         fPlayListener.f_ListenerEvent();
 
-
-        /** burada equalizeri başlangıçta çalıştırıyorum ki sonradan equalizere tıkladığında ses değişmesin ayarlar önceden yapılsın diye*/
-//        if(mediaPlayer!=null){
-//            fragmentListener.addFragment(equalizerFragment);
-////            fragmentListener.hideFragment(equalizerFragment);
-//        }
-        /** Herhangi bit posizyon yok ise default 0'dır */
         if (MusicList.musicData.size() > 0) {
             FPlayListener.currentMusicPosition = pos;
             PlayMusic.prevMusicDAta = MusicList.musicData.get(pos);
-
         }
-
-
-        /** Listviewde coklu secim yapmak icin */
         multipleChoise();
         listviewOneClickListener();
     }
@@ -316,12 +296,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 klavyeDisable();
                 if (!isMulti) {
-                    // pl.play(MusicList.locationList.get(position));
                     FPlayListener.calmaListesiMuzik = false;
                     FPlayListener.currentMusicPosition = position;
                     NotificationService.mainListeOncekiPos.clear();
                     NotificationService.mainListeOncekiPos.add(position);
-//                        fPlayListener.playMusic(position);
                     pos = position;
                     fPlayListener.playMusic(position);
 
@@ -341,14 +319,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         return super.dispatchTouchEvent(ev);
     }
-
-    /**
-     * Listview multi choise event fonksiyonu
-     */
     public void multipleChoise() {
 
         musicListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-            /** Multichoise islemi yapıldıgında secilen itemleri liste ata ve secilen sayısını belirt */
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
 
@@ -393,10 +366,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                MenuInflater inflater = mode.getMenuInflater();
                 switch (item.getItemId()) {
                     case R.id.itemSil:
-                        layoutListClear(tempListLayout);
+                        layoutListClear();
                         for (Integer s : tempList) {
                             musicList.removeFromAdapter(s);
                         }
@@ -410,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     case R.id.itemPlayList:
                         playlistInfo(tempList);
                         list_selected_count = 0;
-                        layoutListClear(tempListLayout);
+                        layoutListClear();
                         mode.finish();
 
 
@@ -424,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 for (int pos : tempList) {
                     MusicList.musicData.get(pos).setIsaretlendi(false);
                 }
-                layoutListClear(tempListLayout);
+                layoutListClear();
                 tempList = new ArrayList<>();
                 list_selected_count = 0;
                 isMulti = false;
@@ -452,10 +424,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         editor.apply();
     }
 
-    private void layoutListClear(List<View> layoutList) {
-//        for (View v : layoutList) {
-//            v.findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
-//        }
+    private void layoutListClear() {
         for (int pos : tempList) {
             if (musicListView.getChildAt(pos) != null) {
 

@@ -153,7 +153,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                 MenuInflater inflater = mode.getMenuInflater();
                 switch (item.getItemId()) {
                     case R.id.item_sil:
-                        layoutListClear(tempListLayout);
+                        layoutListClear();
                         calmaListeleriniSil();
                         list_selected_count = 0;
                         mode.finish();
@@ -161,14 +161,14 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                         return true;
 
                     case R.id.item_kaldır:
-                        layoutListClear(tempListLayout);
+                        layoutListClear();
                         calmaListesiMuzikleriniSil();
                         list_selected_count = 0;
                         temp_position_list.clear();
                         mode.finish();
                     case R.id.item_paylas:
                         list_selected_count = 0;
-                        layoutListClear(tempListLayout);
+                        layoutListClear();
                         mode.finish();
 
                     default:
@@ -188,7 +188,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                     }
 
                 }
-                layoutListClear(tempListLayout);
+                layoutListClear();
                 temp_position_list.clear();
 
                 list_selected_count = 0;
@@ -229,8 +229,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
 
 
     private void itemCheckedState(ActionMode mode, int position, long id, boolean checked) {
-
-
         // Oynatma listelerini gosterecek liste ise
         try {
             if (isList) {
@@ -291,14 +289,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
 
     }
 
-    private void layoutListClear(List<View> layoutList) {
-//        for (View v : layoutList) {
-//            if (isList) {
-//                v.findViewById(R.id.basic_listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
-//            } else {
-//                v.findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
-//            }
-//        }
+    private void layoutListClear() {
         for (int pos : temp_position_list) {
             if (isList) {
                 if (oynatma_listesi.getChildAt(pos) != null) {

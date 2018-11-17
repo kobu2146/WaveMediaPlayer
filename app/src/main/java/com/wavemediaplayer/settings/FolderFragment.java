@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import com.wavemediaplayer.R;
 
 public class FolderFragment extends Fragment {
-    private View view;
+    View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {

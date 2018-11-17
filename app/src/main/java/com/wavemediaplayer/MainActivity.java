@@ -640,7 +640,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         unbindService(this);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
-
     }
 
     @Override
@@ -653,9 +652,5 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         }
         //buradaki amaç runable activity sonlandırldığında dahi calısıyor o yüzden açık bırakıyorum servisteki işlemler için
-
-
     }
-
-
 }

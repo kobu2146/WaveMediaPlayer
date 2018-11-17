@@ -80,6 +80,8 @@ public class FPlayListener {
         myseekbar = view.findViewById(R.id.sample_main_seekBar3);
         handler = new Handler();
 
+        song_title.setSelected(true);
+
         if (PlayMusic.tekrarla == 0) {
             tekrarla.setBackground(Utils.getDrawable(context, R.drawable.baseline_repeat_white));
         } else if (PlayMusic.tekrarla == 1) {

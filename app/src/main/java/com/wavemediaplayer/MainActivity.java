@@ -1,6 +1,7 @@
 package com.wavemediaplayer;
 
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
@@ -13,6 +14,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -23,6 +26,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -53,6 +57,13 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.google.gson.Gson;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.sdsmdg.harjot.crollerTest.Croller;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.wavemediaplayer.adapter.MusicData;
@@ -93,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         SlideAndDragListView.OnDragDropListener, SlideAndDragListView.OnSlideListener,
         SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnItemDeleteListener,ServiceConnection {
 
-    /** Diger sınıflara context ve view gondermek icin */
     public static Context context;
     public static View mainView;
     private boolean isMulti = false;
@@ -101,71 +111,38 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static int tabsHeigh;
     public NotificationService s;
     public RelativeLayout mainSearchLayout;
-
     public MainMenu mainMenu;
-    private static boolean devam = false;
-    /** Main musiclistview */
     public static SlideAndDragListView musicListView;
     List<View> tempListLayout = new ArrayList<>();
     private MusicData mDraggedEntity;
-
     public EditText edit_search;
     ArrayList<ArrayList<MusicData>> geciciAramaSonuclari = new ArrayList<>();
-    ArrayList<MusicData> tempData = new ArrayList<>();
-    /** Templist'te multi choise ile secilen coklu secimlerin pozisyonları tutuluyor */
-
     ArrayList<Integer> tempList = new ArrayList<>();
-
-    /** listview de secilen item sayısı multichoise icin */
     int list_selected_count = 0;
-
     public EqualizerFragment equalizerFragment;
     public FrameLayout mainFrame;
-    /** Calma listelerinin goorunecegi listi  oynatmaListesiFragment inde gosterilecek*/
     private OynatmaListesiFragment oynatmaListesiFragment;
-
     public FolderFragment folderFragment;
-    /** fat linstener event knk */
     public static FPlayListener fPlayListener;
     public MusicList musicList;
-    /** default olarak ilk sıradaki muzigi calar eger listede herhangi bir yere tıklanmıssa ordaki muzigin positionunu alır */
     static int pos = 0;
-
     private ArrayList<MusicData> denememusicdata;
-
     public static final String KARISIK_CAL = "KARISIK CAL";
     public static final String SARKIYI_TEKRARLA = "SARKIYI TEKRAR";
     public static final String DUZENLENMIS_LISTE = "DUZENLENMIS LISTE";
-
     SlidingUpPanelLayout mLayout;
     public FragmentListener fragmentListener;
     public MusicListSettingsFragment musicListSettingsFragment;
-    /**
-     * Templist'te multi choise ile secilen coklu secimlerin pozisyonları tutuluyor
-     */
-
-    /**
-     * listview de secilen item sayısı multichoise icin
-     */
     GestureDetector gestureDetector;
-    /**
-     * swipe olduugnda sağa sola kayması için
-     */
-
     GestureListener gestureListener;
-
-    /**
-     * Calma listelerinin goorunecegi listi  oynatmaListesiFragment inde gosterilecek
-     */
     private SharedPreferences sharedPreferences;
     private SharedPreferences sharedPreferences2;
-
     public static boolean playList_Ekleme_Yapildi = false;
-
     private IntentFilter intentFilter;
     private ImageView mainsearchButton;
     private MainManager mainManager;
-
+    public boolean isSwipeOpen=false;
+    public static boolean allPermGrand=false;
 
 
 
@@ -173,8 +150,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tabsHeigh=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,50,getResources().getDisplayMetrics());
         context = this;
+
+
+
+
+
+        tabsHeigh=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,50,getResources().getDisplayMetrics());
         mainView = getWindow().getDecorView().findViewById(android.R.id.content);
         musicListView = findViewById(R.id.main_musicListView);
         edit_search = findViewById(R.id.edit_search);
@@ -182,8 +164,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mainsearchButton = findViewById(R.id.mainsearchButton);
 
         getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-
-        Log.e("qqqqqqqq","oncreate çalıştı");
         muzikCalmaBicimleri();
 
 
@@ -194,12 +174,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         gestureListener = new GestureListener(mainManager);
         gestureDetector = new GestureDetector(context, gestureListener);
 
-        musicList = new MusicList(musicListView, this);
+       ///////////////////////
 
-        musicList.getMusic("notification", "ringtone");
-        //   duzenlenmisListeyiCek();
         denememusicdata = new ArrayList<>();
-        denememusicdata.addAll(MusicList.musicData);
         musicListView.setOnDragDropListener(this);
         musicListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         musicListView.setOnSlideListener(this);
@@ -207,25 +184,42 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         musicListView.setOnItemDeleteListener(this);
         musicListView.setOnScrollListener(this);
 
-        m_createListener();
-        f_createListener();
-        editTextDegisiklikKontrol();
-        mainMenu=new MainMenu(this);
+        DexterPermission dex=new DexterPermission(this);
+        dex.girisControl();
 
+
+        //  PlayerFragment fragmentS1 = new PlayerFragment();
+        //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
+
+
+        /**servis çalışır ama create edilmediği için iconu yukarda gözükmez taki bi müzik açılana kadar*/
+
+
+
+
+    }
+
+    public void createStart(){
+        intentFilter=new IntentFilter("speedExceeded");
         if(!isMyServiceRunning(NotificationService.class)){
             Intent serviceIntent = new Intent(context, NotificationService.class);
             serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
             context.startService(serviceIntent);
         }
 
-        //  PlayerFragment fragmentS1 = new PlayerFragment();
-        //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
 
-        intentFilter=new IntentFilter("speedExceeded");
+        musicList = new MusicList(musicListView, this);
+        musicList.getMusic();
+        denememusicdata.addAll(MusicList.musicData);
 
-
+        m_createListener();
+        f_createListener();
+        editTextDegisiklikKontrol();
+        mainMenu=new MainMenu(this);
 
     }
+
+
 
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -354,9 +348,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
                 klavyeDisable();
                 if (!isMulti){
-                    Log.e("tiklandi",position+" "+"multi "+isMulti);
                     // pl.play(MusicList.locationList.get(position));
                     FPlayListener.calmaListesiMuzik = false;
                     FPlayListener.currentMusicPosition = position;
@@ -395,7 +390,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     list_selected_count = list_selected_count + 1;
                     mode.setTitle(list_selected_count + "item selected");
                     MusicList.musicData.get(position).setIsaretlendi(true);
-                    Log.e("isaretlenen2 pos", "" + position);
                     if (musicListView.getChildAt(position) != null) {
                         musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.holo_gray_light));
                         tempListLayout.add(musicListView.getChildAt(position).findViewById(R.id.listview_layout));
@@ -521,7 +515,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             fragmentTransaction.remove(prev);
         }
         fragmentTransaction.addToBackStack(null);
-
         DialogFragment dialogFragment = new PlayListsFragment();
         ((PlayListsFragment) dialogFragment).setList(tempLists);
         dialogFragment.show(fragmentTransaction,"dialog");
@@ -534,9 +527,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (mLayout != null){
             if ((mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
                 mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                isSwipeOpen=false;
             }
             else {
                 mLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+                isSwipeOpen=true;
             }
         }
     }
@@ -605,7 +600,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onDragViewDown(int finalPosition) {
         isDrag=false;
         MusicList.musicData.set(finalPosition, mDraggedEntity);
-        Log.e("bıraktı", "evet");
         duzenlenmisListeKaydet();
     }
 
@@ -696,30 +690,39 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onResume() {
         super.onResume();
-        Intent intent= new Intent(this, NotificationService.class);
-        bindService(intent, this, Context.BIND_AUTO_CREATE);
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-                mMessageReceiver,intentFilter );
-        musicList.getMusic("notification","ringtone");
-        fPlayListener.pl.stopRunable();
-        fPlayListener.pl.startRunable();
+        if(allPermGrand){
+            Intent intent= new Intent(this, NotificationService.class);
+            bindService(intent, this, Context.BIND_AUTO_CREATE);
+            LocalBroadcastManager.getInstance(this).registerReceiver(
+                    mMessageReceiver,intentFilter );
+            musicList.getMusic("notification","ringtone");
+            fPlayListener.pl.stopRunable();
+            fPlayListener.pl.startRunable();
+        }
+
 
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        fPlayListener.pl.stopRunable();
-        unbindService(this);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        if(allPermGrand){
+            fPlayListener.pl.stopRunable();
+            unbindService(this);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        }
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(allPermGrand){{
+            fPlayListener.pl.startRunable();
+            s.setSettings();
+        }}
         //buradaki amaç runable activity sonlandırldığında dahi calısıyor o yüzden açık bırakıyorum servisteki işlemler için
-        fPlayListener.pl.startRunable();
-        s.setSettings();
+
 
     }
 

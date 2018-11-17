@@ -20,7 +20,7 @@ import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 
 public class SettingsFragment extends DialogFragment {
-    private TextView fragment_settings_foldersettings,fragment_settings_search,fragment_settings_equalizer;
+    private TextView fragment_settings_foldersettings,fragment_settings_equalizer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,6 @@ public class SettingsFragment extends DialogFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings,container);
         fragment_settings_foldersettings=view.findViewById(R.id.fragment_settings_foldersettings);
-        fragment_settings_search=view.findViewById(R.id.fragment_settings_search);
         fragment_settings_equalizer=view.findViewById(R.id.fragment_settings_equalizer);
 
 
@@ -44,14 +43,7 @@ public class SettingsFragment extends DialogFragment {
                 dismiss();
             }
         });
-        fragment_settings_search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity)getActivity()).mainMenu.folder();
-                dismiss();
 
-            }
-        });
         fragment_settings_equalizer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,9 +60,10 @@ public class SettingsFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
 
         Window window = getDialog().getWindow();
-
         // set "origin" to top left corner, so to speak
-        window.setGravity(Gravity.BOTTOM|Gravity.RIGHT);
+        if(((MainActivity)getActivity()).isSwipeOpen)  window.setGravity(Gravity.TOP|Gravity.RIGHT);
+        else window.setGravity(Gravity.BOTTOM|Gravity.RIGHT);
+
         // after that, setting values for x and y works "naturally"
         WindowManager.LayoutParams params = window.getAttributes();
 //        params.x = 300;

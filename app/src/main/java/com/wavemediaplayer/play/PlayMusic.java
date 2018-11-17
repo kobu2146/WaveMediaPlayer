@@ -2,6 +2,7 @@ package com.wavemediaplayer.play;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
@@ -22,6 +23,7 @@ import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.adapter.Utils;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.main.FPlayListener;
+import com.wavemediaplayer.mservices.Constants;
 import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.settings.InitilationMediaPlayer;
 
@@ -66,6 +68,8 @@ public class PlayMusic {
      * Dosya var mı yok mu belirtilecek varsa calmaya baslar
      */
     public void playMusic(String link) {
+
+
 
         File file = new File(link);
         try {
@@ -114,6 +118,7 @@ public class PlayMusic {
                 Toast.makeText(context, "File not found", Toast.LENGTH_LONG).show();
                 calmayaDevamEt(true);
             }
+
 
 
 

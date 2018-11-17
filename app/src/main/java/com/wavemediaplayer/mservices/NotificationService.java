@@ -81,6 +81,8 @@ public class NotificationService extends Service {
     }
 
     public void listeDegistir(ArrayList<MusicData> musicData, int currentPos) {
+        Log.e("test","lllllllllllllşş");
+
         list = musicData;
         activityPlay();
         tekrarPos = currentPos;
@@ -128,7 +130,7 @@ public class NotificationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(intent.getAction()!=null){
+        if(intent!=null && intent.getAction()!=null){
             switch (intent.getAction()) {
                 case Constants.ACTION.STARTFOREGROUND_ACTION:
                     showNotification();
@@ -265,7 +267,6 @@ public class NotificationService extends Service {
         bigViews.setTextViewText(R.id.status_bar_artist_name, "");
 
         bigViews.setTextViewText(R.id.status_bar_artist_name, "");
-        create();
 
 
     }
@@ -316,10 +317,15 @@ public class NotificationService extends Service {
         PlayMusic.karisikCal = sharedPreferences.getBoolean("karisik", true);
         PlayMusic.tekrarla = sharedPreferences2.getInt("tekrarla", 0);
         if (FPlayListener.calmaListesiMuzik) {
-            listeDegistir(OynatmaListesiFragment.music_oynat_list, FPlayListener.currentMusicPosition);
+            list=OynatmaListesiFragment.music_oynat_list;
+            tekrarPos = FPlayListener.currentMusicPosition;
+            this.currentPos = FPlayListener.currentMusicPosition;
+
 
         } else {
-            listeDegistir(MusicList.musicData, FPlayListener.currentMusicPosition);
+            list=MusicList.musicData;
+            tekrarPos = FPlayListener.currentMusicPosition;
+            this.currentPos = FPlayListener.currentMusicPosition;
         }
 
     }

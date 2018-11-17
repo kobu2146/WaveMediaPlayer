@@ -19,7 +19,6 @@ public class MainManager {
 
     public MainManager(final MainActivity activity){
         this.activity=activity;
-        denemeeee();
 
         viewPager = (ViewPager) activity.findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -103,18 +102,13 @@ public class MainManager {
 
     }
 
-    private void denemeeee(){
-//        Intent serviceIntent = new Intent(activity, NotificationService.class);
-//        serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-//        activity.startService(serviceIntent);
-    }
+
 
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(activity.getSupportFragmentManager());
         adapter.addFragment(new MainFragment(), "One");
         adapter.addFragment(new OynatmaListesiFragment(), "PlayList");
-        adapter.addFragment(new DownloadFragment(), "Download");
         viewPager.setAdapter(adapter);
     }
 }

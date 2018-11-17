@@ -23,6 +23,10 @@
             </intent-filter>
         </activity>
         <service android:name=".mservices.NotificationService" />
+        <activity
+            android:name="com.karumi.dexter.DexterActivity"
+            android:theme="@style/Dexter.Internal.Theme.Transparent"
+            />
     </application>
 
 </manifest>

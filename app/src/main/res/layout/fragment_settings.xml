@@ -16,15 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="8dp"/>
-    <TextView
-        android:id="@+id/fragment_settings_search"
-        android:textSize="16sp"
-        android:textColor="@android:color/white"
-        android:text="Search"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="8dp"/>
+
     <TextView
         android:id="@+id/fragment_settings_equalizer"
         android:textSize="16sp"

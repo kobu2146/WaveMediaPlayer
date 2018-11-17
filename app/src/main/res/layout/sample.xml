@@ -1,6 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
@@ -405,12 +404,13 @@
 
         <SeekBar
             android:id="@+id/sample_main_seekBar3"
-            android:layout_width="0dp"
-            android:layout_height="24dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
             app:layout_constraintBottom_toTopOf="@+id/sample_main_relativeLayout"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/sample_main_relativeLayout"
             app:layout_constraintVertical_bias="0.75" />

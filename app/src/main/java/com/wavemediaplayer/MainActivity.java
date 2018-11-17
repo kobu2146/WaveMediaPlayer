@@ -168,15 +168,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         DexterPermission dex = new DexterPermission(this);
         dex.girisControl();
-
-
-        //  PlayerFragment fragmentS1 = new PlayerFragment();
-        //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
-
-
         /**servis çalışır ama create edilmediği için iconu yukarda gözükmez taki bi müzik açılana kadar*/
-
-
     }
 
     /**
@@ -189,8 +181,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
             context.startService(serviceIntent);
         }
-
-
         musicList = new MusicList(musicListView, this);
         musicList.getMusic();
         denememusicdata.addAll(MusicList.musicData);
@@ -209,7 +199,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
-
                 return true;
             }
         }
@@ -221,8 +210,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         sharedPreferences2 = getSharedPreferences(SARKIYI_TEKRARLA, Context.MODE_PRIVATE);
         PlayMusic.karisikCal = sharedPreferences.getBoolean("karisik", true);
         PlayMusic.tekrarla = sharedPreferences2.getInt("tekrarla", 0);
-
-
     }
 
     /**
@@ -270,9 +257,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         MusicList.adapter.notifyDataSetChanged();
     }
 
-    /**
-     * Musanın olusturdugu listener fonksyonu
-     */
     private void m_createListener() {
         equalizerFragment = new EqualizerFragment();
         oynatmaListesiFragment = new OynatmaListesiFragment();
@@ -296,25 +280,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
             }
         });
-
-
     }
 
-    /**
-     * Fatihin olusturdugu listener fonksiyonu
-     */
     private void f_createListener() {
         mLayout = findViewById(R.id.activity_main);
         fPlayListener = new FPlayListener(this, mainView);
         fPlayListener.f_ListenerEvent();
 
-
-        /** burada equalizeri başlangıçta çalıştırıyorum ki sonradan equalizere tıkladığında ses değişmesin ayarlar önceden yapılsın diye*/
-//        if(mediaPlayer!=null){
-//            fragmentListener.addFragment(equalizerFragment);
-////            fragmentListener.hideFragment(equalizerFragment);
-//        }
-        /** Herhangi bit posizyon yok ise default 0'dır */
         if (MusicList.musicData.size() > 0) {
             FPlayListener.currentMusicPosition = pos;
             PlayMusic.prevMusicDAta = MusicList.musicData.get(pos);
@@ -322,7 +294,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
 
-        /** Listviewde coklu secim yapmak icin */
         multipleChoise();
         listviewOneClickListener();
     }
@@ -335,15 +306,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 klavyeDisable();
                 if (!isMulti) {
-                    // pl.play(MusicList.locationList.get(position));
                     FPlayListener.calmaListesiMuzik = false;
                     FPlayListener.currentMusicPosition = position;
                     NotificationService.mainListeOncekiPos.clear();
                     NotificationService.mainListeOncekiPos.add(position);
-//                        fPlayListener.playMusic(position);
                     pos = position;
                     fPlayListener.playMusic(position);
-
 
                     if (s != null)
                         s.listeDegistir(MusicList.musicData, FPlayListener.currentMusicPosition);
@@ -361,13 +329,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return super.dispatchTouchEvent(ev);
     }
 
-    /**
-     * Listview multi choise event fonksiyonu
-     */
     public void multipleChoise() {
 
         musicListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-            /** Multichoise islemi yapıldıgında secilen itemleri liste ata ve secilen sayısını belirt */
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
 
@@ -412,40 +376,34 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                MenuInflater inflater = mode.getMenuInflater();
                 switch (item.getItemId()) {
                     case R.id.itemSil:
-                        layoutListClear(tempListLayout);
+                        layoutListClear();
                         for (Integer s : tempList) {
                             musicList.removeFromAdapter(s);
                         }
                         list_selected_count = 0;
                         mode.finish();
                         tempList.clear();
-
-
                         return true;
 
                     case R.id.itemPlayList:
                         playlistInfo(tempList);
                         list_selected_count = 0;
-                        layoutListClear(tempListLayout);
+                        layoutListClear();
                         mode.finish();
-
-
                     default:
                         return false;
                 }
 
             }
 
-            /** Multichoise islemi iptal edildiginde secilen tum itemler sıfırlanacak  */
             @Override
             public void onDestroyActionMode(ActionMode mode) {
                 for (int pos : tempList) {
                     MusicList.musicData.get(pos).setIsaretlendi(false);
                 }
-                layoutListClear(tempListLayout);
+                layoutListClear();
                 tempList = new ArrayList<>();
                 list_selected_count = 0;
                 isMulti = false;
@@ -474,10 +432,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         editor.apply();
     }
 
-    private void layoutListClear(List<View> layoutList) {
-//        for (View v : layoutList) {
-//            v.findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
-//        }
+    private void layoutListClear() {
+
         for (int pos : tempList) {
             if (musicListView.getChildAt(pos) != null) {
 
@@ -507,12 +463,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         ((PlayListsFragment) dialogFragment).setList(tempLists);
         dialogFragment.show(fragmentTransaction, "dialog");
 
-
     }
 
-    /**
-     * Mini music playera herhangi bir tiklama isleminde büyültme veya kucultme islemi calisacak
-     */
     public void eventClick(View view) {
         if (mLayout != null) {
             if ((mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
@@ -551,15 +503,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    /**
-     * item menu islemleri
-     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_options, menu);
-
-        // return true so that the menu pop up is opened
         return true;
     }
 
@@ -590,7 +537,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         MusicData applicationInfo = MusicList.musicData.remove(fromPosition);
         MusicList.musicData.add(toPosition, applicationInfo);
     }
-//The initial height of that view
 
     @Override
     public void onDragViewDown(int finalPosition) {
@@ -645,13 +591,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             case AbsListView.OnScrollListener.SCROLL_STATE_FLING:
                 break;
         }
-
-
     }
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
     }
 
     @Override
@@ -687,8 +630,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             fPlayListener.pl.stopRunable();
             fPlayListener.pl.startRunable();
         }
-
-
     }
 
     @Override
@@ -696,7 +637,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onPause();
         if (allPermGrand) {
             fPlayListener.pl.stopRunable();
-
         }
         unbindService(this);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);

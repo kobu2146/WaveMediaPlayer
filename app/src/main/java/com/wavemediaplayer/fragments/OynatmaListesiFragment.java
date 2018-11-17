@@ -71,9 +71,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -87,11 +85,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
         oynatma_listesi.setOnMenuItemClickListener(this);
         oynatma_listesi.setOnItemDeleteListener(this);
         oynatma_listesi.setOnScrollListener(this);
-
-
         context = view.getContext();
-
-
         listviewMultiChoise();
         clickEvent();
 
@@ -113,9 +107,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
 
         ListAdapter adapter2 = new ListAdapter(context,
                 R.layout.basic_list, oynat_list);
-//        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(context,
-//                android.R.layout.simple_list_item_1, android.R.id.text1, oynat_list);
-
         oynatma_listesi.setMenu(new Menu(false));
         oynatma_listesi.setAdapter(adapter2);
 

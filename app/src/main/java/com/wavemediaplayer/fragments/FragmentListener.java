@@ -16,7 +16,6 @@ public class FragmentListener implements FragmentInterface {
         fragmentManager = mainActivity.getSupportFragmentManager();
     }
 
-
     @Override
     public void addFragment(Fragment... fragment) {
         for (Fragment frag : fragment) {
@@ -63,6 +62,5 @@ public class FragmentListener implements FragmentInterface {
 
         }
     }
-
 
 }

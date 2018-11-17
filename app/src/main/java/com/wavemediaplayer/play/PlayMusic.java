@@ -2,14 +2,10 @@ package com.wavemediaplayer.play;
 
 import android.app.ActivityManager;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
 import android.net.Uri;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -17,13 +13,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wavemediaplayer.MainActivity;
-import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
-import com.wavemediaplayer.adapter.Utils;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.main.FPlayListener;
-import com.wavemediaplayer.mservices.Constants;
 import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.settings.InitilationMediaPlayer;
 
@@ -114,7 +107,6 @@ public class PlayMusic {
                     NotificationService.mediaPlayer = mediaPlayer;
                 }
             } else {
-                Log.e("File not found", "Belirtilen dosya yok");
                 Toast.makeText(context, "File not found", Toast.LENGTH_LONG).show();
                 calmayaDevamEt(true);
             }
@@ -125,19 +117,16 @@ public class PlayMusic {
 
 
         } catch (Exception ex) {
-            Log.e("FILE NOT FOUND", ex.getMessage());
         }
     }
 
     public void calmayaDevamEt(boolean ileriCal) {
         if (!karisikCal) { // Sıralı calma aktifse
-            Log.e("sirali", "cal");
             if (!FPlayListener.calmaListesiMuzik) {//Ana playerdan calınacaksa
                 if(MusicList.musicData.size()==0) return;
                 if (tekrarla == 0 || tekrarla == 2) {
                     if (ileriCal) {
                         FPlayListener.currentMusicPosition++;
-                        Log.e("current", "arttı");
                     } else {
                         if (FPlayListener.currentMusicPosition != 0) {
                             FPlayListener.currentMusicPosition--;
@@ -176,7 +165,6 @@ public class PlayMusic {
 
                 }
             } else { //Playlistden veya baska biryerden ise
-                Log.e("playlist", "music");
                 if(OynatmaListesiFragment.music_oynat_list.size()==0) return;
 
                 if (tekrarla == 0 || tekrarla == 2) {
@@ -222,7 +210,6 @@ public class PlayMusic {
         }
         // Karısık sarkı calma
         else {
-            Log.e("karisik", "cal");
             // ana music playerdan karısık calma
             if (!FPlayListener.calmaListesiMuzik) {
                 if(MusicList.musicData.size()==0) return;
@@ -412,7 +399,6 @@ public class PlayMusic {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    Log.e("qqqqqqqq","qweqweqwe");
                     if (mediaPlayer != null) {
                         if (mytext2.getTag() == null || !mytext2.getTag().toString().equals("var")) {
                             mytext2.setTag("var");
@@ -463,7 +449,6 @@ public class PlayMusic {
 
                 mediaPlayer.seekTo(progress);
             }
-            Log.e("seeeekbar",String.valueOf(progress)+"     "+String.valueOf(fromUser));
         }
 
         @Override

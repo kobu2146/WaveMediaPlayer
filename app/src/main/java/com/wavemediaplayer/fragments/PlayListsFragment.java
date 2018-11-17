@@ -68,7 +68,6 @@ public class PlayListsFragment extends DialogFragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_play_lists,container);
-
         return view;
     }
 

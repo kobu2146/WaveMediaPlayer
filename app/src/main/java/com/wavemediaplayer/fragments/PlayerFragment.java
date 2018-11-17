@@ -25,8 +25,6 @@ public class PlayerFragment extends Fragment {
     public PlayerFragment() {
      }
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

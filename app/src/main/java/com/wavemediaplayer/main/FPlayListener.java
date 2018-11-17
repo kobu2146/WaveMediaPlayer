@@ -123,8 +123,6 @@ public class FPlayListener {
 
 
     public void playMusic(int position) {
-        /** Music play */
-
         song_title.setText(MusicList.musicData.get(position).getTitles());
         song_artis.setText(MusicList.musicData.get(position).getArtist());
         pl.playMusic(MusicList.musicData.get(position).getLocation());
@@ -158,7 +156,6 @@ public class FPlayListener {
         return false;
     }
 
-
     public void icerikDegistirme() {
         if (!MusicList.musicData.isEmpty()) {
             if (!calmaListesiMuzik) {
@@ -169,9 +166,7 @@ public class FPlayListener {
                 song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getArtist());
             }
         }
-
     }
-
 
     public void f_ListenerEvent() {
 

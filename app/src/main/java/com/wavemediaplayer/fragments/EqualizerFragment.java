@@ -11,6 +11,7 @@ import android.media.audiofx.Visualizer;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,12 +54,13 @@ public class EqualizerFragment extends Fragment {
 
         seekBars = new ArrayList<>();
 //        create the equalizer with default priority of 0 & attach to our media player
-        if (PlayMusic.mediaPlayer == null) PlayMusic.mediaPlayer = new MediaPlayer();
+        if (PlayMusic.mediaPlayer == null) {
+            PlayMusic.mediaPlayer = new MediaPlayer();
+        }
 
         mEqualizer = new Equalizer(0, PlayMusic.mediaPlayer.getAudioSessionId());
         mEqualizer.setEnabled(true);
         equalizerPresetSpinner = view.findViewById(R.id.spinner);
-
 
 //        set up visualizer and equalizer bars
         setupVisualizerFxAndUI();

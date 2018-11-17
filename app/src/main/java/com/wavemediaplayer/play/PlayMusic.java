@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
 import android.net.Uri;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -43,6 +44,7 @@ public class PlayMusic {
     private BassBoost bassBoost;
     private InitilationMediaPlayer initilationMediaPlayer;
     private MainActivity mainActivity;
+    public static boolean isMediaPlayerCreated=false;
 
 
     public PlayMusic(MainActivity mainActivity, SeekBar myseekbar, TextView mytext1, TextView mytext2, ImageView myimageview, Handler handler) {
@@ -66,6 +68,7 @@ public class PlayMusic {
 
         File file = new File(link);
         try {
+            isMediaPlayerCreated=true;
             if (isMyServiceRunning(NotificationService.class)) {
                 mediaPlayer = NotificationService.mediaPlayer;
             }
@@ -399,7 +402,7 @@ public class PlayMusic {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    if (mediaPlayer != null) {
+                    if (mediaPlayer != null && isMediaPlayerCreated) {
                         if (mytext2.getTag() == null || !mytext2.getTag().toString().equals("var")) {
                             mytext2.setTag("var");
                             mytext2.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getDuration())));

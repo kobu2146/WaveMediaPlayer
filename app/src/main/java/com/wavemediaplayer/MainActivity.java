@@ -103,39 +103,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private IntentFilter intentFilter;
     private ImageView mainsearchButton;
     private MainManager mainManager;
-    private int currentCount = 0;
-    private boolean swipeAnimation = true;
-    private float mainsearchpos = 0;
-    private int screenHeight;
-    private int yedek;
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getStringExtra("servicePause") != null) {
-                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
-                fPlayListener.pl.iconKapat(false);
-
-            } else if (intent.getStringExtra("servicePlay") != null) {
-                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
-                fPlayListener.pl.iconKapat(true);
-            } else if (intent.getStringExtra("serviceNext") != null) {
-                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
-                fPlayListener.icerikDegistirme();
-
-            } else if (intent.getStringExtra("serviceBefore") != null) {
-                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
-                fPlayListener.icerikDegistirme();
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
-
-
         tabsHeigh = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
         mainView = getWindow().getDecorView().findViewById(android.R.id.content);
         musicListView = findViewById(R.id.main_musicListView);
@@ -651,6 +624,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 s.setSettings();
             }
         }
-        //buradaki amaç runable activity sonlandırldığında dahi calısıyor o yüzden açık bırakıyorum servisteki işlemler için
     }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getStringExtra("servicePause") != null) {
+                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
+                fPlayListener.pl.iconKapat(false);
+
+            } else if (intent.getStringExtra("servicePlay") != null) {
+                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
+                fPlayListener.pl.iconKapat(true);
+            } else if (intent.getStringExtra("serviceNext") != null) {
+                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
+                fPlayListener.icerikDegistirme();
+
+            } else if (intent.getStringExtra("serviceBefore") != null) {
+                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
+                fPlayListener.icerikDegistirme();
+            }
+        }
+    };
 }

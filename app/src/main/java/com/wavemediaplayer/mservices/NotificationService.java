@@ -62,12 +62,15 @@ public class NotificationService extends Service {
     }
 
     public void activityPlay(){
-        views.setImageViewResource(R.id.status_bar_play,
-                R.drawable.svgpause);
-        bigViews.setImageViewResource(R.id.status_bar_play,
-                R.drawable.svgpause);
-        Log.e("test","play");
-        create();
+        if(views!=null){
+            views.setImageViewResource(R.id.status_bar_play,
+                    R.drawable.svgpause);
+            bigViews.setImageViewResource(R.id.status_bar_play,
+                    R.drawable.svgpause);
+            Log.e("test","play");
+            create();
+        }
+
 
     }
     public void activityPause(){

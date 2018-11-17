@@ -5,33 +5,41 @@
     android:background="@color/bar7"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="20dp"
-        style="@style/WhiteSpinner"
-        android:layout_weight="0.5"
-        android:spinnerMode="dropdown"
+    android:orientation="vertical"
+    android:weightSum="12">
 
-
-        />
 
     <LinearLayout
         android:id="@+id/linearLayoutVisual"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:layout_weight=".5">
+        android:layout_weight="1">
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayoutEqual"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:orientation="vertical"
         android:layout_weight="1"
+        android:background="@color/bar7">
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            style="@style/WhiteSpinner"
+            android:spinnerMode="dropdown"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutAllSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="4"
         android:background="@color/bar7">
     </LinearLayout>
 
@@ -42,20 +50,25 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="4"
-        android:orientation="vertical">
+        android:layout_weight="6"
+        android:orientation="vertical"
+        android:weightSum="2"
+        android:background="@color/bar7"
+        android:layout_margin="5dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:orientation="horizontal"
-            android:weightSum="2">
+            android:layout_weight="1"
+            android:weightSum="2"
+            android:background="@color/bar7">
             <com.sdsmdg.harjot.crollerTest.Croller
                 android:id="@+id/equalizerVolume"
                 app:label="Volume"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 app:back_circle_color="#EDEDED"
                 app:indicator_color="#0B3C49"
                 app:indicator_width="10"
@@ -65,17 +78,15 @@
                 app:max="1000"
                 app:progress_primary_color="#00BCD4"
                 app:progress_secondary_color="#EEEEEE"
-
                 app:progress_primary_stroke_width="15"
                 app:progress_secondary_stroke_width="8"
-
                 app:start_offset="45" />
             <com.sdsmdg.harjot.crollerTest.Croller
                 android:id="@+id/equalizerRL"
                 app:label="Balance"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 app:back_circle_color="#EDEDED"
                 app:indicator_color="#0B3C49"
                 app:indicator_width="10"
@@ -92,10 +103,12 @@
         </LinearLayout>
 
         <com.sdsmdg.harjot.crollerTest.Croller
+            android:background="@color/bar7"
             android:id="@+id/equalizerBass"
             app:label="Bass"
+            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_gravity="center"
             app:back_circle_color="#EDEDED"
             app:indicator_color="#0B3C49"

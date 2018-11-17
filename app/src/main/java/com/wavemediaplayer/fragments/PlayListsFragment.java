@@ -100,10 +100,13 @@ public class PlayListsFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 String list_name = edit_playlist_name.getText().toString();
-                if (list_name != null || list_name.equals("")){
+                if (!list_name.equals("")){
                     new CreatePlayList(MainActivity.context).createAndAddList(list_name,music_position);
                     SharedPreferences sharedPreferences = MainActivity.context.getSharedPreferences( "WAVE MUSIC PLAYLIST", Context.MODE_PRIVATE);
                     String s =  sharedPreferences.getString(list_name,null);
+                }
+                else {
+                    Toast.makeText(context,"Please, enter a title",Toast.LENGTH_LONG).show();
                 }
                 klavyeDisable();
                 dismiss();

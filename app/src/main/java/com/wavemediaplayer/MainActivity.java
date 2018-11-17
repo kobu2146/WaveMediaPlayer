@@ -18,6 +18,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.GestureDetector;
@@ -27,7 +28,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -106,6 +106,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ImageView mainsearchButton;
     private MainManager mainManager;
     private View HeaderView;
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getStringExtra("servicePause") != null) {
+                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
+                fPlayListener.pl.iconKapat(false);
+
+            } else if (intent.getStringExtra("servicePlay") != null) {
+                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
+                fPlayListener.pl.iconKapat(true);
+            } else if (intent.getStringExtra("serviceNext") != null) {
+                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
+                fPlayListener.icerikDegistirme();
+
+            } else if (intent.getStringExtra("serviceBefore") != null) {
+                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
+                fPlayListener.icerikDegistirme();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -316,14 +336,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
 
+                position = position - 1;
+                Log.e("pos", position + "");
+
+
                 isMulti = true;
                 if (!tempList.contains(position)) {
                     list_selected_count = list_selected_count + 1;
                     mode.setTitle(list_selected_count + "item selected");
                     MusicList.musicData.get(position).setIsaretlendi(true);
                     if (musicListView.getChildAt(position) != null) {
-                        musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.holo_gray_light));
-                        tempListLayout.add(musicListView.getChildAt(position).findViewById(R.id.listview_layout));
+                        if (musicListView.getChildAt(position).findViewById(R.id.listview_layout) != null) {
+                            musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.holo_gray_light));
+                            tempListLayout.add(musicListView.getChildAt(position).findViewById(R.id.listview_layout));
+                        }
                     }
                     tempList.add(position);
                     MusicList.adapter.notifyDataSetChanged();
@@ -333,8 +359,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     mode.setTitle(list_selected_count + "item selected");
                     MusicList.musicData.get(position).setIsaretlendi(false);
                     if (musicListView.getChildAt(position) != null) {
-                        musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
-                        tempListLayout.remove(musicListView.getChildAt(position).findViewById(R.id.listview_layout));
+                        if (musicListView.getChildAt(position).findViewById(R.id.listview_layout) != null) {
+                            musicListView.getChildAt(position).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
+                            tempListLayout.remove(musicListView.getChildAt(position).findViewById(R.id.listview_layout));
+                        }
+
 
                     }
                     tempList.remove((Object) position);
@@ -634,24 +663,4 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         //buradaki amaç runable activity sonlandırldığında dahi calısıyor o yüzden açık bırakıyorum servisteki işlemler için
     }
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getStringExtra("servicePause") != null) {
-                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
-                fPlayListener.pl.iconKapat(false);
-
-            } else if (intent.getStringExtra("servicePlay") != null) {
-                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
-                fPlayListener.pl.iconKapat(true);
-            } else if (intent.getStringExtra("serviceNext") != null) {
-                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
-                fPlayListener.icerikDegistirme();
-
-            } else if (intent.getStringExtra("serviceBefore") != null) {
-                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
-                fPlayListener.icerikDegistirme();
-            }
-        }
-    };
 }

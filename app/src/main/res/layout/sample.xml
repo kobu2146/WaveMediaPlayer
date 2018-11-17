@@ -3,15 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/layout_background2"
 
     >
 
     <ImageView
-        android:src="@drawable/songs_cover"
+        android:src="@drawable/headphones"
         android:layout_centerInParent="true"
         android:layout_width="match_parent"
-        android:scaleType="centerCrop"
         android:clickable="false"
+        android:background="@color/transparent"
         android:layout_height="match_parent" />
 
     <LinearLayout
@@ -37,7 +38,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
                 android:onClick="eventClick"
-                android:src="@drawable/songs_cover"
+                android:src="@drawable/headphones"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"

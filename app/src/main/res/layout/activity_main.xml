@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.sothree.slidinguppanel.SlidingUpPanelLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
@@ -8,9 +7,10 @@
     android:layout_height="match_parent"
     android:background="@drawable/layout_background2"
     android:gravity="bottom"
-    tools:context=".MainActivity"
     app:umanoPanelHeight="70dp"
-    app:umanoShadowHeight="5dp">
+    app:umanoShadowHeight="5dp"
+    tools:context=".MainActivity">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -26,8 +26,8 @@
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:tabMode="fixed"
-                app:tabGravity="fill"/>
+                app:tabGravity="fill"
+                app:tabMode="fixed" />
 
         </android.support.design.widget.AppBarLayout>
 
@@ -35,58 +35,19 @@
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"  />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-
-
-        <RelativeLayout
-            android:id="@+id/mainSearchLayout"
+        <include
+            android:id="@+id/xx"
+            layout="@layout/layout_header"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:layout_below="@id/naber"
-            android:weightSum="10"
-            android:orientation="horizontal"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="8dp"
-
-            >
-
-            <ImageView
-                android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true"
-                android:id="@+id/mainsearchButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_menu_search"
-                android:layout_gravity="center"/>
-
-            <EditText
-                android:paddingStart="8dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:paddingEnd="8dp"
-                android:layout_centerVertical="true"
-                android:id="@+id/edit_search"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rounded_edittext"
-                android:hint="search"
-                android:layout_gravity="center"
-                android:visibility="invisible"
-                android:layout_toStartOf="@+id/mainsearchButton"
-                />
-
-
-
-
-        </RelativeLayout>
-
-
+            android:layout_height="wrap_content" />
 
         <com.yydcdut.sdlv.SlideAndDragListView
             android:id="@+id/main_musicListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@+id/xx"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="0dp"
@@ -102,20 +63,8 @@
             android:scrollbarThumbVertical="@drawable/scrollbar_vertical_thumb"
             android:scrollbarTrackVertical="@drawable/scrollbar_vertical_track"
             android:scrollbars="vertical"
-            android:textColor="#FFF"
-            android:layout_below="@id/mainSearchLayout"
-            />
+            android:textColor="#FFF" />
 
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            >
-
-
-
-        </LinearLayout>
 
         <FrameLayout
             android:id="@+id/mainFrame"
@@ -128,13 +77,9 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <include layout="@layout/sample" />
     </RelativeLayout>
-
-
-
-
-
 
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

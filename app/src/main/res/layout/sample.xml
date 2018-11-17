@@ -430,7 +430,7 @@
             android:paddingStart="6dp"
             android:paddingEnd="6dp"
             android:thumb="@drawable/seek_thumb_custom"
-            android:progressDrawable="@drawable/seek_background"
+            android:progressDrawable="@drawable/seekbarprogress"
             app:layout_constraintBottom_toTopOf="@+id/sample_main_relativeLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

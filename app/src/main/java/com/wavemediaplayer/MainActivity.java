@@ -21,11 +21,13 @@ import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.GestureDetector;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -103,31 +105,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private IntentFilter intentFilter;
     private ImageView mainsearchButton;
     private MainManager mainManager;
-    private int currentCount = 0;
-    private boolean swipeAnimation = true;
-    private float mainsearchpos = 0;
-    private int screenHeight;
-    private int yedek;
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getStringExtra("servicePause") != null) {
-                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
-                fPlayListener.pl.iconKapat(false);
-
-            } else if (intent.getStringExtra("servicePlay") != null) {
-                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
-                fPlayListener.pl.iconKapat(true);
-            } else if (intent.getStringExtra("serviceNext") != null) {
-                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
-                fPlayListener.icerikDegistirme();
-
-            } else if (intent.getStringExtra("serviceBefore") != null) {
-                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
-                fPlayListener.icerikDegistirme();
-            }
-        }
-    };
+    private View HeaderView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,9 +117,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         tabsHeigh = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
         mainView = getWindow().getDecorView().findViewById(android.R.id.content);
         musicListView = findViewById(R.id.main_musicListView);
-        edit_search = findViewById(R.id.edit_search);
-        mainSearchLayout = findViewById(R.id.mainSearchLayout);
-        mainsearchButton = findViewById(R.id.mainsearchButton);
+        HeaderView = LayoutInflater.from(this).inflate(R.layout.layout_header, null);
+        edit_search = HeaderView.findViewById(R.id.edit_search);
+        mainSearchLayout = HeaderView.findViewById(R.id.mainSearchLayout);
+        mainsearchButton = HeaderView.findViewById(R.id.mainsearchButton);
 
         getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         muzikCalmaBicimleri();
@@ -163,6 +142,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         musicListView.setOnMenuItemClickListener(this);
         musicListView.setOnItemDeleteListener(this);
         musicListView.setOnScrollListener(this);
+        musicListView.setNotDragHeaderCount(1);
+        musicListView.addHeaderView(HeaderView);
         intentFilter = new IntentFilter("speedExceeded");
 
 
@@ -235,7 +216,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
     }
@@ -653,4 +633,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         //buradaki amaç runable activity sonlandırldığında dahi calısıyor o yüzden açık bırakıyorum servisteki işlemler için
     }
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getStringExtra("servicePause") != null) {
+                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
+                fPlayListener.pl.iconKapat(false);
+
+            } else if (intent.getStringExtra("servicePlay") != null) {
+                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
+                fPlayListener.pl.iconKapat(true);
+            } else if (intent.getStringExtra("serviceNext") != null) {
+                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
+                fPlayListener.icerikDegistirme();
+
+            } else if (intent.getStringExtra("serviceBefore") != null) {
+                PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
+                fPlayListener.icerikDegistirme();
+            }
+        }
+    };
 }

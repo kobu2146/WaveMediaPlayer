@@ -182,10 +182,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
             context.startService(serviceIntent);
         }
-
         //  PlayerFragment fragmentS1 = new PlayerFragment();
         //    getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragmentS1).commit();
-
         intentFilter = new IntentFilter("speedExceeded");
 
 

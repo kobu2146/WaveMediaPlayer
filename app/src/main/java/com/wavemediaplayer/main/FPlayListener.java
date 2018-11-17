@@ -11,7 +11,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
@@ -20,12 +19,6 @@ import com.wavemediaplayer.adapter.Utils;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.fragments.SettingsFragment;
 import com.wavemediaplayer.play.PlayMusic;
-
-/**
- * Fatihin olusturdugu listener
- * <p>
- * Mainactivity deki tanımlamlamalar ve event islemleri yapılacak
- */
 
 public class FPlayListener {
 
@@ -51,7 +44,6 @@ public class FPlayListener {
     private SeekBar myseekbar;
     private TextView mytext1;
     private TextView mytext2;
-    private Runnable runnable;
     private Handler handler;
     private Context context;
     private View view;
@@ -127,12 +119,6 @@ public class FPlayListener {
             play.setVisibility(View.GONE);
             pause.setVisibility(View.VISIBLE);
         }
-
-//        if(!isMyServiceRunning(NotificationService.class)){
-//            Intent serviceIntent = new Intent(context, NotificationService.class);
-//            serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-//            context.startService(serviceIntent);
-//        }
     }
 
 
@@ -147,7 +133,6 @@ public class FPlayListener {
         // play tab on screen
         play.setVisibility(View.GONE);
         pause.setVisibility(View.VISIBLE);
-        //    Toast.makeText(context,"Song Is now Playing",Toast.LENGTH_SHORT).show();
         if (play_main.getVisibility() == View.VISIBLE) {
             play_main.setVisibility(View.GONE);
             pause_main.setVisibility(View.VISIBLE);
@@ -156,17 +141,10 @@ public class FPlayListener {
         // main play button
         play_main.setVisibility(View.GONE);
         pause_main.setVisibility(View.VISIBLE);
-        //  Toast.makeText(context,"Song Is now Playing",Toast.LENGTH_SHORT).show();
         if (play.getVisibility() == View.VISIBLE) {
             play.setVisibility(View.GONE);
             pause.setVisibility(View.VISIBLE);
         }
-
-//        if(!isMyServiceRunning(NotificationService.class)){
-//            Intent serviceIntent = new Intent(context, NotificationService.class);
-//            serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-//            context.startService(serviceIntent);
-//        }
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -213,11 +191,9 @@ public class FPlayListener {
                 if (PlayMusic.karisikCal) {
                     PlayMusic.karisikCal = false;
                     karisik_cal.setBackground(Utils.getDrawable(context, R.drawable.svg_sirali));
-                    Toast.makeText(context, "Sıralı calacak", Toast.LENGTH_SHORT).show();
                 } else {
                     PlayMusic.karisikCal = true;
                     karisik_cal.setBackground(Utils.getDrawable(context, R.drawable.baseline_shuffle_white));
-                    Toast.makeText(context, "Karışık calacak", Toast.LENGTH_SHORT).show();
                 }
                 SharedPreferences sharedPreferences;
                 SharedPreferences.Editor editor;
@@ -233,16 +209,13 @@ public class FPlayListener {
             public void onClick(View v) {
                 if (PlayMusic.tekrarla == 0) {
                     PlayMusic.tekrarla = 1;
-                    Toast.makeText(context, "Gecerli sarkıyı tekrarlayacak", Toast.LENGTH_SHORT).show();
                     tekrarla.setBackground(Utils.getDrawable(context, R.drawable.svg_repeat_one));
                 } else if (PlayMusic.tekrarla == 1) {
                     PlayMusic.tekrarla = 2;
                     tekrarla.setBackground(Utils.getDrawable(context, R.drawable.svg_liste_finish));
-                    Toast.makeText(context, "Liste bittikten sonra duracak", Toast.LENGTH_SHORT).show();
                 } else {
                     PlayMusic.tekrarla = 0;
                     tekrarla.setBackground(Utils.getDrawable(context, R.drawable.baseline_repeat_white));
-                    Toast.makeText(context, "Tum sarkıyı tekrarlayacak", Toast.LENGTH_SHORT).show();
                 }
 
 

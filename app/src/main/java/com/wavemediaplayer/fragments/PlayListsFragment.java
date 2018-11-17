@@ -3,6 +3,8 @@ package com.wavemediaplayer.fragments;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -48,10 +50,22 @@ public class PlayListsFragment extends DialogFragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        Dialog dialog = getDialog();
+        if (dialog != null && dialog.getWindow()!=null) {
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+    }
+
+    @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
         final Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        if(dialog.getWindow()!=null){
+            dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        }
         dialog.setTitle("Add");
         return dialog;
     }

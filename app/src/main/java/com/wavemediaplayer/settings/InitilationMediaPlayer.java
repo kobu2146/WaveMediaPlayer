@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.Equalizer;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -20,16 +19,16 @@ public class InitilationMediaPlayer {
     private Equalizer mEqualizer;
     private ArrayList<String> equalizerPresetNames;
 
-    public InitilationMediaPlayer(Context context){
-        this.context=context;
-        sharedPreferences=PreferenceManager.getDefaultSharedPreferences(context);
-        equalizerPresetNames=new ArrayList<>();
+    public InitilationMediaPlayer(Context context) {
+        this.context = context;
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        equalizerPresetNames = new ArrayList<>();
 
     }
 
-    public InitilationMediaPlayer init(MediaPlayer mp){
-        if(mp!=null){
-            this.mp=mp;
+    public InitilationMediaPlayer init(MediaPlayer mp) {
+        if (mp != null) {
+            this.mp = mp;
         }
 
         mEqualizer = new Equalizer(0, mp.getAudioSessionId());
@@ -42,12 +41,12 @@ public class InitilationMediaPlayer {
         final short lowerEqualizerBandLevel = mEqualizer.getBandLevelRange()[0];
 
         short numberFrequencyBands = mEqualizer.getNumberOfBands();
-        for(short i=0;i<numberFrequencyBands;i++){
-            if(equalizerPresetNames.get(sharedPreferences.getInt("EqualizerPreset",0)).equals("Custom")){
-                mEqualizer.setBandLevel(i, (short) (sharedPreferences.getInt("band"+String.valueOf(i),1500) + lowerEqualizerBandLevel));
-            }else{
+        for (short i = 0; i < numberFrequencyBands; i++) {
+            if (equalizerPresetNames.get(sharedPreferences.getInt("EqualizerPreset", 0)).equals("Custom")) {
+                mEqualizer.setBandLevel(i, (short) (sharedPreferences.getInt("band" + String.valueOf(i), 1500) + lowerEqualizerBandLevel));
+            } else {
 
-                mEqualizer.usePreset((short) sharedPreferences.getInt("EqualizerPreset",0));
+                mEqualizer.usePreset((short) sharedPreferences.getInt("EqualizerPreset", 0));
                 break;
             }
         }
@@ -61,26 +60,28 @@ public class InitilationMediaPlayer {
         return this;
     }
 
-    /**Bass ayarlarını al*/
-    private void setBass(){
-        int progress=sharedPreferences.getInt("bass",50);
+    /**
+     * Bass ayarlarını al
+     */
+    private void setBass() {
+        int progress = sharedPreferences.getInt("bass", 50);
         BassBoost bassBoost = new BassBoost(1, mediaPlayer.getAudioSessionId());
         bassBoost.setEnabled(true);
-        bassBoost.setStrength((short)progress);
+        bassBoost.setStrength((short) progress);
 
     }
 
-    /**balance ayarlarını al yani ses dengesini başlangıçta yapılandır*/
-    private void setBalance(){
-        int progress=sharedPreferences.getInt("balance",50);
-        if(progress<49){
-            Log.e(String.valueOf((float)progress/50f),String.valueOf(1f-(float)progress/50f));
-            mediaPlayer.setVolume((float)progress/50f,1f);
-        }else if(progress>51){
-            Log.e("1",String.valueOf((50f-((float)progress-50f))/50f));
-            mediaPlayer.setVolume(1f,(50f-((float)progress-50f))/50f);
-        }else{
-            mediaPlayer.setVolume(1f,1f);
+    /**
+     * balance ayarlarını al yani ses dengesini başlangıçta yapılandır
+     */
+    private void setBalance() {
+        int progress = sharedPreferences.getInt("balance", 50);
+        if (progress < 49) {
+            mediaPlayer.setVolume((float) progress / 50f, 1f);
+        } else if (progress > 51) {
+            mediaPlayer.setVolume(1f, (50f - ((float) progress - 50f)) / 50f);
+        } else {
+            mediaPlayer.setVolume(1f, 1f);
         }
     }
 

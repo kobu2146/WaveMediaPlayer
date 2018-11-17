@@ -1,8 +1,6 @@
 package com.wavemediaplayer.playlist;
 
 
-import com.wavemediaplayer.adapter.Adapter;
-
 public class PlayList {
 
     public String title;

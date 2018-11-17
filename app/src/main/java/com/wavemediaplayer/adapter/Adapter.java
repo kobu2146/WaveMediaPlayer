@@ -2,7 +2,6 @@ package com.wavemediaplayer.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,7 +29,6 @@ public class Adapter extends ArrayAdapter<MusicData> {
             Object o = v.getTag();
 
             if (o != null && o instanceof Integer) {
-                Log.e("Secilen item", o.toString());
                 if (kaynak == 0) {
                     MainActivity.musicListView.startDrag(((Integer) o).intValue());
                 } else if (kaynak == 1) {

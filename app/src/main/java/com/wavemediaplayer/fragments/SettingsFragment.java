@@ -1,13 +1,10 @@
 package com.wavemediaplayer.fragments;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +17,7 @@ import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 
 public class SettingsFragment extends DialogFragment {
-    private TextView fragment_settings_foldersettings,fragment_settings_search,fragment_settings_equalizer;
+    private TextView fragment_settings_foldersettings, fragment_settings_search, fragment_settings_equalizer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,23 +28,23 @@ public class SettingsFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_settings,container);
-        fragment_settings_foldersettings=view.findViewById(R.id.fragment_settings_foldersettings);
-        fragment_settings_search=view.findViewById(R.id.fragment_settings_search);
-        fragment_settings_equalizer=view.findViewById(R.id.fragment_settings_equalizer);
+        View view = inflater.inflate(R.layout.fragment_settings, container);
+        fragment_settings_foldersettings = view.findViewById(R.id.fragment_settings_foldersettings);
+        fragment_settings_search = view.findViewById(R.id.fragment_settings_search);
+        fragment_settings_equalizer = view.findViewById(R.id.fragment_settings_equalizer);
 
 
         fragment_settings_foldersettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).mainMenu.musiclist();
+                ((MainActivity) getActivity()).mainMenu.musiclist();
                 dismiss();
             }
         });
         fragment_settings_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).mainMenu.folder();
+                ((MainActivity) getActivity()).mainMenu.folder();
                 dismiss();
 
             }
@@ -55,7 +52,7 @@ public class SettingsFragment extends DialogFragment {
         fragment_settings_equalizer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).mainMenu.equalizer();
+                ((MainActivity) getActivity()).mainMenu.equalizer();
                 dismiss();
 
             }
@@ -65,12 +62,12 @@ public class SettingsFragment extends DialogFragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         Window window = getDialog().getWindow();
 
         // set "origin" to top left corner, so to speak
-        window.setGravity(Gravity.BOTTOM|Gravity.RIGHT);
+        window.setGravity(Gravity.BOTTOM | Gravity.RIGHT);
         // after that, setting values for x and y works "naturally"
         WindowManager.LayoutParams params = window.getAttributes();
 //        params.x = 300;
@@ -78,9 +75,9 @@ public class SettingsFragment extends DialogFragment {
         window.setAttributes(params);
 
     }
+
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState)
-    {
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.getWindow().getAttributes().windowAnimations = R.style.MyCustomAnimation;
         return dialog;
@@ -106,9 +103,6 @@ public class SettingsFragment extends DialogFragment {
 //                });
 //        return builder.create();
 //    }
-
-
-
 
 
 }

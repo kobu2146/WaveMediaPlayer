@@ -2,13 +2,10 @@ package com.wavemediaplayer.play;
 
 import android.app.ActivityManager;
 import android.content.Context;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
 import android.net.Uri;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -16,10 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wavemediaplayer.MainActivity;
-import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.MusicData;
 import com.wavemediaplayer.adapter.MusicList;
-import com.wavemediaplayer.adapter.Utils;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mservices.NotificationService;
@@ -39,6 +34,25 @@ public class PlayMusic {
     private static Runnable runnable;
     private static Handler myHandler;
     private static String playPrev = "";
+    SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if (mediaPlayer != null && fromUser) {
+
+                mediaPlayer.seekTo(progress);
+            }
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
     private Context context;
     private SeekBar myseekbar;
     private TextView mytext1;
@@ -60,7 +74,6 @@ public class PlayMusic {
         this.handler = handler;
 
     }
-
 
     /**
      * Dosya var mı yok mu belirtilecek varsa calmaya baslar
@@ -110,29 +123,20 @@ public class PlayMusic {
                     NotificationService.mediaPlayer = mediaPlayer;
                 }
             } else {
-                Log.e("File not found", "Belirtilen dosya yok");
                 Toast.makeText(context, "File not found", Toast.LENGTH_LONG).show();
                 calmayaDevamEt(true);
             }
-
-
-
-
-
         } catch (Exception ex) {
-            Log.e("FILE NOT FOUND", ex.getMessage());
         }
     }
 
     public void calmayaDevamEt(boolean ileriCal) {
         if (!karisikCal) { // Sıralı calma aktifse
-            Log.e("sirali", "cal");
             if (!FPlayListener.calmaListesiMuzik) {//Ana playerdan calınacaksa
-                if(MusicList.musicData.size()==0) return;
+                if (MusicList.musicData.size() == 0) return;
                 if (tekrarla == 0 || tekrarla == 2) {
                     if (ileriCal) {
                         FPlayListener.currentMusicPosition++;
-                        Log.e("current", "arttı");
                     } else {
                         if (FPlayListener.currentMusicPosition != 0) {
                             FPlayListener.currentMusicPosition--;
@@ -141,8 +145,6 @@ public class PlayMusic {
                         }
                     }
                 }
-
-
                 if (FPlayListener.currentMusicPosition < MusicList.musicData.size()) {
                     prevMusicDAta = MusicList.musicData.get(FPlayListener.currentMusicPosition);
                     MainActivity.fPlayListener.song_artis.setText(MusicList.musicData.get(FPlayListener.currentMusicPosition).getArtist());
@@ -171,8 +173,7 @@ public class PlayMusic {
 
                 }
             } else { //Playlistden veya baska biryerden ise
-                Log.e("playlist", "music");
-                if(OynatmaListesiFragment.music_oynat_list.size()==0) return;
+                if (OynatmaListesiFragment.music_oynat_list.size() == 0) return;
 
                 if (tekrarla == 0 || tekrarla == 2) {
                     if (ileriCal) {
@@ -217,10 +218,9 @@ public class PlayMusic {
         }
         // Karısık sarkı calma
         else {
-            Log.e("karisik", "cal");
             // ana music playerdan karısık calma
             if (!FPlayListener.calmaListesiMuzik) {
-                if(MusicList.musicData.size()==0) return;
+                if (MusicList.musicData.size() == 0) return;
                 int rndPositin = new Random().nextInt(MusicList.musicData.size());
                 if (tekrarla == 0 || tekrarla == 2 || tekrarla == 3) {
                     if (ileriCal) {
@@ -231,8 +231,6 @@ public class PlayMusic {
                             NotificationService.mainListeOncekiPos.remove(NotificationService.mainListeOncekiPos.size() - 1);
                             rndPositin = NotificationService.mainListeOncekiPos.get(NotificationService.mainListeOncekiPos.size() - 1);
                         }
-
-
                     }
                     //İleri butonuna tıklandıgı zaman gecerli sarkıyı tekrarlada ise bir sonraki sarkıya atlattrırıp tekrala = 1 olacak
                     if (tekrarla == 3) {
@@ -254,7 +252,6 @@ public class PlayMusic {
                     }
 
 
-
                 } else if (tekrarla == 1) {
                     if (prevMusicDAta != null) {
                         MainActivity.fPlayListener.song_artis.setText(prevMusicDAta.getArtist());
@@ -271,7 +268,7 @@ public class PlayMusic {
             }
             // Calma listesinden karısık calma
             else {
-                if(OynatmaListesiFragment.music_oynat_list.size()==0) return;
+                if (OynatmaListesiFragment.music_oynat_list.size() == 0) return;
                 if (tekrarla == 0 || tekrarla == 2 || tekrarla == 3) {
                     int rndPositin = new Random().nextInt(OynatmaListesiFragment.music_oynat_list.size());
                     if (ileriCal) {
@@ -407,7 +404,6 @@ public class PlayMusic {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    Log.e("qqqqqqqq","qweqweqwe");
                     if (mediaPlayer != null) {
                         if (mytext2.getTag() == null || !mytext2.getTag().toString().equals("var")) {
                             mytext2.setTag("var");
@@ -439,7 +435,6 @@ public class PlayMusic {
         myseekbar.setOnSeekBarChangeListener(seekBarChangeListener);
 
 
-
     }
 
     public void stopRunable() {
@@ -450,25 +445,4 @@ public class PlayMusic {
         }
 
     }
-
-    SeekBar.OnSeekBarChangeListener seekBarChangeListener=new SeekBar.OnSeekBarChangeListener() {
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            if (mediaPlayer != null && fromUser) {
-
-                mediaPlayer.seekTo(progress);
-            }
-            Log.e("seeeekbar",String.valueOf(progress)+"     "+String.valueOf(fromUser));
-        }
-
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-
-        }
-
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
-
-        }
-    };
 }

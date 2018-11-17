@@ -163,6 +163,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         musicListView.setOnMenuItemClickListener(this);
         musicListView.setOnItemDeleteListener(this);
         musicListView.setOnScrollListener(this);
+        intentFilter = new IntentFilter("speedExceeded");
+
 
         DexterPermission dex = new DexterPermission(this);
         dex.girisControl();
@@ -182,7 +184,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
      */
 
     public void createStart() {
-        intentFilter = new IntentFilter("speedExceeded");
         if (!isMyServiceRunning(NotificationService.class)) {
             Intent serviceIntent = new Intent(context, NotificationService.class);
             serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
@@ -198,6 +199,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         f_createListener();
         editTextDegisiklikKontrol();
         mainMenu = new MainMenu(this);
+
+        fPlayListener.pl.stopRunable();
+        fPlayListener.pl.startRunable();
 
     }
 
@@ -673,11 +677,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onResume() {
         super.onResume();
+        Intent intent = new Intent(this, NotificationService.class);
+        bindService(intent, this, Context.BIND_AUTO_CREATE);
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mMessageReceiver, intentFilter);
         if (allPermGrand) {
-            Intent intent = new Intent(this, NotificationService.class);
-            bindService(intent, this, Context.BIND_AUTO_CREATE);
-            LocalBroadcastManager.getInstance(this).registerReceiver(
-                    mMessageReceiver, intentFilter);
+
             musicList.getMusic("notification", "ringtone");
             fPlayListener.pl.stopRunable();
             fPlayListener.pl.startRunable();
@@ -691,9 +696,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onPause();
         if (allPermGrand) {
             fPlayListener.pl.stopRunable();
-            unbindService(this);
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+
         }
+        unbindService(this);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
 
     }
 

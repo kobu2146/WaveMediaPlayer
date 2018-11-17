@@ -9,6 +9,7 @@
        android:layout_width="match_parent"
        android:layout_height="match_parent"
        android:background="@color/bar8"
+       android:layout_margin="25dp"
       android:orientation="vertical">
       <TextView
           android:layout_width="match_parent"
@@ -34,19 +35,21 @@
          <EditText
              android:id="@+id/edit_playlist_name"
              android:layout_width="match_parent"
-             android:layout_height="match_parent"
+             android:layout_height="wrap_content"
              android:hint="@string/new_add_playlist"
              android:paddingLeft="8dp"
              android:background="@drawable/rounded_edittext"
              android:layout_weight="2"
+             android:layout_gravity="center_vertical"
              android:textSize="20sp"/>
          <Button
              android:id="@+id/btn_add"
-             android:layout_width="50dp"
-             android:layout_height="50dp"
+             android:layout_width="35dp"
+             android:layout_height="35dp"
              android:layout_weight="1"
              android:layout_marginLeft="8dp"
-             android:gravity="center"
+             android:layout_gravity="center_vertical"
+
              android:background="@drawable/svgplay_list_add"/>
 
       </LinearLayout>
@@ -59,7 +62,9 @@
           android:layout_marginEnd="5dp"
           android:layout_marginBottom="5dp"
           android:layout_width="match_parent"
-          android:layout_height="match_parent">
+          android:layout_height="match_parent"
+          android:divider="@color/bar2"
+          android:dividerHeight="1dp">
 
       </ListView>
 

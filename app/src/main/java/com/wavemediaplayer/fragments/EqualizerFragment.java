@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -51,7 +52,6 @@ public class EqualizerFragment extends Fragment {
         // Defines the xml file for the fragment
         view = inflater.inflate(R.layout.fragment_equalizer, parent, false);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
-
         seekBars = new ArrayList<>();
 //        create the equalizer with default priority of 0 & attach to our media player
         if (PlayMusic.mediaPlayer == null) {

@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/transparent"
     tools:context=".fragments.PlayListsFragment">
 
    <LinearLayout
@@ -14,10 +13,11 @@
       <TextView
           android:layout_width="match_parent"
           android:id="@+id/title_txt"
-          android:layout_height="35dp"
+          android:layout_height="wrap_content"
           android:layout_marginStart="5dp"
           android:layout_marginEnd="5dp"
-          android:textSize="25sp"
+          android:padding="10dp"
+          android:textSize="23sp"
           android:textStyle="bold"
           android:textColor="@color/backgroundColor"
           android:gravity="center"
@@ -55,7 +55,7 @@
           android:id="@+id/playListView"
           android:layout_marginStart="5dp"
           android:layout_marginTop="5dp"
-          android:background="@color/backgroundColor"
+          android:background="@drawable/rounded_edittext"
           android:layout_marginEnd="5dp"
           android:layout_marginBottom="5dp"
           android:layout_width="match_parent"

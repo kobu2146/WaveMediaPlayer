@@ -1,13 +1,10 @@
 package com.wavemediaplayer.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -16,22 +13,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.Adapter;
 import com.wavemediaplayer.adapter.ListAdapter;
 import com.wavemediaplayer.adapter.MusicData;
-import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.play.PlayMusic;
 import com.wavemediaplayer.playlist.CreatePlayList;
-import com.wavemediaplayer.playlist.PlayList;
 import com.wavemediaplayer.playlist.PlayListData;
 import com.yydcdut.sdlv.Menu;
 import com.yydcdut.sdlv.SlideAndDragListView;
@@ -116,7 +108,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
         /** tum playlistleri ve iceriklerini cekiyor cekiyor */
         Map<String, ?> allEntries = sharedPreferences.getAll();
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-         //   Log.e("map values", entry.getKey() + ": " + entry.getValue().toString());
             oynat_list.add(new PlayListData(entry.getKey()));
         }
 
@@ -162,7 +153,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                 MenuInflater inflater = mode.getMenuInflater();
                 switch (item.getItemId()) {
                     case R.id.item_sil:
-                        layoutListClear(tempListLayout);
+                        layoutListClear();
                         calmaListeleriniSil();
                         list_selected_count = 0;
                         mode.finish();
@@ -170,14 +161,14 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                         return true;
 
                     case R.id.item_kaldır:
-                        layoutListClear(tempListLayout);
+                        layoutListClear();
                         calmaListesiMuzikleriniSil();
                         list_selected_count = 0;
                         temp_position_list.clear();
                         mode.finish();
                     case R.id.item_paylas:
                         list_selected_count = 0;
-                        layoutListClear(tempListLayout);
+                        layoutListClear();
                         mode.finish();
 
                     default:
@@ -197,7 +188,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                     }
 
                 }
-                layoutListClear(tempListLayout);
+                layoutListClear();
                 temp_position_list.clear();
 
                 list_selected_count = 0;
@@ -238,8 +229,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
 
 
     private void itemCheckedState(ActionMode mode, int position, long id, boolean checked) {
-
-
         // Oynatma listelerini gosterecek liste ise
         try {
             if (isList) {
@@ -261,8 +250,9 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                     if (oynatma_listesi.getChildAt(position) != null) {
                         oynatma_listesi.getChildAt(position).findViewById(R.id.basic_listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
                         tempListLayout.remove(oynatma_listesi.getChildAt(position).findViewById(R.id.basic_listview_layout));
-                        temp_position_list.remove((Object) position);
+
                     }
+                    temp_position_list.remove((Object) position);
                     adapterPlayList.notifyDataSetChanged();
 
                 }
@@ -299,14 +289,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
 
     }
 
-    private void layoutListClear(List<View> layoutList) {
-//        for (View v : layoutList) {
-//            if (isList) {
-//                v.findViewById(R.id.basic_listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
-//            } else {
-//                v.findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
-//            }
-//        }
+    private void layoutListClear() {
         for (int pos : temp_position_list) {
             if (isList) {
                 if (oynatma_listesi.getChildAt(pos) != null) {
@@ -315,12 +298,13 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
             } else {
                 if (oynatma_listesi.getChildAt(pos) != null) {
                     oynatma_listesi.getChildAt(pos).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
+                    adapterPlayList.notifyDataSetChanged();
                 }
             }
         }
         tempListLayout.clear();
         tempListLayout = new ArrayList<>();
-        adapterPlayList.notifyDataSetChanged();
+
     }
 
 
@@ -337,7 +321,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
         Map<String, ?> allEntries = sharedPreferences.getAll();
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
             try {
-                //   Log.e("map values", entry.getKey() + ": " + entry.getValue().toString());
                 if (entry.getKey().equals(liste_key)) {
                     JSONArray jsonArray = new JSONArray(entry.getValue().toString());
                     for (int i = 0; i < jsonArray.length(); i++) {

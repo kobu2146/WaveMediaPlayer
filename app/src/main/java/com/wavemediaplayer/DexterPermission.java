@@ -52,7 +52,7 @@ public class DexterPermission {
     }
 
     public void girisControl(){
-         MainActivity.allPermGrand=true;
+        MainActivity.allPermGrand=true;
         for(String per:permissions){
             if (ContextCompat.checkSelfPermission(activity, per)!= PackageManager.PERMISSION_GRANTED){
                 MainActivity.allPermGrand=false;

@@ -3,17 +3,14 @@ package com.wavemediaplayer.main;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
@@ -22,50 +19,34 @@ import com.wavemediaplayer.adapter.Utils;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.fragments.SettingsFragment;
 import com.wavemediaplayer.play.PlayMusic;
-import com.wavemediaplayer.playlist.PlayList;
-
-import java.util.ArrayList;
-
-/**
- * Fatihin olusturdugu listener
- * <p>
- * Mainactivity deki tanımlamlamalar ve event islemleri yapılacak
- */
 
 public class FPlayListener {
 
-    public PlayMusic pl;
-
-    private ImageButton like;
-    private ImageButton notlike;
-    private ImageButton dislike;
-    private ImageButton notdislike;
     public static ImageButton play;
     public static ImageButton pause;
     public static ImageButton play_main;
     public static ImageButton pause_main;
+    public static TextView song_title;
+    public static TextView song_artis;
+    public static int currentMusicPosition; //Sıralı calmada tutulacak pozisyon
+    public static boolean calmaListesiMuzik = false; //Music calma listesinden mi ana listeden mi?
+    public PlayMusic pl;
+    public MainActivity mainActivity;
+    private ImageButton like;
+    private ImageButton notlike;
+    private ImageButton dislike;
+    private ImageButton notdislike;
     private ImageButton song_next;
     private ImageButton song_prev;
     private ImageButton tekrarla;
     private ImageButton karisik_cal;
     private ImageView sample_main_settings;
-    public static TextView song_title;
-    public static TextView song_artis;
-
     private SeekBar myseekbar;
     private TextView mytext1;
     private TextView mytext2;
-    private Runnable runnable;
     private Handler handler;
-
-
-    public static int currentMusicPosition; //Sıralı calmada tutulacak pozisyon
-    public static boolean calmaListesiMuzik = false; //Music calma listesinden mi ana listeden mi?
-
-
     private Context context;
     private View view;
-    public MainActivity mainActivity;
 
     public FPlayListener(MainActivity mainActivity, View view) {
         this.mainActivity = mainActivity;
@@ -99,20 +80,17 @@ public class FPlayListener {
         myseekbar = view.findViewById(R.id.sample_main_seekBar3);
         handler = new Handler();
 
-        if (PlayMusic.tekrarla == 0){
-            tekrarla.setBackground(Utils.getDrawable(context,R.drawable.baseline_repeat_white));
-        }
-        else if (PlayMusic.tekrarla == 1){
-            tekrarla.setBackground(Utils.getDrawable(context,R.drawable.svg_repeat_one));
-        }
-        else if (PlayMusic.tekrarla == 2){
-            tekrarla.setBackground(Utils.getDrawable(context,R.drawable.svg_liste_finish));
+        if (PlayMusic.tekrarla == 0) {
+            tekrarla.setBackground(Utils.getDrawable(context, R.drawable.baseline_repeat_white));
+        } else if (PlayMusic.tekrarla == 1) {
+            tekrarla.setBackground(Utils.getDrawable(context, R.drawable.svg_repeat_one));
+        } else if (PlayMusic.tekrarla == 2) {
+            tekrarla.setBackground(Utils.getDrawable(context, R.drawable.svg_liste_finish));
         }
 
-        if (PlayMusic.karisikCal){
+        if (PlayMusic.karisikCal) {
             karisik_cal.setBackground(Utils.getDrawable(context, R.drawable.baseline_shuffle_white));
-        }
-        else {
+        } else {
             karisik_cal.setBackground(Utils.getDrawable(context, R.drawable.svg_sirali));
         }
 
@@ -141,7 +119,6 @@ public class FPlayListener {
             play.setVisibility(View.GONE);
             pause.setVisibility(View.VISIBLE);
         }
-
     }
 
 
@@ -156,7 +133,6 @@ public class FPlayListener {
         // play tab on screen
         play.setVisibility(View.GONE);
         pause.setVisibility(View.VISIBLE);
-        //    Toast.makeText(context,"Song Is now Playing",Toast.LENGTH_SHORT).show();
         if (play_main.getVisibility() == View.VISIBLE) {
             play_main.setVisibility(View.GONE);
             pause_main.setVisibility(View.VISIBLE);
@@ -165,12 +141,10 @@ public class FPlayListener {
         // main play button
         play_main.setVisibility(View.GONE);
         pause_main.setVisibility(View.VISIBLE);
-        //  Toast.makeText(context,"Song Is now Playing",Toast.LENGTH_SHORT).show();
         if (play.getVisibility() == View.VISIBLE) {
             play.setVisibility(View.GONE);
             pause.setVisibility(View.VISIBLE);
         }
-
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -204,7 +178,6 @@ public class FPlayListener {
         sample_main_settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("qqqqq","tiklandiiii");
                 FragmentTransaction fragmentTransaction = mainActivity.getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.addToBackStack(null);
                 DialogFragment dialogFragment = new SettingsFragment();
@@ -218,11 +191,9 @@ public class FPlayListener {
                 if (PlayMusic.karisikCal) {
                     PlayMusic.karisikCal = false;
                     karisik_cal.setBackground(Utils.getDrawable(context, R.drawable.svg_sirali));
-                    Toast.makeText(context, "Sıralı calacak", Toast.LENGTH_SHORT).show();
                 } else {
                     PlayMusic.karisikCal = true;
                     karisik_cal.setBackground(Utils.getDrawable(context, R.drawable.baseline_shuffle_white));
-                    Toast.makeText(context, "Karışık calacak", Toast.LENGTH_SHORT).show();
                 }
                 SharedPreferences sharedPreferences;
                 SharedPreferences.Editor editor;
@@ -238,16 +209,13 @@ public class FPlayListener {
             public void onClick(View v) {
                 if (PlayMusic.tekrarla == 0) {
                     PlayMusic.tekrarla = 1;
-                    Toast.makeText(context, "Gecerli sarkıyı tekrarlayacak", Toast.LENGTH_SHORT).show();
-                    tekrarla.setBackground(Utils.getDrawable(context,R.drawable.svg_repeat_one));
+                    tekrarla.setBackground(Utils.getDrawable(context, R.drawable.svg_repeat_one));
                 } else if (PlayMusic.tekrarla == 1) {
                     PlayMusic.tekrarla = 2;
-                    tekrarla.setBackground(Utils.getDrawable(context,R.drawable.svg_liste_finish));
-                    Toast.makeText(context, "Liste bittikten sonra duracak", Toast.LENGTH_SHORT).show();
+                    tekrarla.setBackground(Utils.getDrawable(context, R.drawable.svg_liste_finish));
                 } else {
                     PlayMusic.tekrarla = 0;
-                    tekrarla.setBackground(Utils.getDrawable(context,R.drawable.baseline_repeat_white));
-                    Toast.makeText(context, "Tum sarkıyı tekrarlayacak", Toast.LENGTH_SHORT).show();
+                    tekrarla.setBackground(Utils.getDrawable(context, R.drawable.baseline_repeat_white));
                 }
 
 
@@ -321,7 +289,7 @@ public class FPlayListener {
             @Override
             public void onClick(View view) {
                 if (!calmaListesiMuzik) {
-                    if (MusicList.musicData.size() == 0){
+                    if (MusicList.musicData.size() == 0) {
                         return;
                     }
                     PlayMusic.prevMusicDAta = MusicList.musicData.get(currentMusicPosition);
@@ -332,7 +300,7 @@ public class FPlayListener {
                         mainActivity.s.listeDegistir(MusicList.musicData, currentMusicPosition);
 
                 } else {
-                    if (OynatmaListesiFragment.music_oynat_list.size() == 0){
+                    if (OynatmaListesiFragment.music_oynat_list.size() == 0) {
                         return;
                     }
                     PlayMusic.prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition);
@@ -377,9 +345,9 @@ public class FPlayListener {
 
 
                 if (!calmaListesiMuzik) {
-                        if (MusicList.musicData.size() == 0){
-                            return;
-                        }
+                    if (MusicList.musicData.size() == 0) {
+                        return;
+                    }
                     PlayMusic.prevMusicDAta = MusicList.musicData.get(currentMusicPosition);
                     song_title.setText(MusicList.musicData.get(currentMusicPosition).getTitles());
                     song_artis.setText(MusicList.musicData.get(currentMusicPosition).getArtist());
@@ -387,7 +355,7 @@ public class FPlayListener {
                     if (mainActivity.s != null)
                         mainActivity.s.listeDegistir(MusicList.musicData, currentMusicPosition);
                 } else {
-                    if (OynatmaListesiFragment.music_oynat_list.size() == 0){
+                    if (OynatmaListesiFragment.music_oynat_list.size() == 0) {
                         return;
                     }
                     PlayMusic.prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition);

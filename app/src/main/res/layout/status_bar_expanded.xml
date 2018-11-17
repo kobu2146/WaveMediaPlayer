@@ -12,7 +12,7 @@
         android:scaleType="centerCrop"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/songs_cover"/>
+        android:background="@drawable/headphones"/>
 
     <LinearLayout
         android:gravity="center_vertical"

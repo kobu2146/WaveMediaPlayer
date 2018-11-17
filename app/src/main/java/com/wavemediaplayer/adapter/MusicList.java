@@ -7,8 +7,6 @@ import android.database.Cursor;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
-
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 import com.yydcdut.sdlv.Menu;
@@ -105,14 +103,11 @@ public class MusicList {
     public void getMusic(int Size, String... paths) {
         duzenlenmisListeyiCek();
 
-        int count = 0;
-
 
         if (sharedPreferences.contains("listsettings")) atamaYapildimi = true;
         folderControl = sharedPreferences.getStringSet("listsettings", new HashSet<String>());
 
         for (String f : sharedPreferences.getStringSet("listsettings", new HashSet<String>())) {
-            Log.e("wfolder", f);
         }
 
         ContentResolver contentResolver = context.getContentResolver();
@@ -138,7 +133,6 @@ public class MusicList {
 
                 String loc = "/storage/emulated/0/";
                 String[] split = currentLocation.substring(loc.length(), currentLocation.length()).split("/");
-//                Log.e(folderControl.contains(split[0]), split[0] );
 
 
                 if (!atamaYapildimi || folderControl.contains(split[0])) {
@@ -160,18 +154,15 @@ public class MusicList {
                             }
                         } else {
                             musicData.add(new MusicData(currentTitle, currentArtist, R.drawable.ic_music_nota_1, currentDuration, currentLocation, currentId));
-                            // Log.e("qqqqqqElse" + musicData.get(count).getTitles() + "-->" + currentTitle, musicData.get(count).getIds() + "-->" + currentId);
 
                         }
                     }
-                    count = musicData.size() - 1;
 
 
                 }
             }
             while (songCursor.moveToNext());
 
-            Log.e("while,", "cikti");
 
             if (!sharedPreferences.contains("listsettings")) {
                 if (musicData.size() > 0) {
@@ -236,8 +227,6 @@ public class MusicList {
                         }
 
                         if (isAdd) {
-                            Log.e("curremtLoc", currentLocation);
-                            Log.e("Size", currentSize);
 
                             if (!musicData.get(count).getIds().contains(currentId)) {
                                 musicData.add(new MusicData(currentTitle, currentArtist, R.drawable.music, currentDuration, currentLocation, currentId));
@@ -267,24 +256,19 @@ public class MusicList {
     public void removeFromAdapter(int s) {
         Uri uri = Uri.parse(MusicList.musicData.get(s).getLocation());
         File file = new File(uri.getPath());
-        Log.e("FILE", uri.getPath());
 
         if (file.exists()) {
-            Log.e("File", "var");
             if (file.delete()) {
                 if (file.exists()) {
                     context.deleteFile(file.getName());
                 }
                 scanaddedFile(MusicList.musicData.get(s).getLocation()); // bu mediadanda siliyor
-                Log.e(MusicList.musicData.remove(s).toString(), "silindi");
                 // burdaki parametreler simdilik boyle
                 getMusic("notification", "ringtone");
             } else {
-                Log.e("silindi", "hayır");
             }
         } else {
 
-            Log.e("File", "yok");
         }
 
     }
@@ -294,8 +278,6 @@ public class MusicList {
             MediaScannerConnection.scanFile(context, new String[]{path},
                     null, new MediaScannerConnection.OnScanCompletedListener() {
                         public void onScanCompleted(String path, Uri uri) {
-                            Log.i("ExternalStorage", "Scanned " + path + ":");
-                            Log.i("ExternalStorage", "-> uri=" + uri);
                             context.getContentResolver()
                                     .delete(uri, null, null);
                         }

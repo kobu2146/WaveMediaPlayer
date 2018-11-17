@@ -5,16 +5,12 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.ArraySet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -108,7 +103,6 @@ public class MusicListSettingsFragment extends Fragment {
                 String currentLocation = songCursor.getString(location);
                 String currentId = songCursor.getString(id);
                 String currentDuration = songCursor.getString(duration);
-                Log.e("qqqq",currentLocation);
                 String loc="/storage/emulated/0/";
                 String[] split= currentLocation.substring(loc.length(),currentLocation.length()).split("/");
                 if(!arrayList.contains(split[0])){
@@ -168,7 +162,6 @@ public class MusicListSettingsFragment extends Fragment {
             viewHolder.holderTextView.setText(list.get(position));
 
             for (String veri:adapterSet){
-                Log.e("oncreate",veri);
             }
 
             if(adapterSet.contains(arrayList.get(position))) viewHolder.holderCheckBox.setChecked(true);
@@ -198,7 +191,6 @@ public class MusicListSettingsFragment extends Fragment {
                     }else{
                         if(set.contains(arrayList.get(position))) {
                             for (String veri:set){
-                                Log.e("checkremove oldu",veri);
                             }
                             set.remove(arrayList.get(position));
 
@@ -210,7 +202,6 @@ public class MusicListSettingsFragment extends Fragment {
                     editor.commit();
 
                     for (String f:sharedPreferences.getStringSet("listsettings",new HashSet<String>())){
-                        Log.e("22222222wfolder",f);
                     }
 
 

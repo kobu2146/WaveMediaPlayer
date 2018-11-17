@@ -3,7 +3,6 @@ package com.wavemediaplayer.mfcontroller;
 import android.content.Context;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -19,6 +18,7 @@ public class MainManager {
 
     public MainManager(final MainActivity activity){
         this.activity=activity;
+        denemeeee();
 
         viewPager = (ViewPager) activity.findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -43,7 +43,6 @@ public class MainManager {
                     activity.musicListView.setVisibility(View.GONE);
                     activity.mainSearchLayout.setVisibility(View.GONE);
                     if (i == 1){
-                        Log.e("i",""+i);
                         if (MainActivity.playList_Ekleme_Yapildi){
                           new  OynatmaListesiFragment().getCalmaListeleri();
                             MainActivity.playList_Ekleme_Yapildi = false;
@@ -55,7 +54,6 @@ public class MainManager {
                     activity.edit_search.setVisibility(View.INVISIBLE);
                 }
 
-               // Log.e(String.valueOf(i1),String.valueOf(i));
             }
 
             @Override
@@ -83,7 +81,6 @@ public class MainManager {
     }
 
     public void onSwipeRight() {
-        Log.e("qswipe right", String.valueOf(viewPager.getChildCount()));
 
         if (viewPager.getCurrentItem() != 0) {
             int current = viewPager.getCurrentItem();
@@ -102,13 +99,17 @@ public class MainManager {
 
     }
 
-
+    private void denemeeee(){
+//        Intent serviceIntent = new Intent(activity, NotificationService.class);
+//        serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+//        activity.startService(serviceIntent);
+    }
 
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(activity.getSupportFragmentManager());
-        adapter.addFragment(new MainFragment(), "One");
-        adapter.addFragment(new OynatmaListesiFragment(), "PlayList");
+        adapter.addFragment(new MainFragment(), "All Songs");
+        adapter.addFragment(new OynatmaListesiFragment(), "PlayLists");
         viewPager.setAdapter(adapter);
     }
 }

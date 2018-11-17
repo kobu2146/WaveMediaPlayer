@@ -2,7 +2,6 @@ package com.wavemediaplayer.playlist;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.wavemediaplayer.MainActivity;
@@ -37,17 +36,11 @@ public class CreatePlayList {
 
         for (int i : playLists){
             String title = MusicList.musicData.get(i).getTitles();
-          //  Log.e("title1",title);
             String artirst = MusicList.musicData.get(i).getArtist();
-         //   Log.e("artirst1",artirst);
             Integer thumbnail = MusicList.musicData.get(i).getImages();
-          //  Log.e("thumbnail1",""+thumbnail);
             String duration = MusicList.musicData.get(i).getDuration();
-          //  Log.e("duration1",duration);
             String location = MusicList.musicData.get(i).getLocation();
-          //  Log.e("location1",location);
             String id = MusicList.musicData.get(i).getIds();
-           // Log.e("id1",id);
 
             plList.add(new PlayList(title,artirst,thumbnail,duration,location,id));
 
@@ -70,11 +63,8 @@ public class CreatePlayList {
 
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         String title = jsonObject.getString("title");
-                        Log.e("title2",title);
                         String artist = jsonObject.getString("artist");
-                        Log.e("artis2",artist);
                         int thumbnail = jsonObject.getInt("thumbnail");
-                        Log.e("thumbnail2",""+thumbnail);
                         String duration = jsonObject.getString("duration");
                         String location = jsonObject.getString("location");
                         String id = jsonObject.getString("id");
@@ -95,17 +85,11 @@ public class CreatePlayList {
         plList.clear();
         for (MusicData m : md){
             String title = m.getTitles();
-            Log.e("title1",title);
             String artirst = m.getArtist();
-            Log.e("artirst1",artirst);
             Integer thumbnail = m.getImages();
-            Log.e("thumbnail1",""+thumbnail);
             String duration = m.getDuration();
-            Log.e("duration1",duration);
             String location = m.getLocation();
-            Log.e("location1",location);
             String id = m.getIds();
-            Log.e("id1",id);
 
             plList.add(new PlayList(title,artirst,thumbnail,duration,location,id));
 
@@ -113,7 +97,6 @@ public class CreatePlayList {
         Gson gson = new Gson();
         String json = gson.toJson(plList);
         editor  = sharedPreferences.edit();
-        Log.e("key",listName);
         editor.remove(listName);
         editor.putString(listName,json);
 

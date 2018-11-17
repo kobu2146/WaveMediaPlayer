@@ -1,13 +1,12 @@
 package com.wavemediaplayer.fragments;
 
 import android.app.Dialog;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,7 +86,6 @@ public class PlayListsFragment extends DialogFragment {
         /** tum playlistleri ve iceriklerini cekiyor cekiyor */
         Map<String, ?> allEntries = sharedPreferences.getAll();
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            Log.e("map values", entry.getKey() + ": " + entry.getValue().toString());
             playLists.add(entry.getKey());
         }
 
@@ -128,10 +126,6 @@ public class PlayListsFragment extends DialogFragment {
 
     public void setList(ArrayList<Integer> tempList){
         music_position = tempList;
-
-        for (int i : music_position){
-            Log.e("templist",""+i);
-        }
     }
     private void klavyeDisable(){
         InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);

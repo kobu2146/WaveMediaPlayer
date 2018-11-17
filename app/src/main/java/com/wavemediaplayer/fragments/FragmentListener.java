@@ -3,33 +3,30 @@ package com.wavemediaplayer.fragments;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 
 import com.wavemediaplayer.MainActivity;
-import com.wavemediaplayer.adapter.MusicList;
 
 public class FragmentListener implements FragmentInterface {
     private MainActivity mainActivity;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
 
-    public FragmentListener(MainActivity mainActivity){
-        this.mainActivity=mainActivity;
-        fragmentManager= mainActivity.getSupportFragmentManager();
+    public FragmentListener(MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
+        fragmentManager = mainActivity.getSupportFragmentManager();
     }
 
 
-
     @Override
-    public void addFragment(Fragment ...fragment) {
-        for(Fragment frag:fragment){
-            if(frag!=null){
-                fragmentTransaction=fragmentManager.beginTransaction();
-                if(frag.isAdded()){
+    public void addFragment(Fragment... fragment) {
+        for (Fragment frag : fragment) {
+            if (frag != null) {
+                fragmentTransaction = fragmentManager.beginTransaction();
+                if (frag.isAdded()) {
                     fragmentTransaction.show(frag);
                     fragmentTransaction.commit();
-                }else{
-                    fragmentTransaction.add(android.R.id.content,frag);
+                } else {
+                    fragmentTransaction.add(android.R.id.content, frag);
                     fragmentTransaction.commit();
                 }
             }
@@ -37,14 +34,14 @@ public class FragmentListener implements FragmentInterface {
     }
 
     @Override
-    public boolean removeFragment(Fragment ...fragment) {
-        for(Fragment frag:fragment){
-            if(frag!=null){
-                fragmentTransaction=fragmentManager.beginTransaction();
-                if(frag.isAdded()){
+    public boolean removeFragment(Fragment... fragment) {
+        for (Fragment frag : fragment) {
+            if (frag != null) {
+                fragmentTransaction = fragmentManager.beginTransaction();
+                if (frag.isAdded()) {
                     fragmentTransaction.remove(frag);
                     fragmentTransaction.commit();
-                    if(frag.getClass().getSimpleName().equals("MusicListSettingsFragment")){
+                    if (frag.getClass().getSimpleName().equals("MusicListSettingsFragment")) {
                         mainActivity.musicList.getMusic("");
                         mainActivity.listsettingMusicDataDegistir();
                     }
@@ -56,8 +53,8 @@ public class FragmentListener implements FragmentInterface {
     }
 
     @Override
-    public void hideFragment(Fragment ...fragment) {
-        for(Fragment frag:fragment) {
+    public void hideFragment(Fragment... fragment) {
+        for (Fragment frag : fragment) {
             if (frag != null && !frag.isHidden()) {
                 fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.hide(frag);

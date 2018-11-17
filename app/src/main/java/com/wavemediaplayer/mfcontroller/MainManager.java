@@ -58,14 +58,6 @@ public class MainManager {
 
             @Override
             public void onPageSelected(int i) {
-//                if(activity.musicListView!=null){
-//                    if(!(i==0 || i==1)){
-//                        activity.musicListView.setVisibility(View.GONE);
-//                    }else{
-//                        activity.musicListView.setVisibility(View.VISIBLE);
-//                    }
-//                }
-
             }
 
             @Override

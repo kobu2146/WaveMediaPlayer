@@ -10,16 +10,13 @@ public class MainMenu {
     public MainMenu(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
         folderFragment = mainActivity.folderFragment;
-
     }
 
     public void search() {
-
     }
 
     public void equalizer() {
         mainActivity.fragmentListener.addFragment(mainActivity.equalizerFragment);
-
     }
 
     public void musiclist() {
@@ -39,7 +36,6 @@ public class MainMenu {
                 fragmentTransaction.hide(folderFragment);
             }
         }
-
         fragmentTransaction.commit();
     }
 }

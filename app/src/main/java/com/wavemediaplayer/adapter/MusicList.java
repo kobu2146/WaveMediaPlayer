@@ -23,14 +23,11 @@ import java.util.Map;
 import java.util.Set;
 
 public class MusicList {
-
-
     public static ArrayList<MusicData> musicData;
     public static Adapter adapter;
     private static boolean atamaYapildimi = false;
     private SlideAndDragListView musicListView;
     private Context context;
-    private boolean isAdd = true;
     private SharedPreferences sharedPreferences;
     private SharedPreferences sharedPreferences1;
     private SharedPreferences.Editor editor;
@@ -48,11 +45,7 @@ public class MusicList {
 
     private void init() {
         musicData = new ArrayList<>();
-
-
     }
-
-
     private void duzenlenmisListeyiCek() {
 
         sharedPreferences1 = context.getSharedPreferences(MainActivity.DUZENLENMIS_LISTE, Context.MODE_PRIVATE);
@@ -74,7 +67,6 @@ public class MusicList {
                             String ids = jsonObject.getString("id");
 
                             musicData.add(new MusicData(title, artist, thumbnail, duration, location, ids));
-
                         }
                     }
 
@@ -82,22 +74,17 @@ public class MusicList {
                     e.printStackTrace();
                 }
             }
-
             adapter = new Adapter(context, R.layout.custom_list_item, musicData, 0);
             musicListView.setMenu(new Menu(false));
             musicListView.setAdapter(adapter);
         }
 
     }
-
-
     // Eger herhangi bir bouyt belirtilmezse 0 kb den buyuk butun dosyaları alacak
     //  Eger engellenmesini istedigimiz pathler varsa paths ile belirtiyoruz
     public void getMusic(String... paths) {
         musicData.clear();
-
         getMusic(0, paths);
-        // getAllMusic();
     }
 
     public void getMusic(int Size, String... paths) {
@@ -106,10 +93,6 @@ public class MusicList {
 
         if (sharedPreferences.contains("listsettings")) atamaYapildimi = true;
         folderControl = sharedPreferences.getStringSet("listsettings", new HashSet<String>());
-
-        for (String f : sharedPreferences.getStringSet("listsettings", new HashSet<String>())) {
-        }
-
         ContentResolver contentResolver = context.getContentResolver();
         Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 
@@ -134,7 +117,6 @@ public class MusicList {
                 String loc = "/storage/emulated/0/";
                 String[] split = currentLocation.substring(loc.length(), currentLocation.length()).split("/");
 
-
                 if (!atamaYapildimi || folderControl.contains(split[0])) {
                     if (Integer.valueOf(currentSize) >= Size) {
 
@@ -142,7 +124,6 @@ public class MusicList {
                             boolean ekle = false;
                             for (MusicData md : musicData) {
                                 if (!md.getIds().equals(currentId)) {
-
                                     ekle = true;
                                 } else {
                                     ekle = false;
@@ -157,13 +138,10 @@ public class MusicList {
 
                         }
                     }
-
-
                 }
             }
+
             while (songCursor.moveToNext());
-
-
             if (!sharedPreferences.contains("listsettings")) {
                 if (musicData.size() > 0) {
                     editor = sharedPreferences.edit();
@@ -175,7 +153,6 @@ public class MusicList {
                         String[] split = myLocation.substring(loc.length(), myLocation.length()).split("/");
                         set.add(split[0]);
                     }
-
                     atamaYapildimi = true;
                     editor.clear();
                     editor.putStringSet("listsettings", set);
@@ -186,71 +163,9 @@ public class MusicList {
             songCursor.close();
         }
 
-
-        // getSDCardMusic(Size,paths);
         adapter = new Adapter(context, R.layout.custom_list_item, musicData, 0);
         musicListView.setMenu(new Menu(false));
         musicListView.setAdapter(adapter);
-        //  UIUtils.setListViewHeightBasedOnItems(musicListView);
-
-    }
-
-    private void getSDCardMusic(int Size, String... paths) {
-        int count = 0;
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri songUri = MediaStore.Audio.Media.INTERNAL_CONTENT_URI;
-        Cursor songCursor = contentResolver.query(songUri, null, null, null, null);
-
-        if (songCursor != null && songCursor.moveToFirst()) {
-            int songTitle = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-            int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-            int location = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
-            int size = songCursor.getColumnIndex(MediaStore.Audio.Media.SIZE);
-            int id = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
-            int duration = songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
-
-            do {
-                String currentTitle = songCursor.getString(songTitle);
-                String currentArtist = songCursor.getString(songArtist);
-                String currentSize = songCursor.getString(size);
-                String currentLocation = songCursor.getString(location);
-                String currentId = songCursor.getString(id);
-                String currentDuration = songCursor.getString(duration);
-
-                if (Integer.valueOf(currentSize) >= Size) {
-                    if (paths.length > 0) {
-                        isAdd = true;
-                        for (int i = 0; i < paths.length; i++) {
-                            if (currentLocation.toLowerCase().contains(paths[i])) {
-                                isAdd = false;
-                            }
-                        }
-
-                        if (isAdd) {
-
-                            if (!musicData.get(count).getIds().contains(currentId)) {
-                                musicData.add(new MusicData(currentTitle, currentArtist, R.drawable.music, currentDuration, currentLocation, currentId));
-                                count++;
-                            }
-                        }
-                    } else {
-                        if (!musicData.get(count).getIds().contains(currentId)) {
-                            musicData.add(new MusicData(currentTitle, currentArtist, R.drawable.music, currentDuration, currentLocation, currentId));
-                            count++;
-                        }
-                    }
-                }
-            }
-            while (songCursor.moveToNext());
-            songCursor.close();
-
-        }
-
-        adapter = new Adapter(context, R.layout.custom_list_item, musicData, 0);
-        musicListView.setMenu(new Menu(false));
-        musicListView.setAdapter(adapter);
-
-
     }
 
     public void removeFromAdapter(int s) {

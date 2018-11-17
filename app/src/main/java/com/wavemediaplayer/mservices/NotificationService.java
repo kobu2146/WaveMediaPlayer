@@ -1,6 +1,5 @@
 package com.wavemediaplayer.mservices;
 
-import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -13,14 +12,8 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
-import android.os.Debug;
-import android.os.Handler;
 import android.os.IBinder;
-import android.app.Service;
-import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
-import android.view.View;
 import android.widget.RemoteViews;
 
 import com.wavemediaplayer.MainActivity;
@@ -35,15 +28,15 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class NotificationService extends Service {
-    Notification status;
-    private final String LOG_TAG = "NotificationService";
     public static MediaPlayer mediaPlayer;
     public static ArrayList<MusicData> list;
     public static int currentPos = 0;
     public static boolean calmaListesiMuzik;
     public static ArrayList<Integer> calimaListesiOncekiPos = new ArrayList<>();
     public static ArrayList<Integer> mainListeOncekiPos = new ArrayList<>();
+    private final String LOG_TAG = "NotificationService";
     private final IBinder mBinder = new MyBinder();
+    Notification status;
     private RemoteViews views;
     private RemoteViews bigViews;
     private PendingIntent pendingIntent;
@@ -55,36 +48,25 @@ public class NotificationService extends Service {
         return mBinder;
     }
 
-    public class MyBinder extends Binder {
-        public NotificationService getService() {
-            return NotificationService.this;
-        }
-    }
-
-    public void activityPlay(){
-        if(views!=null){
-            views.setImageViewResource(R.id.status_bar_play,
-                    R.drawable.svgpause);
-            bigViews.setImageViewResource(R.id.status_bar_play,
-                    R.drawable.svgpause);
-            Log.e("test","play");
-            create();
-        }
-
+    public void activityPlay() {
+        views.setImageViewResource(R.id.status_bar_play,
+                R.drawable.svgpause);
+        bigViews.setImageViewResource(R.id.status_bar_play,
+                R.drawable.svgpause);
+        create();
 
     }
-    public void activityPause(){
+
+    public void activityPause() {
         views.setImageViewResource(R.id.status_bar_play,
                 R.drawable.svgplay);
         bigViews.setImageViewResource(R.id.status_bar_play,
                 R.drawable.svgplay);
-        Log.e("test","pause");
         create();
 
     }
 
     public void listeDegistir(ArrayList<MusicData> musicData, int currentPos) {
-        Log.e("test","lllllllllllllşş");
 
         list = musicData;
         activityPlay();
@@ -103,18 +85,19 @@ public class NotificationService extends Service {
         create();
     }
 
-
-    private void servicePause(){
+    private void servicePause() {
         Intent myIntent = new Intent("speedExceeded");
         myIntent.putExtra("servicePause", "servicePause");
         LocalBroadcastManager.getInstance(this).sendBroadcast(myIntent);
     }
-    private void servicePlay(){
+
+    private void servicePlay() {
         Intent myIntent = new Intent("speedExceeded");
         myIntent.putExtra("servicePlay", "servicePlay");
         LocalBroadcastManager.getInstance(this).sendBroadcast(myIntent);
     }
-    private void serviceNext(){
+
+    private void serviceNext() {
         FPlayListener.calmaListesiMuzik = this.calmaListesiMuzik;
         FPlayListener.currentMusicPosition = currentPos;
 
@@ -123,17 +106,17 @@ public class NotificationService extends Service {
         myIntent.putExtra("serviceNextpos", FPlayListener.currentMusicPosition);
         LocalBroadcastManager.getInstance(this).sendBroadcast(myIntent);
     }
-    private void serviceBefore(){
+
+    private void serviceBefore() {
         Intent myIntent = new Intent("speedExceeded");
         myIntent.putExtra("serviceBefore", "serviceBefore");
         myIntent.putExtra("serviceBeforepos", currentPos);
         LocalBroadcastManager.getInstance(this).sendBroadcast(myIntent);
     }
 
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(intent!=null && intent.getAction()!=null){
+        if (intent != null && intent.getAction() != null) {
             switch (intent.getAction()) {
                 case Constants.ACTION.STARTFOREGROUND_ACTION:
                     showNotification();
@@ -156,8 +139,6 @@ public class NotificationService extends Service {
                     break;
             }
         }
-
-        Log.e("qqqq","service started");
         return START_STICKY;
     }
 
@@ -166,25 +147,25 @@ public class NotificationService extends Service {
         calmayaDevamEt(true);
         if (mediaPlayer != null) {
             mediaPlayer.stop();
-            mediaPlayer=MediaPlayer.create(getApplicationContext(), Uri.parse(list.get(currentPos).getLocation()));
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), Uri.parse(list.get(currentPos).getLocation()));
             mediaPlayer.start();
-            listeDegistir(list,currentPos);
+            listeDegistir(list, currentPos);
         }
     }
-    private void pauseSong(){
-        if(mediaPlayer!=null){
-            if(mediaPlayer.isPlaying()){
+
+    private void pauseSong() {
+        if (mediaPlayer != null) {
+            if (mediaPlayer.isPlaying()) {
                 mediaPlayer.pause();
                 activityPause();
                 servicePause();
-            }else{
+            } else {
                 mediaPlayer.start();
                 activityPlay();
                 servicePlay();
             }
             create();
         }
-
     }
 
     private void previousSong() {
@@ -192,30 +173,27 @@ public class NotificationService extends Service {
         calmayaDevamEt(false);
         if (mediaPlayer != null) {
             mediaPlayer.stop();
-            mediaPlayer=MediaPlayer.create(getApplicationContext(), Uri.parse(list.get(currentPos).getLocation()));
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), Uri.parse(list.get(currentPos).getLocation()));
             mediaPlayer.start();
-            listeDegistir(list,currentPos);
+            listeDegistir(list, currentPos);
         }
     }
-    private void exitPlayer(){
-        if(mediaPlayer!=null){
+
+    private void exitPlayer() {
+        if (mediaPlayer != null) {
             mediaPlayer.stop();
         }
         stopForeground(true);
         stopSelf();
     }
 
-
     private void showNotification() {
-// Using RemoteViews to bind custom layouts into Notification
         views = new RemoteViews(getPackageName(),
                 R.layout.status_bar);
         bigViews = new RemoteViews(getPackageName(),
                 R.layout.status_bar_expanded);
 
-// showing default album image
-//        views.setViewVisibility(R.id.status_bar_icon, View.VISIBLE);
-//        views.setViewVisibility(R.id.status_bar_album_art, View.GONE);
+
         bigViews.setImageViewBitmap(R.id.status_bar_album_art,
                 Constants.getDefaultAlbumArt(this));
 
@@ -270,14 +248,12 @@ public class NotificationService extends Service {
         bigViews.setTextViewText(R.id.status_bar_artist_name, "");
 
         bigViews.setTextViewText(R.id.status_bar_artist_name, "");
-
-
     }
 
-    private void create(){
-        Notification.Builder nBuilder=new Notification.Builder(this);
+    private void create() {
+        Notification.Builder nBuilder = new Notification.Builder(this);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
             String name = "Wave ";
             int importance = NotificationManager.IMPORTANCE_LOW;
@@ -285,26 +261,15 @@ public class NotificationService extends Service {
             mNotificationManager.createNotificationChannel(mChannel);
 
             nBuilder.setChannelId(mChannel.getId());
-
-
-
-//            status = new Notification.Builder(this).setPublicVersion().setChannelId(mChannel.getId()).build();
-
-
-        }else{
-//            status = new Notification.Builder(this).build();
-
-
-
         }
 
-        status=new Notification();
+        status = new Notification();
 
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             nBuilder.setVisibility(Notification.VISIBILITY_PUBLIC);
             nBuilder.setPublicVersion(status);
         }
-        status=nBuilder.build();
+        status = nBuilder.build();
 
         status.contentView = views;
         status.bigContentView = bigViews;
@@ -320,13 +285,13 @@ public class NotificationService extends Service {
         PlayMusic.karisikCal = sharedPreferences.getBoolean("karisik", true);
         PlayMusic.tekrarla = sharedPreferences2.getInt("tekrarla", 0);
         if (FPlayListener.calmaListesiMuzik) {
-            list=OynatmaListesiFragment.music_oynat_list;
+            list = OynatmaListesiFragment.music_oynat_list;
             tekrarPos = FPlayListener.currentMusicPosition;
             this.currentPos = FPlayListener.currentMusicPosition;
 
 
         } else {
-            list=MusicList.musicData;
+            list = MusicList.musicData;
             tekrarPos = FPlayListener.currentMusicPosition;
             this.currentPos = FPlayListener.currentMusicPosition;
         }
@@ -343,9 +308,7 @@ public class NotificationService extends Service {
      */
     public void calmayaDevamEt(boolean ileriCal) {
         if (!PlayMusic.karisikCal) { // Sıralı calma aktifse
-            Log.e("sirali", "cal");
             if (!NotificationService.calmaListesiMuzik) {//Ana playerdan calınacaksa
-                Log.e("ana", "music");
                 if (list.size() == 0) {
                     return;
                 }
@@ -359,7 +322,7 @@ public class NotificationService extends Service {
                         if (NotificationService.currentPos != 0) {
                             NotificationService.currentPos--;
                         } else {
-                            NotificationService.currentPos = list.size()-1;
+                            NotificationService.currentPos = list.size() - 1;
                         }
                     }
 
@@ -393,7 +356,7 @@ public class NotificationService extends Service {
                         if (NotificationService.currentPos != 0) {
                             NotificationService.currentPos--;
                         } else {
-                            NotificationService.currentPos = list.size()-1;
+                            NotificationService.currentPos = list.size() - 1;
                         }
                     }
 
@@ -410,12 +373,10 @@ public class NotificationService extends Service {
                 else {
                     listeDegistir(list, tekrarPos);
                 }
-
             }
         }
         // Karısık sarkı calma
         else {
-            Log.e("karisik", "cal");
             // ana music playerdan karısık calma
             if (!NotificationService.calmaListesiMuzik) {
                 if (NotificationService.list.size() == 0) {
@@ -473,6 +434,12 @@ public class NotificationService extends Service {
                 }
             }
 
+        }
+    }
+
+    public class MyBinder extends Binder {
+        public NotificationService getService() {
+            return NotificationService.this;
         }
     }
 

@@ -49,7 +49,6 @@ public class SettingsFragment extends DialogFragment {
             public void onClick(View v) {
                 ((MainActivity)getActivity()).mainMenu.equalizer();
                 dismiss();
-
             }
         });
 
@@ -60,13 +59,10 @@ public class SettingsFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
 
         Window window = getDialog().getWindow();
-        // set "origin" to top left corner, so to speak
         if(((MainActivity)getActivity()).isSwipeOpen)  window.setGravity(Gravity.TOP|Gravity.RIGHT);
         else window.setGravity(Gravity.BOTTOM|Gravity.RIGHT);
 
-        // after that, setting values for x and y works "naturally"
         WindowManager.LayoutParams params = window.getAttributes();
-//        params.x = 300;
         params.y = 100;
         window.setAttributes(params);
 
@@ -78,30 +74,4 @@ public class SettingsFragment extends DialogFragment {
         dialog.getWindow().getAttributes().windowAnimations = R.style.MyCustomAnimation;
         return dialog;
     }
-
-
-//    @Override
-//    public Dialog onCreateDialog(Bundle savedInstanceState)
-//    {
-//        // Set a theme on the dialog builder constructor!
-//        AlertDialog.Builder builder =
-//                new AlertDialog.Builder( getActivity(), R.style.MyAnimation_Window );
-//
-//        builder
-//                .setTitle( "Your title" )
-//                .setMessage( "Your message" )
-//                .setPositiveButton( "OK" , new DialogInterface.OnClickListener()
-//                {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dismiss();
-//                    }
-//                });
-//        return builder.create();
-//    }
-
-
-
-
-
 }

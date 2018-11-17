@@ -80,6 +80,8 @@ public class FPlayListener {
         myseekbar = view.findViewById(R.id.sample_main_seekBar3);
         handler = new Handler();
 
+        song_title.setSelected(true);
+
         if (PlayMusic.tekrarla == 0) {
             tekrarla.setBackground(Utils.getDrawable(context, R.drawable.baseline_repeat_white));
         } else if (PlayMusic.tekrarla == 1) {
@@ -123,8 +125,6 @@ public class FPlayListener {
 
 
     public void playMusic(int position) {
-        /** Music play */
-
         song_title.setText(MusicList.musicData.get(position).getTitles());
         song_artis.setText(MusicList.musicData.get(position).getArtist());
         pl.playMusic(MusicList.musicData.get(position).getLocation());
@@ -158,7 +158,6 @@ public class FPlayListener {
         return false;
     }
 
-
     public void icerikDegistirme() {
         if (!MusicList.musicData.isEmpty()) {
             if (!calmaListesiMuzik) {
@@ -169,9 +168,7 @@ public class FPlayListener {
                 song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getArtist());
             }
         }
-
     }
-
 
     public void f_ListenerEvent() {
 

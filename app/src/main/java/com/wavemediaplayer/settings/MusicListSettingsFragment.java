@@ -43,52 +43,41 @@ public class MusicListSettingsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        activity=getActivity();
-        sharedPreferences=MainActivity.context.getSharedPreferences("settings", Context.MODE_PRIVATE);
-        linearLayout=new LinearLayout(activity);
-        LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
+        activity = getActivity();
+        sharedPreferences = MainActivity.context.getSharedPreferences("settings", Context.MODE_PRIVATE);
+        linearLayout = new LinearLayout(activity);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         linearLayout.setLayoutParams(params);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         linearLayout.setBackgroundColor(getResources().getColor(R.color.bar7));
 
-        TextView textView=new TextView(activity);
+        TextView textView = new TextView(activity);
         textView.setText("Select Music Files");
         textView.setTextColor(getResources().getColor(android.R.color.white));
         textView.setTextSize(20f);
-        LinearLayout.LayoutParams paramstext=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-        paramstext.gravity=Gravity.CENTER_HORIZONTAL;
+        LinearLayout.LayoutParams paramstext = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        paramstext.gravity = Gravity.CENTER_HORIZONTAL;
         textView.setGravity(View.TEXT_ALIGNMENT_CENTER);
         textView.setLayoutParams(paramstext);
-        paramstext.topMargin=20;
+        paramstext.topMargin = 20;
         linearLayout.addView(textView);
-
-        listView=new ListView(getActivity());
-        listView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
+        listView = new ListView(getActivity());
+        listView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         linearLayout.addView(listView);
-
-
-
-        view=linearLayout;
+        view = linearLayout;
         getMusic();
-
-
 
         return view;
     }
 
-
-    public void getMusic(){
-
-
-        arrayList=new ArrayList<>();
-
+    public void getMusic() {
+        arrayList = new ArrayList<>();
 
         /**buradaki amaç müzik olan klasörleri elde tutmak bunları kapatarak o klasöre ait müzikleri listenden çıkarabilirsin*/
-
         ContentResolver contentResolver = view.getContext().getContentResolver();
         Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Cursor songCursor = contentResolver.query(songUri,null,null,null,null);
-        if (songCursor != null && songCursor.moveToFirst()){
+        Cursor songCursor = contentResolver.query(songUri, null, null, null, null);
+        if (songCursor != null && songCursor.moveToFirst()) {
             int songTitle = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
             int location = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
@@ -103,26 +92,14 @@ public class MusicListSettingsFragment extends Fragment {
                 String currentLocation = songCursor.getString(location);
                 String currentId = songCursor.getString(id);
                 String currentDuration = songCursor.getString(duration);
-                String loc="/storage/emulated/0/";
-                String[] split= currentLocation.substring(loc.length(),currentLocation.length()).split("/");
-                if(!arrayList.contains(split[0])){
+                String loc = "/storage/emulated/0/";
+                String[] split = currentLocation.substring(loc.length(), currentLocation.length()).split("/");
+                if (!arrayList.contains(split[0])) {
                     arrayList.add(split[0]);
                 }
-
-
-
             }
             while (songCursor.moveToNext());
-
-
-
-
-
-
-
-
-
-            myAdapter=new MyAdapter(activity, R.layout.fragment_settings_musiclist_item,arrayList);
+            myAdapter = new MyAdapter(activity, R.layout.fragment_settings_musiclist_item, arrayList);
             listView.setAdapter(myAdapter);
             songCursor.close();
         }
@@ -138,33 +115,34 @@ public class MusicListSettingsFragment extends Fragment {
         private Set<String> adapterSet;
 
 
-        public MyAdapter(@NonNull Context context, int resource,ArrayList<String> list) {
-            super(context, resource,list);
-            this.context=context;
-            this.resource=resource;
-            this.list=list;
-            adapterSet=sharedPreferences.getStringSet("listsettings",new HashSet<String>());
+        public MyAdapter(@NonNull Context context, int resource, ArrayList<String> list) {
+            super(context, resource, list);
+            this.context = context;
+            this.resource = resource;
+            this.list = list;
+            adapterSet = sharedPreferences.getStringSet("listsettings", new HashSet<String>());
         }
 
         @NonNull
         @Override
         public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             ViewHolder viewHolder;
-            if(convertView==null){
-                viewHolder=new ViewHolder();
-                convertView=LayoutInflater.from(context).inflate(resource,parent,false);
-                viewHolder.holderTextView=convertView.findViewById(R.id.settingsListTextView);
+            if (convertView == null) {
+                viewHolder = new ViewHolder();
+                convertView = LayoutInflater.from(context).inflate(resource, parent, false);
+                viewHolder.holderTextView = convertView.findViewById(R.id.settingsListTextView);
                 convertView.setTag(viewHolder);
-                viewHolder.holderCheckBox=convertView.findViewById(R.id.settingsListCheckBox);
-            }else{
-                viewHolder=(ViewHolder)convertView.getTag();
+                viewHolder.holderCheckBox = convertView.findViewById(R.id.settingsListCheckBox);
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
             }
             viewHolder.holderTextView.setText(list.get(position));
 
-            for (String veri:adapterSet){
+            for (String veri : adapterSet) {
             }
 
-            if(adapterSet.contains(arrayList.get(position))) viewHolder.holderCheckBox.setChecked(true);
+            if (adapterSet.contains(arrayList.get(position)))
+                viewHolder.holderCheckBox.setChecked(true);
             else viewHolder.holderCheckBox.setChecked(false);
 
             viewHolder.holderCheckBox.setChecked(viewHolder.holderCheckBox.isChecked());
@@ -173,50 +151,46 @@ public class MusicListSettingsFragment extends Fragment {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
 
-                    editor=sharedPreferences.edit();
+                    editor = sharedPreferences.edit();
                     Set<String> set;
-                    set = sharedPreferences.getStringSet("listsettings",null);
-                    if(set==null) set=new HashSet<>();
+                    set = sharedPreferences.getStringSet("listsettings", null);
+                    if (set == null) set = new HashSet<>();
                     else {
                         editor.remove("listsettings");
                         editor.apply();
                         editor.commit();
                     }
 
-                    if(isChecked){
-                        if(!set.contains(arrayList.get(position))) {
+                    if (isChecked) {
+                        if (!set.contains(arrayList.get(position))) {
                             set.add(arrayList.get(position));
                         }
 
-                    }else{
-                        if(set.contains(arrayList.get(position))) {
-                            for (String veri:set){
+                    } else {
+                        if (set.contains(arrayList.get(position))) {
+                            for (String veri : set) {
                             }
                             set.remove(arrayList.get(position));
 
                         }
                     }
 
-                    editor.putStringSet("listsettings",set);
+                    editor.putStringSet("listsettings", set);
                     editor.apply();
                     editor.commit();
 
-                    for (String f:sharedPreferences.getStringSet("listsettings",new HashSet<String>())){
+                    for (String f : sharedPreferences.getStringSet("listsettings", new HashSet<String>())) {
                     }
-
 
 
                 }
             });
 
 
-
-
-
             return convertView;
         }
 
-        public class ViewHolder{
+        public class ViewHolder {
             public TextView holderTextView;
             public CheckBox holderCheckBox;
         }

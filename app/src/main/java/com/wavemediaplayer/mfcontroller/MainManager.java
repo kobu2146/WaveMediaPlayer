@@ -108,9 +108,8 @@ public class MainManager {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(activity.getSupportFragmentManager());
-        adapter.addFragment(new MainFragment(), "One");
-        adapter.addFragment(new OynatmaListesiFragment(), "PlayList");
-        adapter.addFragment(new DownloadFragment(), "Download");
+        adapter.addFragment(new MainFragment(), "All Songs");
+        adapter.addFragment(new OynatmaListesiFragment(), "PlayLists");
         viewPager.setAdapter(adapter);
     }
 }

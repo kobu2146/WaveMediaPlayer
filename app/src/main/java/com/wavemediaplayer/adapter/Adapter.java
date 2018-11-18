@@ -30,7 +30,12 @@ public class Adapter extends ArrayAdapter<MusicData> {
 
             if (o != null && o instanceof Integer) {
                 if (kaynak == 0) {
-                    MainActivity.musicListView.startDrag(((Integer) o).intValue());
+                    int pos = Integer.parseInt(o.toString());
+
+                    if (pos == 1 || pos == 0) {
+                        pos = pos + 2;
+                    }
+                    MainActivity.musicListView.startDrag(pos);
                 } else if (kaynak == 1) {
                     OynatmaListesiFragment.oynatma_listesi.startDrag(((Integer) o).intValue());
                 }
@@ -39,7 +44,6 @@ public class Adapter extends ArrayAdapter<MusicData> {
             return false;
         }
     };
-
 
 
     public Adapter(Context context, int resource, ArrayList<MusicData> musicData, int kaynak) {

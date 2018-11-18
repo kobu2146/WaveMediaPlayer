@@ -28,9 +28,21 @@
     <style name="WhiteSpinner">
         <item name="backgroundTint">#fff</item>
 
+
     </style>
 
 
+    <style name="spinner_style">
+        <item name="backgroundTint">#fff</item>
+        <item name="android:paddingLeft">10dp</item>
+        <!--<item name="android:dropDownWidth">533dp</item>-->
+        <item name="android:showDividers">none</item>
+        <item name="android:dividerHeight">110dp</item>
+        <item name="android:popupBackground">@drawable/ic_music_nota_1</item>
+        <item name="android:dropDownHeight">170dp</item>
+        <item name="android:scrollbarAlwaysDrawVerticalTrack">true</item>
+        <item name="android:dropDownSelector">@android:color/white</item>
+    </style>
 
 
 </resources>

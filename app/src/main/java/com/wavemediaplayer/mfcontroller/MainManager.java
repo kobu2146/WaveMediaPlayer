@@ -74,19 +74,25 @@ public class MainManager {
 
     public void onSwipeRight() {
 
-        if (viewPager.getCurrentItem() != 0) {
-            int current = viewPager.getCurrentItem();
-            current--;
-            viewPager.setCurrentItem(current);
+        if(!activity.isSwipeOpen){
+            if (viewPager.getCurrentItem() != 0) {
+                int current = viewPager.getCurrentItem();
+                current--;
+                viewPager.setCurrentItem(current);
+            }
         }
+
 
     }
 
     public void onSwipeLeft() {
-        if (viewPager.getCurrentItem() != viewPager.getChildCount()) {
-            int current = viewPager.getCurrentItem();
-            current++;
-            viewPager.setCurrentItem(current);
+        if(!activity.isSwipeOpen){
+            if (viewPager.getCurrentItem() != viewPager.getChildCount()) {
+                int current = viewPager.getCurrentItem();
+                current++;
+                viewPager.setCurrentItem(current);
+            }
+
         }
 
     }

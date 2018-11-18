@@ -15,6 +15,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SlidingPaneLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -287,14 +288,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mLayout = findViewById(R.id.activity_main);
         fPlayListener = new FPlayListener(this, mainView);
         fPlayListener.f_ListenerEvent();
+        mLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+            }
+            @Override
+            public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
+                if(newState==(SlidingUpPanelLayout.PanelState.EXPANDED)){
+                    isSwipeOpen=true;
+                }else if(newState==(SlidingUpPanelLayout.PanelState.COLLAPSED)){
+                    isSwipeOpen=false;
+                }
+            }
+        });
 
         if (MusicList.musicData.size() > 0) {
             FPlayListener.currentMusicPosition = pos;
             PlayMusic.prevMusicDAta = MusicList.musicData.get(pos);
-
         }
-
-
         multipleChoise();
         listviewOneClickListener();
     }
@@ -303,8 +314,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-
                 klavyeDisable();
                 if (!isMulti) {
                     FPlayListener.calmaListesiMuzik = false;
@@ -484,6 +493,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 mLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
                 isSwipeOpen = true;
             }
+            Log.e("eventclick",String.valueOf(isSwipeOpen));
         }
     }
 
@@ -508,7 +518,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (mLayout != null &&
                 (mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
             mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+            isSwipeOpen=false;
         } else {
+            isSwipeOpen=true;
             super.onBackPressed();
         }
     }

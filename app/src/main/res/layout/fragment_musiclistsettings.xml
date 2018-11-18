@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bar7"
+    android:padding="16dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
+        <TextView
+            android:textSize="18dp"
+            android:textColor="@color/white"
+            android:text="Ignore tracks with duration less than (seconds)"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
+            android:layout_gravity="center_vertical"/>
+
+        <Spinner
+            android:layout_marginTop="8dp"
+            android:id="@+id/musiclistSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/WhiteSpinner"
+            android:spinnerMode="dropdown"
+            android:layout_gravity="right"
+            />
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_marginTop="20dp"
+        android:background="@android:color/black"
+        android:layout_width="match_parent"
+        android:layout_height="2dp" />
+
+    <TextView
+        android:layout_marginTop="20dp"
+        android:textColor="@color/white"
+        android:textSize="18dp"
+        android:text="Select Music Files"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ListView
+        android:layout_marginTop="10dp"
+        android:id="@+id/musiclistListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:dividerHeight="1dp"
+        android:divider="@color/bar1">
+
+
+    </ListView>
+
+</LinearLayout>

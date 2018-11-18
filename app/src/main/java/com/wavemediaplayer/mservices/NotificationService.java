@@ -14,6 +14,7 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.wavemediaplayer.MainActivity;
@@ -59,11 +60,14 @@ public class NotificationService extends Service {
     }
 
     public void activityPause() {
-        views.setImageViewResource(R.id.status_bar_play,
-                R.drawable.svgplay);
-        bigViews.setImageViewResource(R.id.status_bar_play,
-                R.drawable.svgplay);
-        create();
+        if(views!=null){
+            views.setImageViewResource(R.id.status_bar_play,
+                    R.drawable.svgplay);
+            bigViews.setImageViewResource(R.id.status_bar_play,
+                    R.drawable.svgplay);
+            create();
+        }
+
 
     }
 
@@ -260,7 +264,6 @@ public class NotificationService extends Service {
             int importance = NotificationManager.IMPORTANCE_LOW;
             NotificationChannel mChannel = new NotificationChannel("com.wavemediaplayer", name, importance);
             mNotificationManager.createNotificationChannel(mChannel);
-
             nBuilder.setChannelId(mChannel.getId());
         }
 
@@ -277,6 +280,7 @@ public class NotificationService extends Service {
         status.flags = Notification.FLAG_ONGOING_EVENT;
         status.icon = R.drawable.ic_launcher;
         status.contentIntent = pendingIntent;
+        Log.e("qqqqqqqq","startforeground");
         startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
     }
 

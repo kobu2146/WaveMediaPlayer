@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -15,11 +16,13 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.wavemediaplayer.MainActivity;
@@ -31,13 +34,14 @@ import java.util.Set;
 
 public class MusicListSettingsFragment extends Fragment {
     private View view;
-    private LinearLayout linearLayout;
     private MyAdapter myAdapter;
     private ArrayList<String> arrayList;
     private Activity activity;
     private ListView listView;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+    private Spinner musiclistSpinner;
+    private ArrayList<String> spinnerList;
 
 
     @Nullable
@@ -45,26 +49,66 @@ public class MusicListSettingsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         activity = getActivity();
         sharedPreferences = MainActivity.context.getSharedPreferences("settings", Context.MODE_PRIVATE);
-        linearLayout = new LinearLayout(activity);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        linearLayout.setLayoutParams(params);
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        linearLayout.setBackgroundColor(getResources().getColor(R.color.bar7));
+        view = inflater.inflate(R.layout.fragment_musiclistsettings, container, false);
+        listView = view.findViewById(R.id.musiclistListView);
+        musiclistSpinner = view.findViewById(R.id.musiclistSpinner);
+        spinnerList=new ArrayList<>();
+        spinnerList.add("Don't ignore - include all");
+        spinnerList.add("2");
+        spinnerList.add("6");
+        spinnerList.add("10");
+        spinnerList.add("15");
+        spinnerList.add("30");
 
-        TextView textView = new TextView(activity);
-        textView.setText("Select Music Files");
-        textView.setTextColor(getResources().getColor(android.R.color.white));
-        textView.setTextSize(20f);
-        LinearLayout.LayoutParams paramstext = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        paramstext.gravity = Gravity.CENTER_HORIZONTAL;
-        textView.setGravity(View.TEXT_ALIGNMENT_CENTER);
-        textView.setLayoutParams(paramstext);
-        paramstext.topMargin = 20;
-        linearLayout.addView(textView);
-        listView = new ListView(getActivity());
-        listView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        linearLayout.addView(listView);
-        view = linearLayout;
+        ArrayAdapter<String> equalizerPresetSpinnerAdapter
+                = new ArrayAdapter<String>(view.getContext(),
+                android.R.layout.simple_spinner_item,
+                spinnerList) {
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+
+                TextView text = (TextView) view.findViewById(android.R.id.text1);
+                text.setTextColor(getResources().getColor(android.R.color.darker_gray));
+                text.setTextSize(18);
+                text.setPadding(20, 10, 20, 10);
+                view.setBackgroundColor(getResources().getColor(R.color.bar7));
+
+                return view;
+
+            }
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text = (TextView) view.findViewById(android.R.id.text1);
+                text.setTextColor(getResources().getColor(android.R.color.darker_gray));
+                text.setTextSize(18);
+                text.setPadding(20, 10, 20, 10);
+                return view;
+            }
+        };
+
+
+
+        musiclistSpinner.setAdapter(equalizerPresetSpinnerAdapter);
+        musiclistSpinner.setSelection(spinnerList.indexOf(sharedPreferences.getString("musicDuration",spinnerList.get(0))));
+        musiclistSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                editor=sharedPreferences.edit();
+                editor.putString("musicDuration",spinnerList.get(position));
+                editor.apply();
+                editor.commit();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
         getMusic();
 
         return view;

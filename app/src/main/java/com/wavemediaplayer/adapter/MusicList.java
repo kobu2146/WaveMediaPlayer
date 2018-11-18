@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
+
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
 import com.yydcdut.sdlv.Menu;
@@ -90,6 +92,10 @@ public class MusicList {
     public void getMusic(int Size, String... paths) {
         duzenlenmisListeyiCek();
 
+        String durationMusicSettings=sharedPreferences.getString("musicDuration","ignore");
+        int musicDurationSettings=0;
+        if(!durationMusicSettings.contains("ignore")) musicDurationSettings=Integer.valueOf(durationMusicSettings);
+
 
         if (sharedPreferences.contains("listsettings")) atamaYapildimi = true;
         folderControl = sharedPreferences.getStringSet("listsettings", new HashSet<String>());
@@ -113,12 +119,10 @@ public class MusicList {
                 String currentLocation = songCursor.getString(location);
                 String currentId = songCursor.getString(id);
                 String currentDuration = songCursor.getString(duration);
-
                 String loc = "/storage/emulated/0/";
                 String[] split = currentLocation.substring(loc.length(), currentLocation.length()).split("/");
-
                 if (!atamaYapildimi || folderControl.contains(split[0])) {
-                    if (Integer.valueOf(currentSize) >= Size) {
+                    if (Integer.valueOf(currentDuration) >= musicDurationSettings*1000) {
 
                         if (musicData.size() > 0) {
                             boolean ekle = false;

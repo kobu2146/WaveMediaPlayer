@@ -61,6 +61,7 @@ public class SettingsFragment extends DialogFragment {
         Window window = getDialog().getWindow();
         if(((MainActivity)getActivity()).isSwipeOpen)  window.setGravity(Gravity.TOP|Gravity.RIGHT);
         else window.setGravity(Gravity.BOTTOM|Gravity.RIGHT);
+        Log.e("qqqsettingfrag",String.valueOf(((MainActivity)getActivity()).isSwipeOpen));
 
         WindowManager.LayoutParams params = window.getAttributes();
         params.y = 100;

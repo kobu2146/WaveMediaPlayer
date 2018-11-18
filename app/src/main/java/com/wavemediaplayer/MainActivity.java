@@ -40,6 +40,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.google.android.gms.ads.AdLoader;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.NativeExpressAdView;
 import com.google.gson.Gson;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.wavemediaplayer.adapter.MusicData;
@@ -96,6 +100,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     SlidingUpPanelLayout mLayout;
     GestureDetector gestureDetector;
     GestureListener gestureListener;
+    SharedPreferences sharedPreferences2;
+    MainManager mainManager;
+    View HeaderView;
+    View adHeader;
+    AdView mAdView;
+    NativeExpressAdView nativeExpressAdView;
+
     private boolean isMulti = false;
     private boolean isDrag = false;
     private MusicData mDraggedEntity;
@@ -105,8 +116,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private SharedPreferences sharedPreferences2;
     private IntentFilter intentFilter;
     private ImageView mainsearchButton;
-    private MainManager mainManager;
-    private View HeaderView;
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -143,6 +152,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mainSearchLayout = HeaderView.findViewById(R.id.mainSearchLayout);
         mainsearchButton = HeaderView.findViewById(R.id.mainsearchButton);
 
+        adHeader = LayoutInflater.from(this).inflate(R.layout.ad_layout, null);
+
+
+
+
         getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         muzikCalmaBicimleri();
 
@@ -165,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         musicListView.setOnScrollListener(this);
         musicListView.setNotDragHeaderCount(1);
         musicListView.addHeaderView(HeaderView);
+        musicListView.addHeaderView(adHeader);
         intentFilter = new IntentFilter("speedExceeded");
 
 
@@ -305,7 +320,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (MusicList.musicData.size() > 0) {
             FPlayListener.currentMusicPosition = pos;
             PlayMusic.prevMusicDAta = MusicList.musicData.get(pos);
+
         }
+
+
         multipleChoise();
         listviewOneClickListener();
     }
@@ -314,6 +332,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                position = position - 2;
                 klavyeDisable();
                 if (!isMulti) {
                     FPlayListener.calmaListesiMuzik = false;
@@ -345,10 +365,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
 
-                position = position - 1;
-                Log.e("pos", position + "");
-
-
+                position = position - 2;
                 isMulti = true;
                 if (!tempList.contains(position)) {
                     list_selected_count = list_selected_count + 1;
@@ -455,16 +472,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         for (int pos : tempList) {
             if (musicListView.getChildAt(pos) != null) {
-
-                musicListView.getChildAt(pos).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
+                if (musicListView.getChildAt(pos).findViewById(R.id.listview_layout) != null) {
+                    musicListView.getChildAt(pos).findViewById(R.id.listview_layout).setBackgroundColor(getResources().getColor(R.color.transparent));
+                }
             }
 
         }
         tempListLayout.clear();
         tempListLayout = new ArrayList<>();
         MusicList.adapter.notifyDataSetChanged();
-
-
     }
 
     /**
@@ -481,7 +497,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         DialogFragment dialogFragment = new PlayListsFragment();
         ((PlayListsFragment) dialogFragment).setList(tempLists);
         dialogFragment.show(fragmentTransaction, "dialog");
-
     }
 
     public void eventClick(View view) {
@@ -493,7 +508,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 mLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
                 isSwipeOpen = true;
             }
-            Log.e("eventclick",String.valueOf(isSwipeOpen));
         }
     }
 
@@ -642,6 +656,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onResume() {
         super.onResume();
+
+        mAdView = adHeader.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
+        nativeExpressAdView = findViewById(R.id.nativeAds);
+        AdRequest adRequest2 = new AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
+        nativeExpressAdView.loadAd(adRequest2);
+
         Intent intent = new Intent(this, NotificationService.class);
         bindService(intent, this, Context.BIND_AUTO_CREATE);
         LocalBroadcastManager.getInstance(this).registerReceiver(
@@ -675,4 +698,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         //buradaki amaç runable activity sonlandırldığında dahi calısıyor o yüzden açık bırakıyorum servisteki işlemler için
     }
+
+
 }
+

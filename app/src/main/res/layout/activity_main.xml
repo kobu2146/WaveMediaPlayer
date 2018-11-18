@@ -37,17 +37,24 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+
         <include
             android:id="@+id/xx"
             layout="@layout/layout_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+        <include
+            android:id="@+id/x1"
+            layout="@layout/ad_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
 
         <com.yydcdut.sdlv.SlideAndDragListView
             android:id="@+id/main_musicListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/xx"
+            android:layout_below="@+id/x1"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="0dp"

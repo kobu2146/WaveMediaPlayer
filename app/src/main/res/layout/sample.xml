@@ -2,6 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/layout_background2">
 
     <RelativeLayout
@@ -12,13 +13,23 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
-            android:layout_marginStart="60dp"
-            android:layout_marginTop="150dp"
-            android:layout_marginEnd="60dp"
-            android:layout_marginBottom="150dp"
+            android:layout_marginStart="75dp"
+            android:layout_marginTop="165dp"
+            android:layout_marginEnd="75dp"
+            android:layout_marginBottom="165dp"
             android:background="@drawable/background_transparent"
             android:clickable="false"
-            android:src="@drawable/headphones" />
+            android:src="@drawable/headphones"
+            />
+
+        <com.google.android.gms.ads.NativeExpressAdView
+            android:id="@+id/nativeAds"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
+            ads:adSize="300x250"
+            />
     </RelativeLayout>
 
 

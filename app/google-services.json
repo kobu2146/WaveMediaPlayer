@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "416789945198",
+    "firebase_url": "https://wavemediaplayer.firebaseio.com",
+    "project_id": "wavemediaplayer",
+    "storage_bucket": "wavemediaplayer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:416789945198:android:fd02daa5beca03c2",
+        "android_client_info": {
+          "package_name": "com.wavemediaplayer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "416789945198-nurjrbjfkeko7h4ob4i17isbusns0qii.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wavemediaplayer",
+            "certificate_hash": "b82ba9fa26a9eeffe48db6ea5dbd16dd980817ef"
+          }
+        },
+        {
+          "client_id": "416789945198-ivks0o9i17irvcssf310q6t9b7b7d1n0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2lkpz9dPGQuGTYoVSLbcaNKcJLMcWBhU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "416789945198-ivks0o9i17irvcssf310q6t9b7b7d1n0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

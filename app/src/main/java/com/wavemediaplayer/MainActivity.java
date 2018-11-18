@@ -113,7 +113,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private OynatmaListesiFragment oynatmaListesiFragment;
     private ArrayList<MusicData> denememusicdata;
     private SharedPreferences sharedPreferences;
-    private SharedPreferences sharedPreferences2;
     private IntentFilter intentFilter;
     private ImageView mainsearchButton;
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {

@@ -54,7 +54,7 @@
             android:id="@+id/main_musicListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/x1"
+            android:layout_below="@+id/naber"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="0dp"

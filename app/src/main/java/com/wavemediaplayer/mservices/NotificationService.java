@@ -47,6 +47,7 @@ public class NotificationService extends Service {
     private MusicData mData;
     private int tekrarPos;
     PhoneStateListener phoneStateListener;
+    boolean isPlayed = false;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -266,12 +267,22 @@ public class NotificationService extends Service {
                 @Override
                 public void onCallStateChanged(int state, String incomingNumber) {
                     if (state == TelephonyManager.CALL_STATE_RINGING) {
-                        if (PlayMusic.mediaPlayer != null)
-                            PlayMusic.mediaPlayer.pause();
+                        if (PlayMusic.mediaPlayer != null){
+                            if (PlayMusic.mediaPlayer.isPlaying()){
+                                isPlayed = true;
+                                PlayMusic.mediaPlayer.pause();
+                            }
+                        }
+
+
                         //Incoming call: Pause music
                     } else if(state == TelephonyManager.CALL_STATE_IDLE) {
                         if (PlayMusic.mediaPlayer != null)
-                            PlayMusic.mediaPlayer.start();
+                            if (isPlayed){
+                                PlayMusic.mediaPlayer.start();
+                                isPlayed = false;
+                            }
+
                         //Not in call: Play music
                     } else if(state == TelephonyManager.CALL_STATE_OFFHOOK) {
                         //A call is dialing, active or on hold

@@ -35,8 +35,12 @@ public class Adapter extends ArrayAdapter<MusicData> {
                     if (pos == 1 || pos == 0) {
                         pos = pos + 2;
                     }
-                    MainActivity.musicListView.startDrag(pos);
+                    if (!MainActivity.isMulti){
+                        MainActivity.musicListView.startDrag(pos);
+                    }
+
                 } else if (kaynak == 1) {
+                    if (!OynatmaListesiFragment.isMulti)
                     OynatmaListesiFragment.oynatma_listesi.startDrag(((Integer) o).intValue());
                 }
 

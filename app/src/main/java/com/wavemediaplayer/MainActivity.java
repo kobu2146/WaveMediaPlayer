@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.DialogFragment;
@@ -107,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     AdView mAdView;
     NativeExpressAdView nativeExpressAdView;
 
-    private boolean isMulti = false;
+    public static boolean isMulti = false;
     private boolean isDrag = false;
     private MusicData mDraggedEntity;
     private OynatmaListesiFragment oynatmaListesiFragment;
@@ -338,6 +339,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     FPlayListener.calmaListesiMuzik = false;
                     FPlayListener.currentMusicPosition = position;
                     NotificationService.mainListeOncekiPos.clear();
+                    NotificationService.kaldirilanPos.clear();
                     NotificationService.mainListeOncekiPos.add(position);
                     pos = position;
                     fPlayListener.playMusic(position);

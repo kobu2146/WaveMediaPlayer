@@ -70,7 +70,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,
         AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener,
         SlideAndDragListView.OnDragDropListener, SlideAndDragListView.OnSlideListener,
-        SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnItemDeleteListener, ServiceConnection {
+        SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnItemDeleteListener, ServiceConnection{
 
     public static final String KARISIK_CAL = "KARISIK CAL";
     public static final String SARKIYI_TEKRARLA = "SARKIYI TEKRAR";
@@ -108,6 +108,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     AdView mAdView;
     NativeExpressAdView nativeExpressAdView;
 
+
+
     public static boolean isMulti = false;
     private boolean isDrag = false;
     private MusicData mDraggedEntity;
@@ -142,7 +144,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
-
 
         tabsHeigh = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
         mainView = getWindow().getDecorView().findViewById(android.R.id.content);
@@ -662,13 +663,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
+
         nativeExpressAdView = findViewById(R.id.nativeAds);
         AdRequest adRequest2 = new AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
         nativeExpressAdView.loadAd(adRequest2);
-
         Intent intent = new Intent(this, NotificationService.class);
         bindService(intent, this, Context.BIND_AUTO_CREATE);
         LocalBroadcastManager.getInstance(this).registerReceiver(
+
                 mMessageReceiver, intentFilter);
         if (allPermGrand) {
 
@@ -698,6 +700,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         }
         //buradaki amaç runable activity sonlandırldığında dahi calısıyor o yüzden açık bırakıyorum servisteki işlemler için
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
     }
 
 

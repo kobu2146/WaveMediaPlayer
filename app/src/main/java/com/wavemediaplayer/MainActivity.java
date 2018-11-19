@@ -665,7 +665,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
         nativeExpressAdView = findViewById(R.id.nativeAds);
-        AdRequest adRequest2 = new AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
+        AdRequest adRequest2 = new AdRequest.Builder().build();
         nativeExpressAdView.loadAd(adRequest2);
         Intent intent = new Intent(this, NotificationService.class);
         bindService(intent, this, Context.BIND_AUTO_CREATE);

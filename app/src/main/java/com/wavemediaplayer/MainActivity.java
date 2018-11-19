@@ -77,7 +77,7 @@ import static com.google.android.gms.ads.AdRequest.ERROR_CODE_NETWORK_ERROR;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,
         AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener,
         SlideAndDragListView.OnDragDropListener, SlideAndDragListView.OnSlideListener,
-        SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnItemDeleteListener, ServiceConnection{
+        SlideAndDragListView.OnMenuItemClickListener, SlideAndDragListView.OnItemDeleteListener, ServiceConnection {
 
     public static final String KARISIK_CAL = "KARISIK CAL";
     public static final String SARKIYI_TEKRARLA = "SARKIYI TEKRAR";
@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static FPlayListener fPlayListener;
     public static boolean playList_Ekleme_Yapildi = false;
     public static boolean allPermGrand = false;
+    public static boolean isMulti = false;
     static int pos = 0;
     public NotificationService s;
     public RelativeLayout mainSearchLayout;
@@ -102,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public MusicListSettingsFragment musicListSettingsFragment;
     public boolean isSwipeOpen = false;
     List<View> tempListLayout = new ArrayList<>();
+    ArrayList<ArrayList<MusicData>> geciciAramaSonuclari = new ArrayList<>();
     ArrayList<Integer> tempList = new ArrayList<>();
     int list_selected_count = 0;
     SlidingUpPanelLayout mLayout;
@@ -113,12 +115,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     View adHeader;
     AdView mAdView;
     NativeExpressAdView nativeExpressAdView;
-    private ImageView mainBigIcon;
-
-
-
-    public static boolean isMulti = false;
     private boolean isDrag = false;
+    private ImageView mainBigIcon;
     private MusicData mDraggedEntity;
     private OynatmaListesiFragment oynatmaListesiFragment;
     private ArrayList<MusicData> denememusicdata;
@@ -166,8 +164,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mainBigIcon =findViewById(R.id.mainBigIcon);
 
         adHeader = LayoutInflater.from(this).inflate(R.layout.ad_layout, null);
-
-
 
 
         getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
@@ -277,7 +273,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void searchItem(String text) {
         MusicList.musicData.clear();
         for (int i = 0; i < denememusicdata.size(); i++) {
-            if (denememusicdata.get(i).getTitles().toLowerCase().contains(text.toString().toLowerCase())) {
+            if (denememusicdata.get(i).getTitles().toLowerCase().contains(text.toLowerCase())) {
                 MusicList.musicData.add(denememusicdata.get(i));
                 MusicList.adapter.notifyDataSetChanged();
 
@@ -301,11 +297,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     edit_search.setAnimation(animationSet2);
                     animationSet2.setDuration(500);
                     edit_search.setVisibility(View.VISIBLE);
+                    edit_search.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(edit_search, InputMethodManager.SHOW_IMPLICIT);
                 } else {
                     edit_search.setText("");
                     edit_search.setAnimation(animationSet);
                     animationSet.setDuration(500);
                     edit_search.setVisibility(View.INVISIBLE);
+                    edit_search.setText("");
+                    klavyeDisable();
                 }
             }
         });
@@ -428,9 +429,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 switch (item.getItemId()) {
                     case R.id.itemSil:
                         layoutListClear();
+                        ArrayList<MusicData> tmpData = new ArrayList<>();
+
                         for (Integer s : tempList) {
+                            tmpData.add(MusicList.musicData.get(s));
                             musicList.removeFromAdapter(s);
+
                         }
+                        for (MusicData data : tmpData) {
+                            MusicList.musicData.remove(data);
+                        }
+                        denememusicdata.clear();
+                        denememusicdata.addAll(MusicList.musicData);
+                        MusicList.adapter.notifyDataSetChanged();
+                        musicList.getMusic();
+
+
                         list_selected_count = 0;
                         mode.finish();
                         tempList.clear();
@@ -457,7 +471,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     MusicList.musicData.get(pos).setIsaretlendi(false);
                 }
                 layoutListClear();
-                tempList = new ArrayList<>();
+                tempList.clear();
                 list_selected_count = 0;
                 isMulti = false;
             }
@@ -486,7 +500,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void klavyeDisable() {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(edit_search.getApplicationWindowToken(), 0);
-        edit_search.setVisibility(View.INVISIBLE);
+        //edit_search.setVisibility(View.INVISIBLE);
     }
 
     private void duzenlenmisListeKaydet() {
@@ -697,12 +711,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
-
-
-
-
         nativeExpressAdView = findViewById(R.id.nativeAds);
-        final AdRequest adRequest2 = new AdRequest.Builder().build();
+        AdRequest adRequest2 = new AdRequest.Builder().build();
         nativeExpressAdView.loadAd(adRequest2);
         nativeExpressAdView.setAdListener(new AdListener() {
             @Override
@@ -743,8 +753,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mMessageReceiver, intentFilter);
         if (allPermGrand) {
-
-            musicList.getMusic("notification", "ringtone");
+            if (!isMulti){
+                musicList.getMusic("notification", "ringtone");
+            }
             fPlayListener.pl.stopRunable();
             fPlayListener.pl.startRunable();
         }

@@ -9,14 +9,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.SlidingPaneLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -41,7 +39,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.NativeExpressAdView;
@@ -82,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static FPlayListener fPlayListener;
     public static boolean playList_Ekleme_Yapildi = false;
     public static boolean allPermGrand = false;
+    public static boolean isMulti = false;
     static int pos = 0;
     public NotificationService s;
     public RelativeLayout mainSearchLayout;
@@ -95,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public MusicListSettingsFragment musicListSettingsFragment;
     public boolean isSwipeOpen = false;
     List<View> tempListLayout = new ArrayList<>();
-    ArrayList<ArrayList<MusicData>> geciciAramaSonuclari = new ArrayList<>();
     ArrayList<Integer> tempList = new ArrayList<>();
     int list_selected_count = 0;
     SlidingUpPanelLayout mLayout;
@@ -107,8 +104,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     View adHeader;
     AdView mAdView;
     NativeExpressAdView nativeExpressAdView;
-
-    public static boolean isMulti = false;
     private boolean isDrag = false;
     private MusicData mDraggedEntity;
     private OynatmaListesiFragment oynatmaListesiFragment;
@@ -153,8 +148,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mainsearchButton = HeaderView.findViewById(R.id.mainsearchButton);
 
         adHeader = LayoutInflater.from(this).inflate(R.layout.ad_layout, null);
-
-
 
 
         getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
@@ -243,7 +236,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.toString().equals("")) {
                     musicList.getMusic("notification", "ringtone");
-                    geciciAramaSonuclari.clear();
                 } else {
 
                     searchItem(s.toString().toLowerCase());
@@ -265,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void searchItem(String text) {
         MusicList.musicData.clear();
         for (int i = 0; i < denememusicdata.size(); i++) {
-            if (denememusicdata.get(i).getTitles().toLowerCase().contains(text.toString().toLowerCase())) {
+            if (denememusicdata.get(i).getTitles().toLowerCase().contains(text.toLowerCase())) {
                 MusicList.musicData.add(denememusicdata.get(i));
                 MusicList.adapter.notifyDataSetChanged();
 
@@ -289,11 +281,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     edit_search.setAnimation(animationSet2);
                     animationSet2.setDuration(500);
                     edit_search.setVisibility(View.VISIBLE);
+                    edit_search.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(edit_search, InputMethodManager.SHOW_IMPLICIT);
                 } else {
                     edit_search.setText("");
                     edit_search.setAnimation(animationSet);
                     animationSet.setDuration(500);
                     edit_search.setVisibility(View.INVISIBLE);
+                    edit_search.setText("");
+                    klavyeDisable();
                 }
             }
         });
@@ -307,12 +304,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
             }
+
             @Override
             public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
-                if(newState==(SlidingUpPanelLayout.PanelState.EXPANDED)){
-                    isSwipeOpen=true;
-                }else if(newState==(SlidingUpPanelLayout.PanelState.COLLAPSED)){
-                    isSwipeOpen=false;
+                if (newState == (SlidingUpPanelLayout.PanelState.EXPANDED)) {
+                    isSwipeOpen = true;
+                } else if (newState == (SlidingUpPanelLayout.PanelState.COLLAPSED)) {
+                    isSwipeOpen = false;
                 }
             }
         });
@@ -416,9 +414,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 switch (item.getItemId()) {
                     case R.id.itemSil:
                         layoutListClear();
+                        ArrayList<MusicData> tmpData = new ArrayList<>();
+
                         for (Integer s : tempList) {
+                            tmpData.add(MusicList.musicData.get(s));
                             musicList.removeFromAdapter(s);
+
                         }
+                        for (MusicData data : tmpData) {
+                            MusicList.musicData.remove(data);
+                        }
+                        denememusicdata.clear();
+                        denememusicdata.addAll(MusicList.musicData);
+                        MusicList.adapter.notifyDataSetChanged();
+                        musicList.getMusic();
+
+
                         list_selected_count = 0;
                         mode.finish();
                         tempList.clear();
@@ -440,8 +451,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 for (int pos : tempList) {
                     MusicList.musicData.get(pos).setIsaretlendi(false);
                 }
+                Log.e("destroya girdik","ssssssssssssssss");
                 layoutListClear();
-                tempList = new ArrayList<>();
+                tempList.clear();
                 list_selected_count = 0;
                 isMulti = false;
             }
@@ -451,7 +463,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void klavyeDisable() {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(edit_search.getApplicationWindowToken(), 0);
-        edit_search.setVisibility(View.INVISIBLE);
+        //edit_search.setVisibility(View.INVISIBLE);
     }
 
     private void duzenlenmisListeKaydet() {
@@ -533,9 +545,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (mLayout != null &&
                 (mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
             mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-            isSwipeOpen=false;
+            isSwipeOpen = false;
         } else {
-            isSwipeOpen=true;
+            isSwipeOpen = true;
             super.onBackPressed();
         }
     }
@@ -671,8 +683,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mMessageReceiver, intentFilter);
         if (allPermGrand) {
-
-            musicList.getMusic("notification", "ringtone");
+            if (!isMulti){
+                musicList.getMusic("notification", "ringtone");
+            }
             fPlayListener.pl.stopRunable();
             fPlayListener.pl.startRunable();
         }

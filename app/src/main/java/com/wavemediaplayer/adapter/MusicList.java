@@ -67,8 +67,17 @@ public class MusicList {
                             String duration = jsonObject.getString("duration");
                             String location = jsonObject.getString("location");
                             String ids = jsonObject.getString("id");
+                            File file = new File(location);
+                            if (file.exists()){
+                                String durationMusicSettings=sharedPreferences.getString("musicDuration","ignore");
+                                int musicDurationSettings=0;
+                                if(!durationMusicSettings.contains("ignore")) musicDurationSettings=Integer.valueOf(durationMusicSettings);
+                                musicDurationSettings = musicDurationSettings * 1000;
+                                if (file.getTotalSpace() > musicDurationSettings ){
+                                    musicData.add(new MusicData(title, artist, thumbnail, duration, location, ids));
+                                }
 
-                            musicData.add(new MusicData(title, artist, thumbnail, duration, location, ids));
+                            }
                         }
                     }
 
@@ -183,7 +192,7 @@ public class MusicList {
                 }
                 scanaddedFile(MusicList.musicData.get(s).getLocation()); // bu mediadanda siliyor
                 // burdaki parametreler simdilik boyle
-                getMusic("notification", "ringtone");
+
             } else {
             }
         } else {

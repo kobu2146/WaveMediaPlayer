@@ -278,7 +278,7 @@ public class NotificationService extends Service {
         status.contentView = views;
         status.bigContentView = bigViews;
         status.flags = Notification.FLAG_ONGOING_EVENT;
-        status.icon = R.drawable.ic_launcher;
+        status.icon = R.mipmap.ic_stat_play_circle_outline;
         status.contentIntent = pendingIntent;
         Log.e("qqqqqqqq","startforeground");
         startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);

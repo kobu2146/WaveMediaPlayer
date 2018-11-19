@@ -52,6 +52,7 @@ public class FPlayListener {
     private Context context;
     private View view;
     PhoneStateListener phoneStateListener;
+    private boolean isPlayed = false;
 
     public FPlayListener(MainActivity mainActivity, View view) {
         this.mainActivity = mainActivity;
@@ -180,12 +181,20 @@ public class FPlayListener {
             @Override
             public void onCallStateChanged(int state, String incomingNumber) {
                 if (state == TelephonyManager.CALL_STATE_RINGING) {
-                    if (PlayMusic.mediaPlayer != null)
-                    PlayMusic.mediaPlayer.pause();
+                    if (PlayMusic.mediaPlayer != null){
+                        if (PlayMusic.mediaPlayer.isPlaying()){
+                            isPlayed = true;
+                            PlayMusic.mediaPlayer.pause();
+                        }
+                    }
                     //Incoming call: Pause music
                 } else if(state == TelephonyManager.CALL_STATE_IDLE) {
                     if (PlayMusic.mediaPlayer != null)
-                    PlayMusic.mediaPlayer.start();
+                        if (isPlayed){
+                            PlayMusic.mediaPlayer.start();
+                            isPlayed = false;
+                        }
+
                     //Not in call: Play music
                 } else if(state == TelephonyManager.CALL_STATE_OFFHOOK) {
                     //A call is dialing, active or on hold

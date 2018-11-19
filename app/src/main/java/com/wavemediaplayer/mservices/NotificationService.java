@@ -14,6 +14,8 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -35,6 +37,7 @@ public class NotificationService extends Service {
     public static boolean calmaListesiMuzik;
     public static ArrayList<Integer> calimaListesiOncekiPos = new ArrayList<>();
     public static ArrayList<Integer> mainListeOncekiPos = new ArrayList<>();
+    public static ArrayList<Integer> kaldirilanPos = new ArrayList<>();
     private final String LOG_TAG = "NotificationService";
     private final IBinder mBinder = new MyBinder();
     Notification status;
@@ -43,6 +46,7 @@ public class NotificationService extends Service {
     private PendingIntent pendingIntent;
     private MusicData mData;
     private int tekrarPos;
+    PhoneStateListener phoneStateListener;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -50,7 +54,7 @@ public class NotificationService extends Service {
     }
 
     public void activityPlay() {
-        if(views!=null){
+        if (views != null) {
             views.setImageViewResource(R.id.status_bar_play,
                     R.drawable.svgpause);
             bigViews.setImageViewResource(R.id.status_bar_play,
@@ -60,7 +64,7 @@ public class NotificationService extends Service {
     }
 
     public void activityPause() {
-        if(views!=null){
+        if (views != null) {
             views.setImageViewResource(R.id.status_bar_play,
                     R.drawable.svgplay);
             bigViews.setImageViewResource(R.id.status_bar_play,
@@ -256,6 +260,31 @@ public class NotificationService extends Service {
     }
 
     private void create() {
+
+        if (phoneStateListener == null){
+            phoneStateListener = new PhoneStateListener() {
+                @Override
+                public void onCallStateChanged(int state, String incomingNumber) {
+                    if (state == TelephonyManager.CALL_STATE_RINGING) {
+                        if (PlayMusic.mediaPlayer != null)
+                            PlayMusic.mediaPlayer.pause();
+                        //Incoming call: Pause music
+                    } else if(state == TelephonyManager.CALL_STATE_IDLE) {
+                        if (PlayMusic.mediaPlayer != null)
+                            PlayMusic.mediaPlayer.start();
+                        //Not in call: Play music
+                    } else if(state == TelephonyManager.CALL_STATE_OFFHOOK) {
+                        //A call is dialing, active or on hold
+                    }
+                    super.onCallStateChanged(state, incomingNumber);
+                }
+            };
+            TelephonyManager mgr = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
+            if(mgr != null) {
+                mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+            }
+        }
+
         Notification.Builder nBuilder = new Notification.Builder(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -280,7 +309,7 @@ public class NotificationService extends Service {
         status.flags = Notification.FLAG_ONGOING_EVENT;
         status.icon = R.mipmap.ic_stat_play_circle_outline;
         status.contentIntent = pendingIntent;
-        Log.e("qqqqqqqq","startforeground");
+        Log.e("qqqqqqqq", "startforeground");
         startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
     }
 
@@ -390,11 +419,31 @@ public class NotificationService extends Service {
                 int rndPositin = new Random().nextInt(NotificationService.list.size());
                 if (PlayMusic.tekrarla == 0 || PlayMusic.tekrarla == 2 || PlayMusic.tekrarla == 3) {
                     if (ileriCal) {
-                        NotificationService.mainListeOncekiPos.add(rndPositin);
+                        if (NotificationService.kaldirilanPos.size() > 0) {
+                            rndPositin = NotificationService.kaldirilanPos.get(NotificationService.kaldirilanPos.size() - 1);
+                            NotificationService.kaldirilanPos.remove(NotificationService.kaldirilanPos.size() - 1);
+                            if (rndPositin < 0) {
+                                NotificationService.kaldirilanPos.clear();
+                                rndPositin = new Random().nextInt(NotificationService.list.size());
+                            }
+                        } else {
+                            rndPositin = new Random().nextInt(NotificationService.list.size());
+                            NotificationService.mainListeOncekiPos.add(rndPositin);
+                        }
+
                     } else {
-                        if (NotificationService.mainListeOncekiPos.size() > 1) {
+                        if (NotificationService.mainListeOncekiPos.size() > 0) {
+                            NotificationService.kaldirilanPos.add(NotificationService.mainListeOncekiPos.size() - 1);
                             NotificationService.mainListeOncekiPos.remove(NotificationService.mainListeOncekiPos.size() - 1);
-                            rndPositin = NotificationService.mainListeOncekiPos.get(NotificationService.mainListeOncekiPos.size() - 1);
+                            try {
+                                rndPositin = NotificationService.mainListeOncekiPos.get(NotificationService.mainListeOncekiPos.size() - 1);
+                            } catch (IndexOutOfBoundsException ex) {
+                                Log.e("HATA", ex.getMessage());
+                                rndPositin = new Random().nextInt(NotificationService.list.size());
+                            }
+                        }
+                        else {
+                            NotificationService.kaldirilanPos.clear();
                         }
                     }
                     currentPos = rndPositin;
@@ -418,11 +467,31 @@ public class NotificationService extends Service {
                 int rndPositin = new Random().nextInt(NotificationService.list.size());
                 if (PlayMusic.tekrarla == 0 || PlayMusic.tekrarla == 2 || PlayMusic.tekrarla == 3) {
                     if (ileriCal) {
-                        NotificationService.calimaListesiOncekiPos.add(rndPositin);
+                        if (NotificationService.kaldirilanPos.size() > 0) {
+                            rndPositin = NotificationService.kaldirilanPos.get(NotificationService.kaldirilanPos.size() - 1);
+                            NotificationService.kaldirilanPos.remove(NotificationService.kaldirilanPos.size() - 1);
+                            if (rndPositin < 0) {
+                                NotificationService.kaldirilanPos.clear();
+                                rndPositin = new Random().nextInt(NotificationService.list.size());
+                            }
+                        } else {
+                            rndPositin = new Random().nextInt(NotificationService.list.size());
+                            NotificationService.calimaListesiOncekiPos.add(rndPositin);
+                        }
+
                     } else {
-                        if (NotificationService.calimaListesiOncekiPos.size() > 1) {
+                        if (NotificationService.calimaListesiOncekiPos.size() > 0) {
+                            NotificationService.kaldirilanPos.add(NotificationService.calimaListesiOncekiPos.size() - 1);
                             NotificationService.calimaListesiOncekiPos.remove(NotificationService.calimaListesiOncekiPos.size() - 1);
-                            rndPositin = NotificationService.calimaListesiOncekiPos.get(NotificationService.calimaListesiOncekiPos.size() - 1);
+                            try {
+                                rndPositin = NotificationService.calimaListesiOncekiPos.get(NotificationService.calimaListesiOncekiPos.size() - 1);
+                            } catch (IndexOutOfBoundsException ex) {
+                                Log.e("HATA", ex.getMessage());
+                                rndPositin = new Random().nextInt(NotificationService.list.size());
+                            }
+                        }
+                        else {
+                            NotificationService.kaldirilanPos.clear();
                         }
                     }
                     currentPos = rndPositin;

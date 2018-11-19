@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -19,6 +21,8 @@ import com.wavemediaplayer.adapter.Utils;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.fragments.SettingsFragment;
 import com.wavemediaplayer.play.PlayMusic;
+
+import static android.content.Context.TELEPHONY_SERVICE;
 
 public class FPlayListener {
 
@@ -47,6 +51,7 @@ public class FPlayListener {
     private Handler handler;
     private Context context;
     private View view;
+    PhoneStateListener phoneStateListener;
 
     public FPlayListener(MainActivity mainActivity, View view) {
         this.mainActivity = mainActivity;
@@ -95,8 +100,6 @@ public class FPlayListener {
         } else {
             karisik_cal.setBackground(Utils.getDrawable(context, R.drawable.svg_sirali));
         }
-
-
         pl = new PlayMusic(mainActivity, myseekbar, mytext1, mytext2, play, handler);
     }
 
@@ -172,6 +175,29 @@ public class FPlayListener {
 
     public void f_ListenerEvent() {
 
+
+        phoneStateListener = new PhoneStateListener() {
+            @Override
+            public void onCallStateChanged(int state, String incomingNumber) {
+                if (state == TelephonyManager.CALL_STATE_RINGING) {
+                    if (PlayMusic.mediaPlayer != null)
+                    PlayMusic.mediaPlayer.pause();
+                    //Incoming call: Pause music
+                } else if(state == TelephonyManager.CALL_STATE_IDLE) {
+                    if (PlayMusic.mediaPlayer != null)
+                    PlayMusic.mediaPlayer.start();
+                    //Not in call: Play music
+                } else if(state == TelephonyManager.CALL_STATE_OFFHOOK) {
+                    //A call is dialing, active or on hold
+                }
+                super.onCallStateChanged(state, incomingNumber);
+            }
+        };
+        TelephonyManager mgr = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);
+        if(mgr != null) {
+            mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        }
+
         sample_main_settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -232,7 +258,6 @@ public class FPlayListener {
                 if (PlayMusic.tekrarla == 1) {
                     PlayMusic.tekrarla = 3;
                 }
-
                 pl.calmayaDevamEt(true);
             }
         });

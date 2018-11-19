@@ -56,7 +56,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
 
     private ArrayList<Integer> temp_position_list = new ArrayList<>();
 
-    private boolean isMulti = false;
+    public static boolean isMulti = false;
     int list_selected_count = 0;
     List<View> tempListLayout = new ArrayList<>();
     // Tum oynatma listesini gpruntulemek icin
@@ -356,6 +356,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                     } else {
                         if (music_oynat_list.size() > 0) {
                             NotificationService.calimaListesiOncekiPos.clear();
+                            NotificationService.kaldirilanPos.clear();
                             FPlayListener.currentMusicPosition = position;
                             NotificationService.calimaListesiOncekiPos.add(position);
                             PlayMusic.prevMusicDAta = music_oynat_list.get(position);

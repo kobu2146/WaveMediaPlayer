@@ -251,13 +251,13 @@ public class NotificationService extends Service {
         bigViews.setImageViewResource(R.id.status_bar_play,
                 R.drawable.svgpause);
 
-        views.setTextViewText(R.id.status_bar_track_name, "");
-        bigViews.setTextViewText(R.id.status_bar_track_name, "");
+        views.setTextViewText(R.id.status_bar_track_name, " ");
+        bigViews.setTextViewText(R.id.status_bar_track_name, " ");
 
-        views.setTextViewText(R.id.status_bar_artist_name, "");
-        bigViews.setTextViewText(R.id.status_bar_artist_name, "");
+        views.setTextViewText(R.id.status_bar_artist_name, " ");
+        bigViews.setTextViewText(R.id.status_bar_artist_name, " ");
 
-        bigViews.setTextViewText(R.id.status_bar_artist_name, "");
+        bigViews.setTextViewText(R.id.status_bar_artist_name, " ");
     }
 
     private void create() {
@@ -320,7 +320,6 @@ public class NotificationService extends Service {
         status.flags = Notification.FLAG_ONGOING_EVENT;
         status.icon = R.mipmap.ic_stat_play_circle_outline;
         status.contentIntent = pendingIntent;
-        Log.e("qqqqqqqq", "startforeground");
         startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
     }
 

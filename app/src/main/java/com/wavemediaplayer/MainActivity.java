@@ -10,8 +10,10 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.StrictMode;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -41,6 +43,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -59,12 +62,16 @@ import com.wavemediaplayer.mfcontroller.MainManager;
 import com.wavemediaplayer.mservices.Constants;
 import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.play.PlayMusic;
+import com.wavemediaplayer.playlist.PlayList;
 import com.wavemediaplayer.settings.FolderFragment;
 import com.wavemediaplayer.settings.MusicListSettingsFragment;
 import com.yydcdut.sdlv.SlideAndDragListView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.android.gms.ads.AdRequest.ERROR_CODE_NETWORK_ERROR;
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,
@@ -95,7 +102,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public MusicListSettingsFragment musicListSettingsFragment;
     public boolean isSwipeOpen = false;
     List<View> tempListLayout = new ArrayList<>();
-    ArrayList<ArrayList<MusicData>> geciciAramaSonuclari = new ArrayList<>();
     ArrayList<Integer> tempList = new ArrayList<>();
     int list_selected_count = 0;
     SlidingUpPanelLayout mLayout;
@@ -107,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     View adHeader;
     AdView mAdView;
     NativeExpressAdView nativeExpressAdView;
+    private ImageView mainBigIcon;
 
 
 
@@ -145,6 +152,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_main);
         context = this;
 
+        /** buradaki amaç multiple secim yapıp gönderirken hata alıyorduk bu şekilde düzelttim önemli silinirse multiple share çalışmaz*/
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
         tabsHeigh = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
         mainView = getWindow().getDecorView().findViewById(android.R.id.content);
         musicListView = findViewById(R.id.main_musicListView);
@@ -152,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         edit_search = HeaderView.findViewById(R.id.edit_search);
         mainSearchLayout = HeaderView.findViewById(R.id.mainSearchLayout);
         mainsearchButton = HeaderView.findViewById(R.id.mainsearchButton);
+        mainBigIcon =findViewById(R.id.mainBigIcon);
 
         adHeader = LayoutInflater.from(this).inflate(R.layout.ad_layout, null);
 
@@ -244,7 +256,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.toString().equals("")) {
                     musicList.getMusic("notification", "ringtone");
-                    geciciAramaSonuclari.clear();
                 } else {
 
                     searchItem(s.toString().toLowerCase());
@@ -425,6 +436,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         tempList.clear();
                         return true;
 
+                    case R.id.itemPaylas:
+                        shareMultiple();
+                        return false;
+
                     case R.id.itemPlayList:
                         playlistInfo(tempList);
                         list_selected_count = 0;
@@ -447,6 +462,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 isMulti = false;
             }
         });
+    }
+
+    private void shareMultiple(){
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND_MULTIPLE);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "");
+        intent.setType("audio/*");
+
+        ArrayList<Uri> files = new ArrayList<Uri>();
+
+        for (Integer s : tempList) {
+            File file = new File(MusicList.musicData.get(s).getLocation());
+            Uri uri = Uri.fromFile(file);
+            files.add(uri);
+        }
+        tempList.clear();
+
+        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
+        startActivity(intent);
     }
 
     private void klavyeDisable() {
@@ -664,13 +698,49 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mAdView.loadAd(adRequest);
 
 
+
+
+
         nativeExpressAdView = findViewById(R.id.nativeAds);
-        AdRequest adRequest2 = new AdRequest.Builder().build();
+        final AdRequest adRequest2 = new AdRequest.Builder().build();
         nativeExpressAdView.loadAd(adRequest2);
+        nativeExpressAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                nativeExpressAdView.setVisibility(View.VISIBLE);
+                mainBigIcon.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                nativeExpressAdView.setVisibility(View.INVISIBLE);
+                mainBigIcon.setVisibility(View.VISIBLE);
+                if(errorCode!=ERROR_CODE_NETWORK_ERROR){
+                    nativeExpressAdView.loadAd(new AdRequest.Builder().build());
+                }
+            }
+
+            @Override
+            public void onAdOpened() {
+                nativeExpressAdView.setVisibility(View.VISIBLE);
+                mainBigIcon.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                // Code to be executed when the user has left the app.
+            }
+
+            @Override
+            public void onAdClosed() {
+                nativeExpressAdView.setVisibility(View.INVISIBLE);
+                mainBigIcon.setVisibility(View.VISIBLE);
+            }
+        });
+
         Intent intent = new Intent(this, NotificationService.class);
         bindService(intent, this, Context.BIND_AUTO_CREATE);
         LocalBroadcastManager.getInstance(this).registerReceiver(
-
                 mMessageReceiver, intentFilter);
         if (allPermGrand) {
 

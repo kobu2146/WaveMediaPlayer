@@ -3,7 +3,10 @@
 
     <item
         android:id="@+id/itemSil"
-        android:title="Sil" />
+        android:title="Remove" />
+    <item
+        android:id="@+id/itemPaylas"
+        android:title="Share" />
     <item
         android:id="@+id/itemPlayList"
         android:title="Add Playlist" />

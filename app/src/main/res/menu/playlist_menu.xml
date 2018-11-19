@@ -3,5 +3,5 @@
 
     <item
         android:id="@+id/item_sil"
-        android:title="Sil" />
+        android:title="Remove" />
 </menu>

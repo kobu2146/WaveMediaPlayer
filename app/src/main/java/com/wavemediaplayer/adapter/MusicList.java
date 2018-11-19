@@ -96,7 +96,6 @@ public class MusicList {
         int musicDurationSettings=0;
         if(!durationMusicSettings.contains("ignore")) musicDurationSettings=Integer.valueOf(durationMusicSettings);
 
-
         if (sharedPreferences.contains("listsettings")) atamaYapildimi = true;
         folderControl = sharedPreferences.getStringSet("listsettings", new HashSet<String>());
         ContentResolver contentResolver = context.getContentResolver();

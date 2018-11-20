@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -340,6 +341,7 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
             try {
                 if (entry.getKey().equals(liste_key)) {
                     JSONArray jsonArray = new JSONArray(entry.getValue().toString());
+                    Log.e("pllist",jsonArray.toString());
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         String title = jsonObject.getString("title");

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,12 +70,9 @@ public class PlayListsFragment extends DialogFragment {
         dialog.setTitle("Add");
         return dialog;
     }
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -135,13 +133,14 @@ public class PlayListsFragment extends DialogFragment {
                 new CreatePlayList(MainActivity.context).createAndAddList(playLists.get(position),music_position);
                 Toast.makeText(MainActivity.context,"Music added to "+playLists.get(position),Toast.LENGTH_SHORT).show();
                 dismiss();
-
             }
         });
     }
 
     public void setList(ArrayList<Integer> tempList){
-        music_position = tempList;
+        music_position.clear();
+        music_position.addAll(tempList);
+        Log.e("templist",music_position.size()+"");
     }
     private void klavyeDisable(){
         InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);

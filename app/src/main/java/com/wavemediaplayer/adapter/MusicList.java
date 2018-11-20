@@ -192,10 +192,7 @@ public class MusicList {
                 scanaddedFile(MusicList.musicData.get(s).getLocation()); // bu mediadanda siliyor
                 // burdaki parametreler simdilik boyle
 
-            } else {
             }
-        } else {
-
         }
 
     }

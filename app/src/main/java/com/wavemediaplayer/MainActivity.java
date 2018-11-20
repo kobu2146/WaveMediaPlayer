@@ -162,9 +162,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mainSearchLayout = HeaderView.findViewById(R.id.mainSearchLayout);
         mainsearchButton = HeaderView.findViewById(R.id.mainsearchButton);
         mainBigIcon =findViewById(R.id.mainBigIcon);
-
         adHeader = LayoutInflater.from(this).inflate(R.layout.ad_layout, null);
-
 
         getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         muzikCalmaBicimleri();
@@ -190,6 +188,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         musicListView.addHeaderView(HeaderView);
         musicListView.addHeaderView(adHeader);
         intentFilter = new IntentFilter("speedExceeded");
+
 
 
         DexterPermission dex = new DexterPermission(this);
@@ -430,28 +429,30 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     case R.id.itemSil:
                         layoutListClear();
                         ArrayList<MusicData> tmpData = new ArrayList<>();
-
                         for (Integer s : tempList) {
                             tmpData.add(MusicList.musicData.get(s));
                             musicList.removeFromAdapter(s);
-
                         }
                         for (MusicData data : tmpData) {
+
                             MusicList.musicData.remove(data);
+                            MusicList.adapter.notifyDataSetChanged();
                         }
+
                         denememusicdata.clear();
                         denememusicdata.addAll(MusicList.musicData);
+                       // musicList.getMusic();
                         MusicList.adapter.notifyDataSetChanged();
-                        musicList.getMusic();
-
-
+                        duzenlenmisListeKaydet();
+                        tempList.clear();
                         list_selected_count = 0;
                         mode.finish();
-                        tempList.clear();
                         return true;
 
                     case R.id.itemPaylas:
                         shareMultiple();
+                        layoutListClear();
+                        mode.finish();
                         return false;
 
                     case R.id.itemPlayList:
@@ -459,6 +460,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         list_selected_count = 0;
                         layoutListClear();
                         mode.finish();
+                        return true;
                     default:
                         return false;
                 }
@@ -467,12 +469,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-                for (int pos : tempList) {
-                    if(MusicList.musicData.get(pos) != null){
-                        MusicList.musicData.get(pos).setIsaretlendi(false);
+                    for (int pos : tempList) {
+                        if(pos < MusicList.musicData.size()){
+                            if(MusicList.musicData.get(pos) != null){
+                                MusicList.musicData.get(pos).setIsaretlendi(false);
+                            }
+                        }
                     }
-
-                }
                 layoutListClear();
                 tempList.clear();
                 list_selected_count = 0;
@@ -540,6 +543,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
      * Add Play list'e tıklandıgında Dialog fragment acılacak ve olusturulan playlistler gosterilecek
      */
     private void playlistInfo(ArrayList<Integer> tempLists) {
+
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
         Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");

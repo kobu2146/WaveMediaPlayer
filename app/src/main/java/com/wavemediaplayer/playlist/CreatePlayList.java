@@ -2,6 +2,7 @@ package com.wavemediaplayer.playlist;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.wavemediaplayer.MainActivity;
@@ -30,8 +31,11 @@ public class CreatePlayList {
     }
 
     public void createAndAddList(String listName, ArrayList<Integer> playLists) {
-        for (int i : playLists) {
+        Log.e("girdi","girdi"+playLists.size());
+        for (Integer i : playLists) {
+            Log.e("asdasdadad","qqqqqqqqqqqqqqqqqqqqq");
             String title = MusicList.musicData.get(i).getTitles();
+            Log.e("title",title);
             String artirst = MusicList.musicData.get(i).getArtist();
             Integer thumbnail = MusicList.musicData.get(i).getImages();
             String duration = MusicList.musicData.get(i).getDuration();
@@ -91,6 +95,7 @@ public class CreatePlayList {
     }
 
     private void set(String key, String value) {
+        Log.e("amcık",value);
         editor = sharedPreferences.edit();
         editor.putString(key, value);
         editor.apply();

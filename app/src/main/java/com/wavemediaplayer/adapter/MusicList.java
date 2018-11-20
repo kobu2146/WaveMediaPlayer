@@ -175,7 +175,7 @@ public class MusicList {
             songCursor.close();
         }
 
-        adapter = new Adapter(context, R.layout.custom_list_item, musicData, 0);
+        if(adapter==null) adapter = new Adapter(context, R.layout.custom_list_item, musicData, 0);
         musicListView.setMenu(new Menu(false));
         musicListView.setAdapter(adapter);
     }

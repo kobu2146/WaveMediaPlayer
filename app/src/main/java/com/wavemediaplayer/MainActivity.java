@@ -468,7 +468,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onDestroyActionMode(ActionMode mode) {
                 for (int pos : tempList) {
-                    MusicList.musicData.get(pos).setIsaretlendi(false);
+                    if(MusicList.musicData.get(pos) != null){
+                        MusicList.musicData.get(pos).setIsaretlendi(false);
+                    }
+
                 }
                 layoutListClear();
                 tempList.clear();

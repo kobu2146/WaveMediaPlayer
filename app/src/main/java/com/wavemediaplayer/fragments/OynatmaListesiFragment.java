@@ -1,7 +1,9 @@
 package com.wavemediaplayer.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,6 +23,7 @@ import com.wavemediaplayer.R;
 import com.wavemediaplayer.adapter.Adapter;
 import com.wavemediaplayer.adapter.ListAdapter;
 import com.wavemediaplayer.adapter.MusicData;
+import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.play.PlayMusic;
@@ -33,6 +36,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -158,10 +162,14 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
                         list_selected_count = 0;
                         temp_position_list.clear();
                         mode.finish();
+                        return  true;
                     case R.id.item_paylas:
                         list_selected_count = 0;
                         layoutListClear();
+                        shareMultiple();
+
                         mode.finish();
+                        return true;
 
                     default:
                         return false;
@@ -188,6 +196,24 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
 
             }
         });
+    }
+
+    private void shareMultiple(){
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND_MULTIPLE);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "");
+        intent.setType("audio/*");
+
+        ArrayList<Uri> files = new ArrayList<Uri>();
+
+        for (Integer s : temp_position_list) {
+            File file = new File(MusicList.musicData.get(s).getLocation());
+            Uri uri = Uri.fromFile(file);
+            files.add(uri);
+        }
+
+        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
+        startActivity(intent);
     }
 
     private void calmaListeleriniSil() {
@@ -296,7 +322,6 @@ public class OynatmaListesiFragment extends Fragment implements AdapterView.OnIt
             }
         }
         tempListLayout.clear();
-        tempListLayout = new ArrayList<>();
 
     }
 

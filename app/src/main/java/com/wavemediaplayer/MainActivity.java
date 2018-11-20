@@ -497,7 +497,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Uri uri = Uri.fromFile(file);
             files.add(uri);
         }
-        tempList.clear();
 
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
         startActivity(intent);

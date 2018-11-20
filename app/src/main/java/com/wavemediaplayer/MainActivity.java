@@ -251,8 +251,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.toString().equals("")) {
                     musicList.getMusic("notification", "ringtone");
+                    edit_search.requestFocus();
                 } else {
-
                     searchItem(s.toString().toLowerCase());
                 }
             }

@@ -770,9 +770,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onPause() {
         super.onPause();
-        if (allPermGrand) {
-            fPlayListener.pl.stopRunable();
-        }
         unbindService(this);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
     }

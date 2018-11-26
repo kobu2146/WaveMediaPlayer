@@ -242,9 +242,6 @@ public class PlayMusic {
                                 rndPositin = new Random().nextInt(MusicList.musicData.size());
                             }
                         }
-                        else {
-                            NotificationService.kaldirilanPos.clear();
-                        }
                     }
                     //İleri butonuna tıklandıgı zaman gecerli sarkıyı tekrarlada ise bir sonraki sarkıya atlattrırıp tekrala = 1 olacak
                     if (tekrarla == 3) {
@@ -296,7 +293,6 @@ public class PlayMusic {
                         } else {
                             rndPositin = new Random().nextInt(OynatmaListesiFragment.music_oynat_list.size());
                             NotificationService.calimaListesiOncekiPos.add(rndPositin);
-                            Log.e("ana", "bitti");
                         }
                     } else {
                         if (NotificationService.calimaListesiOncekiPos.size() > 0) {
@@ -308,9 +304,6 @@ public class PlayMusic {
                                 Log.e("HATA", ex.getMessage());
                                 rndPositin = new Random().nextInt(OynatmaListesiFragment.music_oynat_list.size());
                             }
-                        }
-                        else {
-                            NotificationService.kaldirilanPos.clear();
                         }
 
                     }
@@ -379,7 +372,6 @@ public class PlayMusic {
                 myseekbar.setMax(mediaPlayer.getDuration());
                 myseekbar.setOnSeekBarChangeListener(seekBarChangeListener);
                 mytext2.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getDuration())));
-                mytext2.setTag("var");
                 mediaPlayer.start();
             }
         });
@@ -437,11 +429,7 @@ public class PlayMusic {
                 @Override
                 public void run() {
                     if (mediaPlayer != null && isMediaPlayerCreated) {
-                        if (mytext2.getTag() == null || !mytext2.getTag().toString().equals("var")) {
-                            mytext2.setTag("var");
-                            mytext2.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getDuration())));
-
-                        }
+                        mytext2.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getDuration())));
                         myseekbar.setProgress(mediaPlayer.getCurrentPosition());
                         mytext1.setText(String.valueOf(android.text.format.DateFormat.format("mm:ss", mediaPlayer.getCurrentPosition())));
 

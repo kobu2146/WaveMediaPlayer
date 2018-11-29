@@ -454,6 +454,7 @@ public class PlayMusic {
                         }
 
                     }
+                    Log.e("qqqqqqqqqq","runablee");
                     myHandler.postDelayed(runnable, 1000);
                 }
             };

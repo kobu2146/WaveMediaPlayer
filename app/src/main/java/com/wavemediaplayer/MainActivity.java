@@ -18,6 +18,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v4.widget.SlidingPaneLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -26,6 +27,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -63,6 +65,7 @@ import com.wavemediaplayer.mservices.Constants;
 import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.play.PlayMusic;
 import com.wavemediaplayer.playlist.PlayList;
+import com.wavemediaplayer.settings.AllReceiver;
 import com.wavemediaplayer.settings.FolderFragment;
 import com.wavemediaplayer.settings.MusicListSettingsFragment;
 import com.yydcdut.sdlv.SlideAndDragListView;
@@ -123,6 +126,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private SharedPreferences sharedPreferences;
     private IntentFilter intentFilter;
     private ImageView mainsearchButton;
+    private AllReceiver allReceiver;
+
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -144,11 +149,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     };
 
+
+
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if(equalizerFragment!=null){
+            equalizerFragment.onKeyUp(keyCode,event);
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
+        allReceiver=new AllReceiver(this);
 
         /** buradaki amaç multiple secim yapıp gönderirken hata alıyorduk bu şekilde düzelttim önemli silinirse multiple share çalışmaz*/
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -712,7 +727,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onResume() {
         super.onResume();
-
+        allReceiver.registerReceiver();
         mAdView = adHeader.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
@@ -770,6 +785,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onPause() {
         super.onPause();
+        allReceiver.unRegisterReceiver();
+
         if (allPermGrand) {
             fPlayListener.pl.stopRunable();
         }

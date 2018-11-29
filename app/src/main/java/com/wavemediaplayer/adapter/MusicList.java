@@ -76,7 +76,6 @@ public class MusicList {
                                 if (file.getTotalSpace() > musicDurationSettings ){
                                     musicData.add(new MusicData(title, artist, thumbnail, duration, location, ids));
                                 }
-
                             }
                         }
                     }

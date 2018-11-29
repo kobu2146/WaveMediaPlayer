@@ -1,6 +1,9 @@
 package com.wavemediaplayer.fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioManager;
@@ -11,8 +14,11 @@ import android.media.audiofx.Visualizer;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.media.session.MediaButtonReceiver;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +32,7 @@ import android.widget.TextView;
 
 import com.sdsmdg.harjot.crollerTest.Croller;
 import com.wavemediaplayer.R;
+import com.wavemediaplayer.mservices.NotificationService;
 import com.wavemediaplayer.play.PlayMusic;
 import com.wavemediaplayer.visaulizer.VerticalSeekBar;
 import com.wavemediaplayer.visaulizer.VisualizerView;
@@ -47,6 +54,11 @@ public class EqualizerFragment extends Fragment {
     private Spinner equalizerPresetSpinner;
     private ArrayList<String> equalizerPresetNames;
     private boolean initSpinner = false;
+    private AudioManager audio;
+    private boolean volumeChangeBoolean=false;
+
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
@@ -82,8 +94,19 @@ public class EqualizerFragment extends Fragment {
         return view;
     }
 
+    public void onKeyUp(int keyCode,KeyEvent event){
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            if(audio!=null){
+                int currentVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
+                volumeChangeBoolean=false;
+                equalizerVolume.setProgress(currentVolume);
+            }
+
+        }
+    }
+
     private void createCroller() {
-        final AudioManager audio = (AudioManager) view.getContext().getSystemService(Context.AUDIO_SERVICE);
+        audio = (AudioManager) view.getContext().getSystemService(Context.AUDIO_SERVICE);
         int currentVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
         equalizerVolume = view.findViewById(R.id.equalizerVolume);
         equalizerVolume.setMax(audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
@@ -91,8 +114,15 @@ public class EqualizerFragment extends Fragment {
         equalizerVolume.setOnProgressChangedListener(new Croller.onProgressChangedListener() {
             @Override
             public void onProgressChanged(int progress) {
-                audio.setStreamVolume(AudioManager.STREAM_MUSIC,
-                        progress, 0);
+                if(volumeChangeBoolean){
+                    audio.setStreamVolume(AudioManager.STREAM_MUSIC,
+                            progress, 0);
+
+                }
+                volumeChangeBoolean=true;
+
+                Log.e("qqqqqqqqprog",String.valueOf(progress));
+
             }
         });
 
@@ -227,14 +257,18 @@ public class EqualizerFragment extends Fragment {
                     for (short i = 0; i < numberFrequencyBands; i++) {
                         equalizerBandIndex = i;
                         SeekBar seekBar = seekBars.get(i);
+
 //                    get current gain setting for this equalizer band
 //                    set the progress indicator of this seekBar to indicate the current gain value
                         seekBar.setProgress(mEqualizer.getBandLevel(equalizerBandIndex) - lowerEqualizerBandLevel);
+
+
                     }
                 } else {
                     for (int i = 0; i < seekBars.size(); i++) {
                         SeekBar seekBar = seekBars.get(i);
 //                            seekBar.setMax(upperEqualizerBandLevel - lowerEqualizerBandLevel);
+                        mEqualizer.setBandLevel((short) i, (short) (sharedPreferences.getInt("band" + String.valueOf(i), 1500) + lowerEqualizerBandLevel));
                         seekBar.setProgress((short) sharedPreferences.getInt("band" + String.valueOf(i), 1500));
                     }
                 }
@@ -359,9 +393,13 @@ public class EqualizerFragment extends Fragment {
                 public void onProgressChanged(SeekBar seekBar, int progress,
                                               boolean fromUser) {
 
-                    mEqualizer.setBandLevel(equalizerBandIndex, (short) (progress + lowerEqualizerBandLevel));
+
+                    Log.e("seekbar ",String.valueOf(equalizerBandIndex)+ "   "+String.valueOf((progress + lowerEqualizerBandLevel)));
+
 
                     if (equalizerPresetSpinner.getTag() != null && !equalizerPresetSpinner.getTag().equals("false")) {
+                        mEqualizer.setBandLevel(equalizerBandIndex, (short) (progress + lowerEqualizerBandLevel));
+
                         int selection = equalizerPresetSpinner.getSelectedItemPosition();
                         if (!equalizerPresetNames.get(selection).equals("Custom")) {
 

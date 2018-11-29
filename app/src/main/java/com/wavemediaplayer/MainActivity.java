@@ -126,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private SharedPreferences sharedPreferences;
     private IntentFilter intentFilter;
     private ImageView mainsearchButton;
-    private AllReceiver allReceiver;
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
@@ -163,7 +162,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
-        allReceiver=new AllReceiver(this);
 
         /** buradaki amaç multiple secim yapıp gönderirken hata alıyorduk bu şekilde düzelttim önemli silinirse multiple share çalışmaz*/
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -727,7 +725,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onResume() {
         super.onResume();
-        allReceiver.registerReceiver();
         mAdView = adHeader.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
@@ -785,7 +782,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onPause() {
         super.onPause();
-        allReceiver.unRegisterReceiver();
 
         if (allPermGrand) {
             fPlayListener.pl.stopRunable();

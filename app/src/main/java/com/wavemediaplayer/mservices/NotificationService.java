@@ -26,6 +26,7 @@ import com.wavemediaplayer.adapter.MusicList;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.play.PlayMusic;
+import com.wavemediaplayer.settings.AllReceiver;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -48,6 +49,7 @@ public class NotificationService extends Service {
     private int tekrarPos;
     PhoneStateListener phoneStateListener;
     boolean isPlayed = false;
+    private AllReceiver allReceiver;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -156,6 +158,13 @@ public class NotificationService extends Service {
         return START_STICKY;
     }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        allReceiver=new AllReceiver(this);
+        allReceiver.registerReceiver();
+    }
+
     private void nextSong() {
         activityPlay();
         calmayaDevamEt(true);
@@ -167,7 +176,7 @@ public class NotificationService extends Service {
         }
     }
 
-    private void pauseSong() {
+    public void pauseSong() {
         if (mediaPlayer != null) {
             if (mediaPlayer.isPlaying()) {
                 mediaPlayer.pause();
@@ -349,6 +358,8 @@ public class NotificationService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        allReceiver.unRegisterReceiver();
+
     }
 
     /**

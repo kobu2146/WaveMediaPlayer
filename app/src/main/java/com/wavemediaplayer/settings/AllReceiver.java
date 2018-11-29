@@ -4,30 +4,28 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.AudioManager;
 import android.util.Log;
 
-import com.wavemediaplayer.MainActivity;
-import com.wavemediaplayer.play.PlayMusic;
+import com.wavemediaplayer.mservices.NotificationService;
 
 public class AllReceiver{
-    private MainActivity mainActivity;
     private IntentFilter actionheadsetplug;
     private JackListener jackListener;
+    private NotificationService notificationService;
 
-    public AllReceiver(MainActivity mainActivity){
-        this.mainActivity=mainActivity;
+    public AllReceiver(NotificationService notificationService){
+        this.notificationService=notificationService;
         jackListener=new JackListener();
         actionheadsetplug = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
     }
 
 
     public void registerReceiver(){
-        mainActivity.registerReceiver(jackListener,actionheadsetplug);
+        notificationService.registerReceiver(jackListener,actionheadsetplug);
     }
 
     public void unRegisterReceiver(){
-        mainActivity.unregisterReceiver(jackListener);
+        notificationService.unregisterReceiver(jackListener);
     }
 
 
@@ -38,14 +36,17 @@ public class AllReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getIntExtra("state", 0) == 0) {
-                if (PlayMusic.mediaPlayer != null){
-                    if (PlayMusic.mediaPlayer.isPlaying()){
-                        PlayMusic.mediaPlayer.pause();
-                        if(mainActivity.s!=null) mainActivity.s.activityPause();
-                        mainActivity.fPlayListener.pl.iconKapat(false);
+                notificationService.pauseSong();
+                Log.e("receiver","receiiiver");
 
-                    }
-                }
+//                if (PlayMusic.mediaPlayer != null){
+//                    if (PlayMusic.mediaPlayer.isPlaying()){
+//                        PlayMusic.mediaPlayer.pause();
+//                        if(mainActivity.s!=null) mainActivity.s.activityPause();
+//                        mainActivity.fPlayListener.pl.iconKapat(false);
+//
+//                    }
+//                }
             }
 
         }

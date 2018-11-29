@@ -85,6 +85,10 @@ public class NotificationService extends Service {
         this.calmaListesiMuzik = FPlayListener.calmaListesiMuzik;
         FPlayListener.currentMusicPosition = currentPos;
         if (views != null && bigViews != null) {
+            Log.e("rndpos",""+currentPos);
+            if (musicData.size() < currentPos){
+                currentPos = new Random().nextInt(musicData.size());
+            }
             mData = musicData.get(currentPos);
             views.setTextViewText(R.id.status_bar_track_name, musicData.get(currentPos).getTitles());
             bigViews.setTextViewText(R.id.status_bar_track_name, musicData.get(currentPos).getTitles());
@@ -452,9 +456,9 @@ public class NotificationService extends Service {
                                 rndPositin = new Random().nextInt(NotificationService.list.size());
                             }
                         }
-                        else {
-                            NotificationService.kaldirilanPos.clear();
-                        }
+                    }
+                    while (rndPositin > list.size()){
+                        rndPositin = new Random().nextInt(NotificationService.list.size());
                     }
                     currentPos = rndPositin;
                     tekrarPos = currentPos;
@@ -500,9 +504,9 @@ public class NotificationService extends Service {
                                 rndPositin = new Random().nextInt(NotificationService.list.size());
                             }
                         }
-                        else {
-                            NotificationService.kaldirilanPos.clear();
-                        }
+                    }
+                    while (rndPositin > list.size()){
+                        rndPositin = new Random().nextInt(NotificationService.list.size());
                     }
                     currentPos = rndPositin;
                     tekrarPos = currentPos;

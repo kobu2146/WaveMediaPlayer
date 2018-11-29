@@ -34,6 +34,15 @@
             android:name="com.karumi.dexter.DexterActivity"
             android:theme="@style/Dexter.Internal.Theme.Transparent"
             />
+        <receiver android:name=".settings.AllReceiver$HeatsetButton"
+            android:enabled="true">
+
+            <intent-filter android:priority="2147483647">
+
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

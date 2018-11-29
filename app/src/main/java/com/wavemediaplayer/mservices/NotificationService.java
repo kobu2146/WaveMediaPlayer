@@ -165,10 +165,12 @@ public class NotificationService extends Service {
         allReceiver.registerReceiver();
     }
 
-    private void nextSong() {
-        activityPlay();
-        calmayaDevamEt(true);
+    public void nextSong() {
+
         if (mediaPlayer != null) {
+            activityPlay();
+            serviceNext();
+            calmayaDevamEt(true);
             mediaPlayer.stop();
             mediaPlayer = MediaPlayer.create(getApplicationContext(), Uri.parse(list.get(currentPos).getLocation()));
             mediaPlayer.start();
@@ -187,14 +189,14 @@ public class NotificationService extends Service {
                 activityPlay();
                 servicePlay();
             }
-            create();
         }
     }
 
-    private void previousSong() {
-        activityPlay();
-        calmayaDevamEt(false);
+    public void previousSong() {
+
         if (mediaPlayer != null) {
+            activityPlay();
+            calmayaDevamEt(false);
             mediaPlayer.stop();
             mediaPlayer = MediaPlayer.create(getApplicationContext(), Uri.parse(list.get(currentPos).getLocation()));
             mediaPlayer.start();
@@ -205,6 +207,8 @@ public class NotificationService extends Service {
     private void exitPlayer() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
+            activityPause();
+            servicePause();
         }
         stopForeground(true);
         stopSelf();

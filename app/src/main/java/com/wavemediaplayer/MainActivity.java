@@ -133,18 +133,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (intent.getStringExtra("servicePause") != null) {
                 PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
                 fPlayListener.pl.iconKapat(false);
+                Log.e("qqqqqqq","pause");
+
 
             } else if (intent.getStringExtra("servicePlay") != null) {
                 PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
                 fPlayListener.pl.iconKapat(true);
+                Log.e("qqqqqqq","play");
             } else if (intent.getStringExtra("serviceNext") != null) {
                 PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
                 fPlayListener.icerikDegistirme();
+                Log.e("qqqqqqq","next");
 
             } else if (intent.getStringExtra("serviceBefore") != null) {
                 PlayMusic.mediaPlayer = NotificationService.mediaPlayer;
                 fPlayListener.icerikDegistirme();
             }
+
+
         }
     };
 

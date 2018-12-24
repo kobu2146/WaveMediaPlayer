@@ -8,6 +8,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.wavemediaplayer.MainActivity;
 import com.wavemediaplayer.R;
+import com.wavemediaplayer.fragments.OnlineFragment;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 
 public class MainManager {
@@ -108,6 +109,7 @@ public class MainManager {
         ViewPagerAdapter adapter = new ViewPagerAdapter(activity.getSupportFragmentManager());
         adapter.addFragment(new MainFragment(), "All Songs");
         adapter.addFragment(new OynatmaListesiFragment(), "PlayLists");
+        adapter.addFragment(new OnlineFragment(), "Online Music");
         viewPager.setAdapter(adapter);
     }
 }

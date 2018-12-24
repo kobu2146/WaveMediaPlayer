@@ -58,6 +58,8 @@ import com.wavemediaplayer.fragments.EqualizerFragment;
 import com.wavemediaplayer.fragments.FragmentListener;
 import com.wavemediaplayer.fragments.OynatmaListesiFragment;
 import com.wavemediaplayer.fragments.PlayListsFragment;
+import com.wavemediaplayer.jamendo.info.GetData;
+import com.wavemediaplayer.jamendo.info.JamendoApi;
 import com.wavemediaplayer.main.FPlayListener;
 import com.wavemediaplayer.main.GestureListener;
 import com.wavemediaplayer.mfcontroller.MainManager;
@@ -69,6 +71,9 @@ import com.wavemediaplayer.settings.AllReceiver;
 import com.wavemediaplayer.settings.FolderFragment;
 import com.wavemediaplayer.settings.MusicListSettingsFragment;
 import com.yydcdut.sdlv.SlideAndDragListView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -225,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
             context.startService(serviceIntent);
         }
+
         musicList = new MusicList(musicListView, this);
         musicList.getMusic();
         denememusicdata.addAll(MusicList.musicData);
@@ -377,7 +383,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     if (s != null)
                         s.listeDegistir(MusicList.musicData, FPlayListener.currentMusicPosition);
-                    eventClick(view);
+                   // eventClick(view);
                 }
             }
         });
@@ -574,6 +580,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         dialogFragment.show(fragmentTransaction, "dialog");
     }
 
+    /*
     public void eventClick(View view) {
         if (mLayout != null) {
             if ((mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
@@ -585,6 +592,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         }
     }
+
+    */
 
     @Override
     public void onBackPressed() {

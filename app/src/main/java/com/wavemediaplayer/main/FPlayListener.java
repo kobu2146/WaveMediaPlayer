@@ -107,6 +107,7 @@ public class FPlayListener {
 
     public void playFromPlayList(String link) {
         /** Music play */
+        PlayMusic.internetOynat = false;
         pl.playMusic(link);
 
         calmaListesiMuzik = true;
@@ -129,10 +130,33 @@ public class FPlayListener {
 
 
     public void playMusic(int position) {
+        PlayMusic.internetOynat = false;
         song_title.setText(MusicList.musicData.get(position).getTitles());
         song_artis.setText(MusicList.musicData.get(position).getArtist());
         pl.playMusic(MusicList.musicData.get(position).getLocation());
 
+
+        // play tab on screen
+        play.setVisibility(View.GONE);
+        pause.setVisibility(View.VISIBLE);
+        if (play_main.getVisibility() == View.VISIBLE) {
+            play_main.setVisibility(View.GONE);
+            pause_main.setVisibility(View.VISIBLE);
+        }
+
+        // main play button
+        play_main.setVisibility(View.GONE);
+        pause_main.setVisibility(View.VISIBLE);
+        if (play.getVisibility() == View.VISIBLE) {
+            play.setVisibility(View.GONE);
+            pause.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void playMusicFromUrl(String link){
+
+        PlayMusic.internetOynat = true;
+        pl.playMusic(link);
 
         // play tab on screen
         play.setVisibility(View.GONE);
@@ -319,29 +343,35 @@ public class FPlayListener {
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!calmaListesiMuzik) {
-                    if (MusicList.musicData.size() == 0) {
-                        return;
-                    }
-                    PlayMusic.prevMusicDAta = MusicList.musicData.get(currentMusicPosition);
-                    song_title.setText(MusicList.musicData.get(currentMusicPosition).getTitles());
-                    song_artis.setText(MusicList.musicData.get(currentMusicPosition).getArtist());
-                    pl.playMusic(MusicList.musicData.get(currentMusicPosition).getLocation());
-                    if (mainActivity.s != null)
-                        mainActivity.s.listeDegistir(MusicList.musicData, currentMusicPosition);
+                if (!PlayMusic.internetOynat){
+                    if (!calmaListesiMuzik) {
+                        if (MusicList.musicData.size() == 0) {
+                            return;
+                        }
+                        PlayMusic.prevMusicDAta = MusicList.musicData.get(currentMusicPosition);
+                        song_title.setText(MusicList.musicData.get(currentMusicPosition).getTitles());
+                        song_artis.setText(MusicList.musicData.get(currentMusicPosition).getArtist());
+                        pl.playMusic(MusicList.musicData.get(currentMusicPosition).getLocation());
+                        if (mainActivity.s != null)
+                            mainActivity.s.listeDegistir(MusicList.musicData, currentMusicPosition);
 
-                } else {
-                    if (OynatmaListesiFragment.music_oynat_list.size() == 0) {
-                        return;
-                    }
-                    PlayMusic.prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition);
-                    song_title.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getTitles());
-                    song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getArtist());
-                    pl.playMusic(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getLocation());
-                    if (mainActivity.s != null)
-                        mainActivity.s.listeDegistir(OynatmaListesiFragment.music_oynat_list, currentMusicPosition);
+                    } else {
+                        if (OynatmaListesiFragment.music_oynat_list.size() == 0) {
+                            return;
+                        }
+                        PlayMusic.prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition);
+                        song_title.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getTitles());
+                        song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getArtist());
+                        pl.playMusic(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getLocation());
+                        if (mainActivity.s != null)
+                            mainActivity.s.listeDegistir(OynatmaListesiFragment.music_oynat_list, currentMusicPosition);
 
+                    }
                 }
+                else {
+                    pl.playMusic(PlayMusic.internetLink);
+                }
+
 
 
                 play.setVisibility(View.GONE);
@@ -374,27 +404,33 @@ public class FPlayListener {
             @Override
             public void onClick(View view) {
 
+                if (!PlayMusic.internetOynat){
+                    if (!calmaListesiMuzik) {
+                        if (MusicList.musicData.size() == 0) {
+                            return;
+                        }
+                        PlayMusic.prevMusicDAta = MusicList.musicData.get(currentMusicPosition);
+                        song_title.setText(MusicList.musicData.get(currentMusicPosition).getTitles());
+                        song_artis.setText(MusicList.musicData.get(currentMusicPosition).getArtist());
+                        pl.playMusic(MusicList.musicData.get(currentMusicPosition).getLocation());
+                        if (mainActivity.s != null)
+                            mainActivity.s.listeDegistir(MusicList.musicData, currentMusicPosition);
 
-                if (!calmaListesiMuzik) {
-                    if (MusicList.musicData.size() == 0) {
-                        return;
+                    } else {
+                        if (OynatmaListesiFragment.music_oynat_list.size() == 0) {
+                            return;
+                        }
+                        PlayMusic.prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition);
+                        song_title.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getTitles());
+                        song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getArtist());
+                        pl.playMusic(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getLocation());
+                        if (mainActivity.s != null)
+                            mainActivity.s.listeDegistir(OynatmaListesiFragment.music_oynat_list, currentMusicPosition);
+
                     }
-                    PlayMusic.prevMusicDAta = MusicList.musicData.get(currentMusicPosition);
-                    song_title.setText(MusicList.musicData.get(currentMusicPosition).getTitles());
-                    song_artis.setText(MusicList.musicData.get(currentMusicPosition).getArtist());
-                    pl.playMusic(MusicList.musicData.get(currentMusicPosition).getLocation());
-                    if (mainActivity.s != null)
-                        mainActivity.s.listeDegistir(MusicList.musicData, currentMusicPosition);
-                } else {
-                    if (OynatmaListesiFragment.music_oynat_list.size() == 0) {
-                        return;
-                    }
-                    PlayMusic.prevMusicDAta = OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition);
-                    song_title.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getTitles());
-                    song_artis.setText(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getArtist());
-                    pl.playMusic(OynatmaListesiFragment.music_oynat_list.get(currentMusicPosition).getLocation());
-                    if (mainActivity.s != null)
-                        mainActivity.s.listeDegistir(OynatmaListesiFragment.music_oynat_list, currentMusicPosition);
+                }
+                else {
+                    pl.playMusic(PlayMusic.internetLink);
                 }
 
 

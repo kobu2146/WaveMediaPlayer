@@ -2,6 +2,7 @@ package com.wavemediaplayer.play;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
 import android.net.Uri;
@@ -30,6 +31,11 @@ import java.util.Random;
 public class PlayMusic {
     public static boolean karisikCal = true;
     public static int tekrarla = 0;
+
+    // internertten calacak muzikleri icin veriler
+    public static boolean internetOynat = false;
+    public static String internetLink = "";
+
     public static MediaPlayer mediaPlayer;
     public static MusicData prevMusicDAta;
     public static boolean isMediaPlayerCreated = false;
@@ -83,7 +89,10 @@ public class PlayMusic {
             if (isMyServiceRunning(NotificationService.class)) {
                 mediaPlayer = NotificationService.mediaPlayer;
             }
-            if (file.exists()) {
+            if (file.exists() || internetOynat) {
+                if (internetOynat){
+                    internetLink = link;
+                }
                 if (!playPrev.equals(link)) {
                     playPrev = link;
                     stopPlaying();
@@ -442,7 +451,6 @@ public class PlayMusic {
                         }
 
                     }
-                    Log.e("qqqqqqqqqq","runablee");
                     myHandler.postDelayed(runnable, 1000);
                 }
             };

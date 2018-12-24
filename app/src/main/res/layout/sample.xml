@@ -39,15 +39,12 @@
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:background="@color/bar8"
-        android:clickable="true"
         android:gravity="center"
-        android:onClick="eventClick"
         android:orientation="horizontal">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:onClick="eventClick">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/songs_cover_one"
@@ -56,7 +53,6 @@
                 android:layout_margin="10dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:onClick="eventClick"
                 android:src="@drawable/headphones"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -71,7 +67,6 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:onClick="eventClick"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/songs_cover_one"
@@ -88,7 +83,6 @@
                     android:focusableInTouchMode="true"
                     android:fontFamily="sans-serif-condensed"
                     android:marqueeRepeatLimit="marquee_forever"
-                    android:onClick="eventClick"
                     android:scrollHorizontally="true"
 
                     android:singleLine="true"
@@ -101,7 +95,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:lines="1"
-                    android:onClick="eventClick"
                     android:text="Camila Cabello"
                     android:textColor="@color/backgroundColor" />
 

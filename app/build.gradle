@@ -39,4 +39,10 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.chibde:audiovisualizer:2.0.1'
     implementation 'com.google.android.gms:play-services-ads:17.1.1'
+
+    //progress
+    implementation 'com.github.ybq:Android-SpinKit:1.2.0'
+
+    // bitmap
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }
